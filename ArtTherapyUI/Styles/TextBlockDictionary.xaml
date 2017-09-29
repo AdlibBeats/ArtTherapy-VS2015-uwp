@@ -1,0 +1,16 @@
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="ms-appx:///ArtTherapyUI/Colors/ColorsDictionary.xaml"/>
+    </ResourceDictionary.MergedDictionaries>
+    
+    <Style TargetType="TextBlock">
+        <Style.Setters>
+            <Setter Property="Foreground" Value="{StaticResource Static.TextBlock.Foreground}"/>
+            <Setter Property="FontSize" Value="14"/>
+        </Style.Setters>
+    </Style>
+
+</ResourceDictionary>

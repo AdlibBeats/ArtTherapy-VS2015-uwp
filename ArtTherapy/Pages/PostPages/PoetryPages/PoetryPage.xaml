@@ -1,0 +1,65 @@
+﻿<Page
+    x:Class="ArtTherapy.Pages.PostPages.PoetryPages.PoetryPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:l="using:ArtTherapy"
+    xmlns:local="using:ArtTherapy.Pages.PostPages.PoetryPages"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:data="using:ArtTherapy.ViewModels"
+    xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls.WrapPanel"
+    xmlns:cc="using:ArtTherapyUI.Controls"
+    mc:Ignorable="d" Loaded="Page_Loaded">
+    <Page.Resources>
+        
+    </Page.Resources>
+
+    <Grid Background="{StaticResource Static.Grid.Background}">
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition Height="50"/>
+        </Grid.RowDefinitions>
+        <ScrollViewer Name="scroll">
+            <Grid>
+                <!--<ListBox Background="Transparent" ItemsSource="{Binding PostModel.Items}" DisplayMemberPath="Name"/>-->
+
+                <GridView ItemsSource="{Binding PostModel.Items}" >
+                    <GridView.ItemTemplate>
+                        <DataTemplate>
+                            <l:SuperItem Height="150" Width="100" Margin="10">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="4*"/>
+                                        <RowDefinition Height="2*"/>
+                                        <RowDefinition Height="2*"/>
+                                        <RowDefinition Height="1*"/>
+                                        <RowDefinition Height="1*"/>
+                                    </Grid.RowDefinitions>
+                                    <!--<TextBlock Grid.Column="0" Text="{Binding Id}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                    <TextBlock Grid.Column="1" Text="{Binding Name}" VerticalAlignment="Center" HorizontalAlignment="Center" TextWrapping="Wrap"/>
+                                    <TextBlock Grid.Column="0" Grid.Row="1" Text="{Binding Description}" VerticalAlignment="Center" HorizontalAlignment="Center" TextWrapping="Wrap"/>
+                                    <TextBlock Grid.Column="1" Grid.Row="1" Text="{Binding Type}" VerticalAlignment="Center" HorizontalAlignment="Center" TextWrapping="Wrap"/>
+                                    <ProgressRing Height="50" Width="50" IsActive="{Binding IsLoading}" BorderBrush="Gray" Foreground="Gray" Grid.RowSpan="2" Grid.ColumnSpan="2" HorizontalAlignment="Center" VerticalAlignment="Center"/>-->
+                                    <ProgressRing Height="50" Width="50" IsActive="{Binding IsLoading}" BorderBrush="Gray" Foreground="Gray" Grid.RowSpan="5" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    <TextBlock Grid.Row="0" FontSize="10" HorizontalAlignment="Stretch" VerticalAlignment="Center" TextAlignment="Center" TextWrapping="Wrap" Text="{Binding Type}"/>
+                                    <TextBlock Grid.Row="1" FontSize="10" HorizontalAlignment="Left" VerticalAlignment="Center" TextAlignment="Center" TextWrapping="Wrap" Text="{Binding Name}"/>
+                                    <Grid Grid.Row="2">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Grid.Column="0" FontSize="10" Text="{Binding Description}"  TextWrapping="Wrap"/>
+                                        <Button Grid.Column="1" FontSize="10" Width="50" Height="50" Content="{Binding Id}" Background="Red"/>
+                                    </Grid>
+                                    <TextBlock Grid.Row="3" FontSize="10" HorizontalAlignment="Left" VerticalAlignment="Center" TextAlignment="Center"  TextWrapping="Wrap" Text="{Binding Type}"/>
+                                    <TextBlock Grid.Row="4" FontSize="10" HorizontalAlignment="Left" VerticalAlignment="Center" TextAlignment="Center"  TextWrapping="Wrap" Text="{Binding Type}"/>
+                                </Grid>
+                            </l:SuperItem>
+                        </DataTemplate>
+                    </GridView.ItemTemplate>
+                </GridView>
+            </Grid>
+        </ScrollViewer>
+        <Button Grid.Row="1" Click="Button_Click" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Content="GetData"/>
+    </Grid>
+</Page>

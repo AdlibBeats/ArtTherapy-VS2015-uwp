@@ -1,0 +1,18 @@
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    
+    <SolidColorBrush x:Key="Static.TextBlock.Foreground" Color="Black"/>
+    <SolidColorBrush x:Key="Static.TextBlock.Disabled" Color="#FFE4E4E4"/>
+    <SolidColorBrush x:Key="Static.Button.Background" Color="Gray"/>
+    <SolidColorBrush x:Key="Static.Button.PointOver" Color="#FFD39555"/>
+    <SolidColorBrush x:Key="Static.Button.Pressed" Color="#FFB67534"/>
+    <SolidColorBrush x:Key="Static.Button.Disabled" Color="Gray"/>
+    <SolidColorBrush x:Key="Static.ListBoxItem.Normal" Color="Orange"/>
+    <SolidColorBrush x:Key="Static.ListBoxItem.PointOver" Color="#FFD39555"/>
+    <SolidColorBrush x:Key="Static.ListBoxItem.Pressed" Color="#FFB67534"/>
+    <SolidColorBrush x:Key="Static.ListBoxItem.Selected" Color="#FFB67534"/>
+    <SolidColorBrush x:Key="Static.SplitView.CompactPane.Background" Color="Orange"/>
+    <SolidColorBrush x:Key="Static.Grid.Background" Color="Orange"/>
+    
+</ResourceDictionary>
