@@ -227,12 +227,6 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ArtTherapyUI\ArtTherapyUI.csproj">
-      <Project>{4a1ec88d-09cd-4ea0-b5f4-782551076a80}</Project>
-      <Name>ArtTherapyUI</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <SDKReference Include="WindowsDesktop, Version=10.0.14393.0">
       <Name>Windows Desktop Extensions for the UWP</Name>
     </SDKReference>
@@ -240,7 +234,12 @@
       <Name>Windows Mobile Extensions for the UWP</Name>
     </SDKReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\ArtTherapyUI\ArtTherapyUI.csproj">
+      <Project>{4a1ec88d-09cd-4ea0-b5f4-782551076a80}</Project>
+      <Name>ArtTherapyUI</Name>
+    </ProjectReference>
+  </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>
