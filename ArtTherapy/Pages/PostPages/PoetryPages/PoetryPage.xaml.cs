@@ -87,20 +87,20 @@ namespace ArtTherapy.Pages.PostPages.PoetryPages
             _viewModel.Dispose();
         }
 
-        private async void _viewModel_Loaded(object sender, PostEventArgs e)
+        private void _viewModel_Loaded(object sender, PostEventArgs e)
         {
             if (!e.IsFullInitialized)
-                await _viewModel.LoadData(scrollViewer.GetScrollViewProgress());
+                _viewModel.LoadData(scrollViewer.GetScrollViewProgress());
         }
 
-        private async void Page_Loaded(object sender, RoutedEventArgs e)
+        private void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            await _viewModel.LoadData(scrollViewer.GetScrollViewProgress());
+            _viewModel.LoadData(scrollViewer.GetScrollViewProgress());
         }
 
-        private async void ScrollViewer_ViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
+        private void ScrollViewer_ViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
         {
-            await _viewModel.LoadData(scrollViewer.GetScrollViewProgress());
+            _viewModel.LoadData(scrollViewer.GetScrollViewProgress());
         }
 
         #region INotifyPropertyChanged Members

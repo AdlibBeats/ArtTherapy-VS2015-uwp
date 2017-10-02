@@ -33,9 +33,9 @@ namespace ArtTherapy.ViewModels
             };
         }
 
-        public async Task LoadData(double scrollViewerProgress)
+        public void LoadData(double scrollViewerProgress)
         {
-            await Task.Factory.StartNew(async () =>
+            Task.Factory.StartNew(async () =>
             {
                 await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
                 {
@@ -55,7 +55,6 @@ namespace ArtTherapy.ViewModels
                                 int startIndex = PostModel.Items.IndexOf(PostModel.Items.LastOrDefault());
                                 if (startIndex >= 19)
                                 {
-                                    //IsLoaded = new TaskCompletionSource<bool>();
                                     IsLoadedList.Add(new TaskCompletionSource<bool>());
                                     startIndex -= 19;
                                     for (int i = startIndex, k = 0; k < 20 && i < postModel.Count; i++, k++)
@@ -63,28 +62,6 @@ namespace ArtTherapy.ViewModels
                                         PostModel.Items[i].IsLoading = true;
                                     }
                                     await Task.Delay(1000);
-
-                                    var demoPostModel = new PostModel()
-                                    {
-                                        Items = new ObservableCollection<CurrentPostModel>()
-                                    };
-
-                                    //for (int i = 0; i < 175; i++)
-                                    //{
-                                    //    demoPostModel.Items.Add(new CurrentPostModel()
-                                    //    {
-                                    //        Id = (uint)(i + 1),
-                                    //        Description = "108990р.",
-                                    //        Image = null,
-                                    //        BuyIcon = "\xE7BF",
-                                    //        IsLoading = false,
-                                    //        Name = "Apple MacBook Pro 2017",
-                                    //        Text = "https://rebabaskett.com/wp-content/uploads/2017/01/u_10150899.jpg",
-                                    //        Type = "4 шт."
-                                    //    });
-                                    //}
-
-                                    //await AppStorage<PostModel>.Set(demoPostModel, "PoetryRepository.json");
 
                                     var fullPostModel = await AppStorage<PostModel>.Get("PoetryRepository.json");
                                     if (fullPostModel != null && fullPostModel.Items != null && fullPostModel.Items.Count > 0)
@@ -106,6 +83,31 @@ namespace ArtTherapy.ViewModels
             });
         }
 
+        public async void AddDemoData()
+        {
+            var demoPostModel = new PostModel()
+            {
+                Items = new ObservableCollection<CurrentPostModel>()
+            };
+
+            for (int i = 0; i < 175; i++)
+            {
+                demoPostModel.Items.Add(new CurrentPostModel()
+                {
+                    Id = (uint)(i + 1),
+                    Description = "108990р.",
+                    Image = null,
+                    BuyIcon = "\xE7BF",
+                    IsLoading = false,
+                    Name = "Apple MacBook Pro 2017",
+                    Text = "https://rebabaskett.com/wp-content/uploads/2017/01/u_10150899.jpg",
+                    Type = "4 шт."
+                });
+            }
+
+            await AppStorage<PostModel>.Set(demoPostModel, "PoetryRepository.json");
+        }
+
         public override T GetViewModel()
         {
             return PostModel;
@@ -120,6 +122,7 @@ namespace ArtTherapy.ViewModels
             PostModel = null;
 
             IsLoadedList.Clear();
+            IsLoadedList = null;
         }
         public T PostModel
         {
