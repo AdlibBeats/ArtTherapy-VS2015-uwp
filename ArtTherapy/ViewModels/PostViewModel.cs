@@ -8,79 +8,88 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Input;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
+using ArtTherapy.Extensions;
 
 namespace ArtTherapy.ViewModels
 {
+    public class PostEventArgs : EventArgs
+    {
+        public bool IsFullInitialized { get; private set; }
+
+        public PostEventArgs(bool isFullInitialized)
+        {
+            IsFullInitialized = isFullInitialized;
+        }
+    }
     public class PostViewModel : BaseViewModel
     {
-        public event EventHandler<EventArgs> Initialized;
+        public event EventHandler<PostEventArgs> Loaded;
 
-        public string Title { get; private set; }
+        public TaskCompletionSource<bool> IsLoaded = new TaskCompletionSource<bool>();
 
-        public PostViewModel(string title)
+        public PostViewModel()
         {
-            Title = title;
             PostModel = new PostModel()
             {
                 Items = new ObservableCollection<CurrentPostModel>()
             };
         }
 
-        public int Count { get; set; }
-
-        //public bool IsLoadedComplete { get; set; } = false;
-
-        public async void Initialize()
+        public async Task LoadData(double scrollViewerProgress)
         {
-            var postModelCount = await AppStorage<PostModel>.Get(Title + "Count" + ".json");
-            if (postModelCount != null)
+            await Task.Factory.StartNew(async () =>
             {
-                Count = postModelCount.Count;
-
-                if (Count > 0 && PostModel.Items.Count < Count)
-                {
-                    for (int i = 0; i < Count; i++)
+                await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
                     {
-                        if (i == 20 || PostModel.Items.Count == Count) break;
-                        PostModel.Items.Add(new CurrentPostModel());
-                        Debug.WriteLine($"{PostModel.Items.Count} --- {Count}");
-                    }
-                    int startIndex = PostModel.Items.IndexOf(PostModel.Items.LastOrDefault());
-                    Debug.WriteLine($"-------------- {startIndex}");
-                    if (startIndex >= 19)
-                    {
-                        startIndex -= 19;
-                        for (int i = startIndex, k = 0; k < 20 && i < Count; i++, k++)
+                        if (scrollViewerProgress > 0.999)
                         {
-                            PostModel.Items[i].IsLoading = true;
-                        }
-                        await Task.Delay(2000);
-
-                        var postModel = await AppStorage<PostModel>.Get(Title + ".json");
-                        if (postModel != null && postModel.Items != null && postModel.Items.Count > 0)
-                        {
-
-                            for (int i = startIndex, k = 0; k < 20 && i < Count; i++, k++)
+                            var postModel = await AppStorage<PostModel>.Get("PoetryRepositoryCount.json");
+                            if (postModel != null)
                             {
-                                PostModel.Items[i] = postModel.Items[i];
-                                PostModel.Items[i].IsLoading = false;
+                                if (postModel.Count > 0 && PostModel.Items.Count < postModel.Count)
+                                {
+                                    for (int i = 0; i < postModel.Count; i++)
+                                    {
+                                        if (i == 20 || PostModel.Items.Count == postModel.Count) break;
+                                        PostModel.Items.Add(new CurrentPostModel());
+                                        Debug.WriteLine($"Добавлено {PostModel.Items.Count} из {postModel.Count}");
+                                    }
+                                    int startIndex = PostModel.Items.IndexOf(PostModel.Items.LastOrDefault());
+                                    if (startIndex >= 19)
+                                    {
+                                        startIndex -= 19;
+                                        for (int i = startIndex, k = 0; k < 20 && i < postModel.Count; i++, k++)
+                                        {
+                                            PostModel.Items[i].IsLoading = true;
+                                        }
+                                        await Task.Delay(1000);
+
+                                        var fullPostModel = await AppStorage<PostModel>.Get("PoetryRepository.json");
+                                        if (fullPostModel != null && fullPostModel.Items != null && fullPostModel.Items.Count > 0)
+                                        {
+                                            for (int i = startIndex, k = 0; k < 20 && i < postModel.Count; i++, k++)
+                                            {
+                                                PostModel.Items[i] = fullPostModel.Items[i];
+                                                PostModel.Items[i].IsLoading = false;
+                                                await Task.Delay(50);
+                                            }
+                                        }
+                                    }
+                                }
                             }
+                            Loaded?.Invoke(this, new PostEventArgs(postModel.Count == PostModel.Items.Count));
                         }
-                    }
-                    await Task.Delay(2000);
-                }
-            }
-            Initialized?.Invoke(this, new EventArgs());
+                    });
+            });
         }
+
         public PostModel PostModel
         {
             get { return (PostModel)GetValue(PostModelProperty); }
-            set
-            {
-                SetValue(PostModelProperty, value);
-                OnPropertyChanged(nameof(PostModel));
-            }
+            set { SetValue(PostModelProperty, value); }
         }
         
         public static readonly DependencyProperty PostModelProperty =

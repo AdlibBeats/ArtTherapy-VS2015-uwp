@@ -18,7 +18,7 @@ namespace ArtTherapy.AppStorage
         {
             StorageFile file = null;
 
-            Debug.WriteLine(ApplicationData.Current.LocalFolder.Path);
+            Debug.WriteLine($"{fileName}: {ApplicationData.Current.LocalFolder.Path}");
 
             try
             {

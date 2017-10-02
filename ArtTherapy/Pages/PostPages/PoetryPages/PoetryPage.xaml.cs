@@ -16,6 +16,7 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using ArtTherapy.Extensions;
 
 namespace ArtTherapy.Pages.PostPages.PoetryPages
 {
@@ -65,53 +66,34 @@ namespace ArtTherapy.Pages.PostPages.PoetryPages
             NavigateEventType = NavigateEventTypes.ListBoxSelectionChanged;
         }
 
+        private PostViewModel _viewModel;
+
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
 
-            DataContext = new PostViewModel("PoetryRepository");
-            (DataContext as PostViewModel).Initialized += _viewModel_Initialized;
+            _viewModel.Loaded += _viewModel_Loaded;
+
+            DataContext = _viewModel;
+
             Initialized?.Invoke(this, new EventArgs());
-            scroll.ViewChanged += Scroll_ViewChanged;
         }
 
-        private void Page_Loaded(object sender, RoutedEventArgs e)
+        private async void _viewModel_Loaded(object sender, PostEventArgs e)
         {
-            Load();
+            _viewModel.IsLoaded.TrySetResult(true);
+            if (!e.IsFullInitialized)
+                await _viewModel.LoadData(scrollViewer.GetScrollViewProgress());
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            Load();
+            await _viewModel.LoadData(scrollViewer.GetScrollViewProgress());
         }
 
-        TaskCompletionSource<bool> isLoaded = new TaskCompletionSource<bool>();
-
-        private void Scroll_ViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
+        private async void ScrollViewer_ViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
         {
-            var newScrollProgress = (scroll.VerticalOffset + scroll.ActualHeight) / scroll.ExtentHeight;
-            Debug.WriteLine(newScrollProgress);
-            if (newScrollProgress >= 0.9)
-            {
-                Load();
-            }
-        }
-
-        private async void Load()
-        {
-            await Task.Factory.StartNew(async () =>
-            {
-                await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
-                {
-                    (DataContext as PostViewModel).Initialize();
-                    await isLoaded.Task;
-                });
-            });
-        }
-
-        private void _viewModel_Initialized(object sender, EventArgs e)
-        {
-            isLoaded.TrySetResult(true);
+            await _viewModel.LoadData(scrollViewer.GetScrollViewProgress());
         }
 
         #region INotifyPropertyChanged Members
