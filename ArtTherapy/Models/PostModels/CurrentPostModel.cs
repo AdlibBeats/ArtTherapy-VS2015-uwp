@@ -6,6 +6,8 @@ namespace ArtTherapy.Models.PostModels
 {
     public class CurrentPostModel : BaseModel
     {
+        #region Json Serialized
+
         public uint Id
         {
             get { return _Id; }
@@ -17,29 +19,17 @@ namespace ArtTherapy.Models.PostModels
         }
         private uint _Id;
 
-        [JsonIgnore]
-        public ImageSource Image
-        {
-            get { return _Image; }
-            set
-            {
-                _Image = value;
-                OnPropertyChanged(nameof(Image));
-            }
-        }
-        private ImageSource _Image;
 
-        [JsonIgnore]
-        public Visibility Visibility
+        public string BuyIcon
         {
-            get { return _Visibility; }
+            get { return _BuyIcon; }
             set
             {
-                _Visibility = value;
-                OnPropertyChanged(nameof(Visibility));
+                _BuyIcon = value;
+                OnPropertyChanged(nameof(BuyIcon));
             }
         }
-        private Visibility _Visibility;
+        private string _BuyIcon;
 
         public string Name
         {
@@ -73,7 +63,7 @@ namespace ArtTherapy.Models.PostModels
             }
         }
         private string _Text;
-
+        
         public string Type
         {
             get { return _Type; }
@@ -84,6 +74,22 @@ namespace ArtTherapy.Models.PostModels
             }
         }
         private string _Type;
+
+        #endregion
+
+        #region JsonIgnore
+
+        [JsonIgnore]
+        public ImageSource Image
+        {
+            get { return _Image; }
+            set
+            {
+                _Image = value;
+                OnPropertyChanged(nameof(Image));
+            }
+        }
+        private ImageSource _Image;
 
         [JsonIgnore]
         public bool IsLoading
@@ -96,5 +102,7 @@ namespace ArtTherapy.Models.PostModels
             }
         }
         private bool _IsLoading;
+
+        #endregion
     }
 }

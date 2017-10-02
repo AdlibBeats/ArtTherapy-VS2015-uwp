@@ -17,6 +17,7 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using ArtTherapy.Extensions;
+using ArtTherapy.Models.PostModels;
 
 namespace ArtTherapy.Pages.PostPages.PoetryPages
 {
@@ -66,7 +67,7 @@ namespace ArtTherapy.Pages.PostPages.PoetryPages
             NavigateEventType = NavigateEventTypes.ListBoxSelectionChanged;
         }
 
-        private PostViewModel _viewModel = new PostViewModel();
+        private PostViewModel<PostModel> _viewModel = new PostViewModel<PostModel>();
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
@@ -74,14 +75,20 @@ namespace ArtTherapy.Pages.PostPages.PoetryPages
 
             _viewModel.Loaded += _viewModel_Loaded;
 
-            DataContext = _viewModel;
-
             Initialized?.Invoke(this, new EventArgs());
+        }
+
+        protected override void OnNavigatedFrom(NavigationEventArgs e)
+        {
+            base.OnNavigatedFrom(e);
+
+            _viewModel.Loaded -= _viewModel_Loaded;
+
+            _viewModel.Dispose();
         }
 
         private async void _viewModel_Loaded(object sender, PostEventArgs e)
         {
-            _viewModel.IsLoaded.TrySetResult(true);
             if (!e.IsFullInitialized)
                 await _viewModel.LoadData(scrollViewer.GetScrollViewProgress());
         }

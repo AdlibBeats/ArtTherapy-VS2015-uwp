@@ -99,7 +99,7 @@ namespace ArtTherapy.Pages.PostPages
 
         #endregion
 
-        private async void SaveButton_Click(object sender, RoutedEventArgs e)
+        private void SaveButton_Click(object sender, RoutedEventArgs e)
         {
             //_CurrentPostModel = value;
             //var file = await SetAsync("path", _CurrentPostModel);
@@ -128,7 +128,7 @@ namespace ArtTherapy.Pages.PostPages
 //            await AppStorage.AppStorage.SetAsync(url, postModel);
         }
 
-        private async void OpenButton_Click(object sender, RoutedEventArgs e)
+        private void OpenButton_Click(object sender, RoutedEventArgs e)
         {
         //    pr.IsActive = true;
         //    pr.Visibility = Visibility.Visible;

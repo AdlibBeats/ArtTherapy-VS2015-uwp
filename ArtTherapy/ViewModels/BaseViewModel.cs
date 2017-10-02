@@ -1,11 +1,16 @@
-﻿using System;
+﻿using ArtTherapy.Models;
+using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using Windows.UI.Xaml;
 
 namespace ArtTherapy.ViewModels
 {
-    public abstract class BaseViewModel : DependencyObject, INotifyPropertyChanged
+    public interface IBaseViewModel<out T> : INotifyPropertyChanged where T : BaseModel, new()
+    {
+        T GetViewModel();
+    }
+    public abstract class BaseViewModel<T> : DependencyObject, IDisposable, IBaseViewModel<T> where T : BaseModel, new()
     {
         public BaseViewModel()
         {
@@ -14,8 +19,12 @@ namespace ArtTherapy.ViewModels
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public void OnPropertyChanged([CallerMemberName]string propertyName = null) =>
+        public void OnPropertyChanged(string propertyName = null) =>
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+
+        public abstract T GetViewModel();
+
+        public abstract void Dispose();
 
         public Action Command
         {
