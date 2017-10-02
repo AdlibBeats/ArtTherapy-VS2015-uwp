@@ -14,34 +14,38 @@
     
     <Grid Background="{StaticResource Static.Grid.Background}">
         <ScrollViewer Name="scrollViewer" ViewChanged="ScrollViewer_ViewChanged">
-            <Grid>
-                <GridView ItemsSource="{Binding PostModel.Items}" >
+            <Grid Background="White">
+                <GridView ItemsSource="{Binding PostModel.Items}">
                     <GridView.ItemTemplate>
                         <DataTemplate>
-                            <l:SuperItem Height="150" Width="100" Margin="10">
-                                <Grid>
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="4*"/>
-                                        <RowDefinition Height="2*"/>
-                                        <RowDefinition Height="2*"/>
-                                        <RowDefinition Height="1*"/>
-                                        <RowDefinition Height="1*"/>
-                                    </Grid.RowDefinitions>
-                                    <ProgressRing Height="50" Width="50" IsActive="{Binding IsLoading}" BorderBrush="Gray" Foreground="Gray" Grid.RowSpan="5" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                    <TextBlock Grid.Row="0" FontSize="10" HorizontalAlignment="Stretch" VerticalAlignment="Center" TextAlignment="Center" TextWrapping="Wrap" Text="{Binding Type}"/>
-                                    <TextBlock Grid.Row="1" FontSize="10" HorizontalAlignment="Left" VerticalAlignment="Center" TextAlignment="Center" TextWrapping="Wrap" Text="{Binding Name}"/>
-                                    <Grid Grid.Row="2">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition/>
-                                            <ColumnDefinition Width="Auto"/>
-                                        </Grid.ColumnDefinitions>
-                                        <TextBlock Grid.Column="0" FontSize="10" Text="{Binding Description}"  TextWrapping="Wrap"/>
-                                        <Button Grid.Column="1" FontSize="10" Width="50" Height="50" Content="{Binding Id}" Background="Red"/>
-                                    </Grid>
-                                    <TextBlock Grid.Row="3" FontSize="10" HorizontalAlignment="Left" VerticalAlignment="Center" TextAlignment="Center"  TextWrapping="Wrap" Text="{Binding Type}"/>
-                                    <TextBlock Grid.Row="4" FontSize="10" HorizontalAlignment="Left" VerticalAlignment="Center" TextAlignment="Center"  TextWrapping="Wrap" Text="{Binding Type}"/>
+                            <Grid Height="200" Width="175" Margin="5" Background="White">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="10*"/>
+                                    <RowDefinition Height="2*"/>
+                                    <RowDefinition Height="2*"/>
+                                    <RowDefinition Height="1*"/>
+                                    <RowDefinition Height="1*"/>
+                                </Grid.RowDefinitions>
+                                <ProgressRing Height="50" Width="50" IsActive="{Binding IsLoading}" BorderBrush="Gray" Foreground="Gray" Grid.RowSpan="5" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                <Border Grid.Row="0" Visibility="{Binding Visibility}">
+                                    <Border.Background>
+                                        <ImageBrush ImageSource="{Binding Image}" Stretch="UniformToFill"/>
+                                    </Border.Background>
+                                </Border>
+                                <Border Grid.Row="1" Background="LightGray" Visibility="{Binding Visibility}">
+                                    <TextBlock FontSize="12" HorizontalAlignment="Left" VerticalAlignment="Center" TextAlignment="Center" TextWrapping="Wrap" Text="{Binding Name}"/>
+                                </Border>
+                                <Grid Grid.Row="2" Background="White" Visibility="{Binding Visibility}">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" FontSize="12" Text="{Binding Description}"  TextWrapping="Wrap"/>
+                                    <Button Grid.Column="1" FontSize="12" Width="50" Height="50" Content="Buy" Background="Red"/>
                                 </Grid>
-                            </l:SuperItem>
+                                <TextBlock Grid.Row="3" FontSize="12" HorizontalAlignment="Left" VerticalAlignment="Center" TextAlignment="Center"  TextWrapping="Wrap" Text="{Binding Id}" Visibility="{Binding Visibility}"/>
+                                <TextBlock Grid.Row="4" FontSize="12" HorizontalAlignment="Left" VerticalAlignment="Center" TextAlignment="Center"  TextWrapping="Wrap" Text="{Binding Type}" Visibility="{Binding Visibility}"/>
+                            </Grid>
                         </DataTemplate>
                     </GridView.ItemTemplate>
                 </GridView>

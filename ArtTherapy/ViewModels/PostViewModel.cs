@@ -64,8 +64,31 @@ namespace ArtTherapy.ViewModels
                                         for (int i = startIndex, k = 0; k < 20 && i < postModel.Count; i++, k++)
                                         {
                                             PostModel.Items[i].IsLoading = true;
+                                            PostModel.Items[i].Visibility = Visibility.Collapsed;
                                         }
                                         await Task.Delay(1000);
+
+                                        var demoPostModel = new PostModel()
+                                        {
+                                            Items = new ObservableCollection<CurrentPostModel>()
+                                        };
+
+                                        //for (int i = 0; i < 175; i++)
+                                        //{
+                                        //    demoPostModel.Items.Add(new CurrentPostModel()
+                                        //    {
+                                        //        Id = (uint)(i + 1),
+                                        //        Description = "108990р.",
+                                        //        Image = null,
+                                        //        Visibility = Visibility.Visible,
+                                        //        IsLoading = false,
+                                        //        Name = "Apple MacBook Pro 2017",
+                                        //        Text = "https://rebabaskett.com/wp-content/uploads/2017/01/u_10150899.jpg",
+                                        //        Type = "4 шт."
+                                        //    });
+                                        //}
+
+                                        //await AppStorage<PostModel>.Set(demoPostModel, "PoetryRepository.json");
 
                                         var fullPostModel = await AppStorage<PostModel>.Get("PoetryRepository.json");
                                         if (fullPostModel != null && fullPostModel.Items != null && fullPostModel.Items.Count > 0)
@@ -73,7 +96,9 @@ namespace ArtTherapy.ViewModels
                                             for (int i = startIndex, k = 0; k < 20 && i < postModel.Count; i++, k++)
                                             {
                                                 PostModel.Items[i] = fullPostModel.Items[i];
+                                                PostModel.Items[i].Image = PostModel.Items[i].Text.GetImageSource();
                                                 PostModel.Items[i].IsLoading = false;
+                                                PostModel.Items[i].Visibility = Visibility.Visible;
                                                 await Task.Delay(50);
                                             }
                                         }

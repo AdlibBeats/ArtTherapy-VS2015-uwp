@@ -66,7 +66,7 @@ namespace ArtTherapy.Pages.PostPages.PoetryPages
             NavigateEventType = NavigateEventTypes.ListBoxSelectionChanged;
         }
 
-        private PostViewModel _viewModel;
+        private PostViewModel _viewModel = new PostViewModel();
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {

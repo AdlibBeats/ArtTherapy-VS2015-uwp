@@ -1,4 +1,6 @@
-﻿using Windows.UI.Xaml.Media;
+﻿using Newtonsoft.Json;
+using Windows.UI.Xaml;
+using Windows.UI.Xaml.Media;
 
 namespace ArtTherapy.Models.PostModels
 {
@@ -15,6 +17,7 @@ namespace ArtTherapy.Models.PostModels
         }
         private uint _Id;
 
+        [JsonIgnore]
         public ImageSource Image
         {
             get { return _Image; }
@@ -25,6 +28,18 @@ namespace ArtTherapy.Models.PostModels
             }
         }
         private ImageSource _Image;
+
+        [JsonIgnore]
+        public Visibility Visibility
+        {
+            get { return _Visibility; }
+            set
+            {
+                _Visibility = value;
+                OnPropertyChanged(nameof(Visibility));
+            }
+        }
+        private Visibility _Visibility;
 
         public string Name
         {
@@ -70,6 +85,7 @@ namespace ArtTherapy.Models.PostModels
         }
         private string _Type;
 
+        [JsonIgnore]
         public bool IsLoading
         {
             get { return _IsLoading; }
