@@ -5,62 +5,68 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
+    xmlns:anControls="using:ArtTherapyUI.Controls"
     xmlns:models="using:ArtTherapy.Models.PostModels"
     xmlns:ex="using:ArtTherapy.Extensions"
-    mc:Ignorable="d" Loaded="Page_Loaded">
+    mc:Ignorable="d" SizeChanged="Page_SizeChanged">
     
     <Page.Resources>
-        <ex:VisibilityConverter x:Key="visibilityConverter"/>
+        <ex:VisibilityInverseConverter x:Key="visibilityInverseConverter"/>
     </Page.Resources>
     
     <Grid Background="{StaticResource Static.Grid.Background}">
         <ScrollViewer x:Name="scrollViewer" ViewChanged="ScrollViewer_ViewChanged">
             <Grid Background="White">
-                <GridView x:Name="gridView" ItemsSource="{x:Bind _viewModel.PostModel.Items}">
-                    <GridView.ItemTemplate>
+                <GridView x:Name="gridView"
+                        ItemsSource="{x:Bind _viewModel.PostModel.Items}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <anControls:AnimatedWrapPanel/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
                         <DataTemplate x:DataType="models:CurrentPostModel">
-                            <Grid Height="200" Width="175" Margin="5" Background="White">
+                            <Grid Margin="5" Background="White" MaxWidth="170">
                                 <Grid.RowDefinitions>
-                                    <RowDefinition Height="10*"/>
-                                    <RowDefinition Height="2*"/>
-                                    <RowDefinition Height="2*"/>
-                                    <RowDefinition Height="1*"/>
-                                    <RowDefinition Height="1*"/>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
                                 </Grid.RowDefinitions>
                                 <ProgressRing Height="50" Width="50" BorderBrush="Gray" Foreground="Gray" Grid.RowSpan="5" HorizontalAlignment="Center" VerticalAlignment="Center"
-                                              IsActive="{x:Bind IsLoading}"/>
+                                        IsActive="{x:Bind IsLoading}"/>
                                 <controls:ImageEx Grid.Row="0" Stretch="UniformToFill"
-                                                  Source="{x:Bind Text}"
-                                                  Visibility="{x:Bind Path=IsLoading, Converter={StaticResource visibilityConverter}}"/>
-                                <Border Grid.Row="1" Background="LightGray"
-                                        Visibility="{x:Bind Path=IsLoading, Converter={StaticResource visibilityConverter}}">
-                                    <TextBlock FontSize="12" HorizontalAlignment="Left" VerticalAlignment="Center" TextAlignment="Center" TextWrapping="Wrap"
-                                               Text="{x:Bind Name}"/>
-                                </Border>
+                                        Source="{x:Bind Text}"
+                                        Visibility="{x:Bind Path=IsLoading, Converter={StaticResource visibilityInverseConverter}}"/>
+                                <Border Grid.Row="1" Background="LightGray" Opacity="0.5" Height="50" Margin="0, -100"
+                                        Visibility="{x:Bind Path=IsLoading, Converter={StaticResource visibilityInverseConverter}}"/>
+                                <TextBlock Grid.Row="1" FontSize="12" HorizontalAlignment="Left" VerticalAlignment="Center" TextAlignment="Center" TextWrapping="Wrap"
+                                        Text="{x:Bind Name}"/>
                                 <Grid Grid.Row="2" Background="White"
-                                      Visibility="{x:Bind Path=IsLoading, Converter={StaticResource visibilityConverter}}">
+                                      Visibility="{x:Bind Path=IsLoading, Converter={StaticResource visibilityInverseConverter}}">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition/>
                                         <ColumnDefinition Width="Auto"/>
                                     </Grid.ColumnDefinitions>
                                     <TextBlock Grid.Column="0" FontSize="12"  TextWrapping="Wrap"
-                                               Text="{x:Bind Description}"/>
-                                    <Button Grid.Column="1" Width="50" Height="50" Background="Red">
+                                        Text="{x:Bind Description}"/>
+                                    <Button Grid.Column="1" Width="50" Height="20" Background="Red">
                                         <Button.Content>
                                             <TextBlock FontSize="12" FontFamily="Segoe MDL2 Assets"
-                                                       Text="{x:Bind BuyIcon}"/>
+                                                Text="{x:Bind BuyIcon}"/>
                                         </Button.Content>
                                     </Button>
                                 </Grid>
                                 <TextBlock Grid.Row="3" FontSize="12" HorizontalAlignment="Left" VerticalAlignment="Center" TextAlignment="Center"  TextWrapping="Wrap"
-                                           Text="{x:Bind Id}"
-                                           Visibility="{x:Bind Path=IsLoading, Converter={StaticResource visibilityConverter}}"/>
+                                    Text="{x:Bind Id}"
+                                    Visibility="{x:Bind Path=IsLoading, Converter={StaticResource visibilityInverseConverter}}"/>
                                 <TextBlock Grid.Row="4" FontSize="12" HorizontalAlignment="Left" VerticalAlignment="Center" TextAlignment="Center"  TextWrapping="Wrap"
-                                           Text="{x:Bind Type}"
-                                           Visibility="{x:Bind Path=IsLoading, Converter={StaticResource visibilityConverter}}"/>
+                                    Text="{x:Bind Type}"
+                                    Visibility="{x:Bind Path=IsLoading, Converter={StaticResource visibilityInverseConverter}}"/>
                             </Grid>
                         </DataTemplate>
-                    </GridView.ItemTemplate>
+                    </ItemsControl.ItemTemplate>
                 </GridView>
             </Grid>
         </ScrollViewer>

@@ -33,6 +33,12 @@ namespace ArtTherapy.ViewModels
             };
         }
 
+        public int Count { get; private set; }
+
+        public int CurrentCount { get => PostModel.Items.Count; }
+
+        public bool IsFullInitialized { get => Count.Equals(CurrentCount); }
+
         public void LoadData(double scrollViewerProgress)
         {
             Task.Factory.StartNew(async () =>
@@ -44,20 +50,21 @@ namespace ArtTherapy.ViewModels
                         var postModel = await AppStorage<PostModel>.Get("PoetryRepositoryCount.json");
                         if (postModel != null)
                         {
-                            if (postModel.Count > 0 && PostModel.Items.Count < postModel.Count)
+                            Count = postModel.Count;
+                            if (Count > 0 && CurrentCount < postModel.Count)
                             {
-                                for (int i = 0; i < postModel.Count; i++)
+                                for (int i = 0; i < Count; i++)
                                 {
-                                    if (i == 20 || PostModel.Items.Count == postModel.Count) break;
+                                    if (i == 20 || CurrentCount == Count) break;
                                     PostModel.Items.Add(new CurrentPostModel());
-                                    Debug.WriteLine($"Добавлено {PostModel.Items.Count} из {postModel.Count}");
+                                    Debug.WriteLine($"Добавлено {CurrentCount} из {Count}");
                                 }
                                 int startIndex = PostModel.Items.IndexOf(PostModel.Items.LastOrDefault());
                                 if (startIndex >= 19)
                                 {
                                     IsLoadedList.Add(new TaskCompletionSource<bool>());
                                     startIndex -= 19;
-                                    for (int i = startIndex, k = 0; k < 20 && i < postModel.Count; i++, k++)
+                                    for (int i = startIndex, k = 0; k < 20 && i < Count; i++, k++)
                                     {
                                         PostModel.Items[i].IsLoading = true;
                                     }
@@ -66,7 +73,7 @@ namespace ArtTherapy.ViewModels
                                     var fullPostModel = await AppStorage<PostModel>.Get("PoetryRepository.json");
                                     if (fullPostModel != null && fullPostModel.Items != null && fullPostModel.Items.Count > 0)
                                     {
-                                        for (int i = startIndex, k = 0; k < 20 && i < postModel.Count; i++, k++)
+                                        for (int i = startIndex, k = 0; k < 20 && i < Count; i++, k++)
                                         {
                                             PostModel.Items[i] = fullPostModel.Items[i];
                                             PostModel.Items[i].IsLoading = false;
@@ -77,7 +84,7 @@ namespace ArtTherapy.ViewModels
                                 }
                             }
                         }
-                        Loaded?.Invoke(this, new PostEventArgs(postModel.Count == PostModel.Items.Count));
+                        Loaded?.Invoke(this, new PostEventArgs(Count.Equals(CurrentCount)));
                     }
                  });
             });
