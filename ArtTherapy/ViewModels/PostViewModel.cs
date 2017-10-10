@@ -33,6 +33,12 @@ namespace ArtTherapy.ViewModels
             };
         }
 
+        public int Count { get; private set; }
+
+        public int CurrentCount { get => PostModel.Items.Count; }
+
+        public bool IsFullInitialized { get => Count.Equals(CurrentCount); }
+
         public void LoadData(double scrollViewerProgress)
         {
             Task.Factory.StartNew(async () =>
@@ -41,31 +47,33 @@ namespace ArtTherapy.ViewModels
                 {
                     if (scrollViewerProgress > 0.999)
                     {
-                        var postModel = await AppStorage<PostModel>.Get($"{typeof(T).Name}Count.json");
+                        var postModel = await AppStorage<PostModel>.Get("PoetryRepositoryCount.json");
                         if (postModel != null)
                         {
-                            if (postModel.Count > 0 && PostModel.Items.Count < postModel.Count)
+                            Count = postModel.Count;
+                            if (Count > 0 && CurrentCount < postModel.Count)
                             {
-                                for (int i = 0; i < postModel.Count; i++)
+                                for (int i = 0; i < Count; i++)
                                 {
-                                    if (i == 20 || PostModel.Items.Count == postModel.Count) break;
-                                    PostModel.Items.Add(new CurrentPostModel() { IsLoading = true });
-                                    Debug.WriteLine($"Добавлено {PostModel.Items.Count} из {postModel.Count}");
+                                    if (i == 20 || CurrentCount == Count) break;
+                                    PostModel.Items.Add(new CurrentPostModel());
+                                    Debug.WriteLine($"Добавлено {CurrentCount} из {Count}");
                                 }
-                                int startIndex = PostModel.Items.Count - 1;
+                                int startIndex = PostModel.Items.IndexOf(PostModel.Items.LastOrDefault());
                                 if (startIndex >= 19)
                                 {
                                     IsLoadedList.Add(new TaskCompletionSource<bool>());
                                     startIndex -= 19;
-
+                                    for (int i = startIndex, k = 0; k < 20 && i < Count; i++, k++)
+                                    {
+                                        PostModel.Items[i].IsLoading = true;
+                                    }
                                     await Task.Delay(1000);
 
-                                    //await AddDemoData();
-
-                                    var fullPostModel = await AppStorage<PostModel>.Get($"{typeof(T).Name}.json");
+                                    var fullPostModel = await AppStorage<PostModel>.Get("PoetryRepository.json");
                                     if (fullPostModel != null && fullPostModel.Items != null && fullPostModel.Items.Count > 0)
                                     {
-                                        for (int i = startIndex, k = 0; k < 20 && i < postModel.Count; i++, k++)
+                                        for (int i = startIndex, k = 0; k < 20 && i < Count; i++, k++)
                                         {
                                             PostModel.Items[i] = fullPostModel.Items[i];
                                             PostModel.Items[i].IsLoading = false;
@@ -76,13 +84,13 @@ namespace ArtTherapy.ViewModels
                                 }
                             }
                         }
-                        Loaded?.Invoke(this, new PostEventArgs(postModel.Count == PostModel.Items.Count));
+                        Loaded?.Invoke(this, new PostEventArgs(Count.Equals(CurrentCount)));
                     }
                  });
             });
         }
 
-        public async Task AddDemoData()
+        public async void AddDemoData()
         {
             var demoPostModel = new PostModel()
             {
@@ -104,10 +112,10 @@ namespace ArtTherapy.ViewModels
                 });
             }
 
-            await AppStorage<PostModel>.Set(demoPostModel, $"{typeof(T)}.json");
+            await AppStorage<PostModel>.Set(demoPostModel, "PoetryRepository.json");
         }
 
-        public override T GetModel()
+        public override T GetViewModel()
         {
             return PostModel;
         }

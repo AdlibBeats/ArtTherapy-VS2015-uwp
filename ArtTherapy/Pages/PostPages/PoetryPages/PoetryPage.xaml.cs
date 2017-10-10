@@ -18,6 +18,7 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using ArtTherapy.Extensions;
 using ArtTherapy.Models.PostModels;
+using ArtTherapyUI.Controls;
 
 namespace ArtTherapy.Pages.PostPages.PoetryPages
 {
@@ -101,6 +102,9 @@ namespace ArtTherapy.Pages.PostPages.PoetryPages
         private void Page_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             _viewModel.LoadData(scrollViewer.GetScrollViewProgress());
+
+            //if (_viewModel.IsFullInitialized)
+            //animationTimer.Start();
         }
 
         #region INotifyPropertyChanged Members

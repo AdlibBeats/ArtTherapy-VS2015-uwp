@@ -107,6 +107,11 @@
     <None Include="project.json" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Animation\AnimationBase.cs" />
+    <Compile Include="Animation\Animators\FractionDistanceAnimator.cs" />
+    <Compile Include="Animation\IArrangeAnimator.cs" />
+    <Compile Include="Controls\AnimatedGridView.cs" />
+    <Compile Include="Controls\AnimatedWrapPanel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Properties\ArtTherapyUI.rd.xml" />
   </ItemGroup>

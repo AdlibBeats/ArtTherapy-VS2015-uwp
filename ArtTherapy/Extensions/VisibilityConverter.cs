@@ -17,12 +17,12 @@ namespace ArtTherapy.Extensions
             ((Visibility)value == Visibility.Visible) ? true : false;
     }
 
-    public class VisibilityConverterReverse : IValueConverter
+    public class VisibilityInverseConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, string language) =>
             ((bool)value) ? Visibility.Collapsed : Visibility.Visible;
 
         public object ConvertBack(object value, Type targetType, object parameter, string language) =>
-            ((Visibility)value == Visibility.Visible) ? false : true;
+            (value is Visibility.Visible) ? false : true;
     }
 }
