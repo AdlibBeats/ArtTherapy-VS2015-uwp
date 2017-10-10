@@ -93,12 +93,12 @@ namespace ArtTherapy.Pages.PostPages.PoetryPages
                 _viewModel.LoadData(scrollViewer.GetScrollViewProgress());
         }
 
-        private void Page_Loaded(object sender, RoutedEventArgs e)
+        private void ScrollViewer_ViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
         {
             _viewModel.LoadData(scrollViewer.GetScrollViewProgress());
         }
 
-        private void ScrollViewer_ViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
+        private void Page_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             _viewModel.LoadData(scrollViewer.GetScrollViewProgress());
         }

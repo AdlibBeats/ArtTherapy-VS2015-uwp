@@ -7,10 +7,10 @@
     xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
     xmlns:models="using:ArtTherapy.Models.PostModels"
     xmlns:ex="using:ArtTherapy.Extensions"
-    mc:Ignorable="d" Loaded="Page_Loaded">
+    mc:Ignorable="d" SizeChanged="Page_SizeChanged">
     
     <Page.Resources>
-        <ex:VisibilityConverter x:Key="visibilityConverter"/>
+        <ex:VisibilityConverterReverse x:Key="visibilityConverterReverse"/>
     </Page.Resources>
     
     <Grid Background="{StaticResource Static.Grid.Background}">
@@ -19,7 +19,7 @@
                 <GridView x:Name="gridView" ItemsSource="{x:Bind _viewModel.PostModel.Items}">
                     <GridView.ItemTemplate>
                         <DataTemplate x:DataType="models:CurrentPostModel">
-                            <Grid Height="200" Width="175" Margin="5" Background="White">
+                            <Grid Height="200" Width="170" Margin="5" Background="White">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="10*"/>
                                     <RowDefinition Height="2*"/>
@@ -27,18 +27,18 @@
                                     <RowDefinition Height="1*"/>
                                     <RowDefinition Height="1*"/>
                                 </Grid.RowDefinitions>
-                                <ProgressRing Height="50" Width="50" BorderBrush="Gray" Foreground="Gray" Grid.RowSpan="5" HorizontalAlignment="Center" VerticalAlignment="Center"
+                                <ProgressRing Height="50" Width="50" BorderBrush="Gray" Foreground="Gray" Background="White" Grid.RowSpan="5" HorizontalAlignment="Center" VerticalAlignment="Center"
                                               IsActive="{x:Bind IsLoading}"/>
-                                <controls:ImageEx Grid.Row="0" Stretch="UniformToFill"
+                                <controls:ImageEx Grid.Row="0" Stretch="UniformToFill" Background="White"
                                                   Source="{x:Bind Text}"
-                                                  Visibility="{x:Bind Path=IsLoading, Converter={StaticResource visibilityConverter}}"/>
+                                                  Visibility="{x:Bind Path=IsLoading, Converter={StaticResource visibilityConverterReverse}}"/>
                                 <Border Grid.Row="1" Background="LightGray"
-                                        Visibility="{x:Bind Path=IsLoading, Converter={StaticResource visibilityConverter}}">
+                                        Visibility="{x:Bind Path=IsLoading, Converter={StaticResource visibilityConverterReverse}}">
                                     <TextBlock FontSize="12" HorizontalAlignment="Left" VerticalAlignment="Center" TextAlignment="Center" TextWrapping="Wrap"
                                                Text="{x:Bind Name}"/>
                                 </Border>
                                 <Grid Grid.Row="2" Background="White"
-                                      Visibility="{x:Bind Path=IsLoading, Converter={StaticResource visibilityConverter}}">
+                                      Visibility="{x:Bind Path=IsLoading, Converter={StaticResource visibilityConverterReverse}}">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition/>
                                         <ColumnDefinition Width="Auto"/>
@@ -54,10 +54,10 @@
                                 </Grid>
                                 <TextBlock Grid.Row="3" FontSize="12" HorizontalAlignment="Left" VerticalAlignment="Center" TextAlignment="Center"  TextWrapping="Wrap"
                                            Text="{x:Bind Id}"
-                                           Visibility="{x:Bind Path=IsLoading, Converter={StaticResource visibilityConverter}}"/>
+                                           Visibility="{x:Bind Path=IsLoading, Converter={StaticResource visibilityConverterReverse}}"/>
                                 <TextBlock Grid.Row="4" FontSize="12" HorizontalAlignment="Left" VerticalAlignment="Center" TextAlignment="Center"  TextWrapping="Wrap"
                                            Text="{x:Bind Type}"
-                                           Visibility="{x:Bind Path=IsLoading, Converter={StaticResource visibilityConverter}}"/>
+                                           Visibility="{x:Bind Path=IsLoading, Converter={StaticResource visibilityConverterReverse}}"/>
                             </Grid>
                         </DataTemplate>
                     </GridView.ItemTemplate>
