@@ -97,18 +97,18 @@ namespace ArtTherapy
         {
             if (this.IsPhoneContract())
             {
-                PhoneFactorySettings settingsEx =
-                    new PhoneFactorySettings(rootFrame);
-                PhoneSettings settings =
-                    (PhoneSettings)settingsEx.Create();
+                PhoneFactorySettings factorySettings =
+                    new PhoneFactorySettings();
+                BasePhoneSettings settings =
+                    (BasePhoneSettings)factorySettings.Create(rootFrame);
                 settings.SetSettings();
             }
             else
             {
-                DesktopFactorySettings settingsEx =
-                    new DesktopFactorySettings(rootFrame);
-                DesktopSettings settings =
-                    (DesktopSettings)settingsEx.Create();
+                DesktopFactorySettings factorySettings =
+                    new DesktopFactorySettings();
+                BaseDesktopSettings settings =
+                    (BaseDesktopSettings)factorySettings.Create(rootFrame);
                 settings.SetSettings();
             }
         }

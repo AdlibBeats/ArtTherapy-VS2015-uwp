@@ -14,19 +14,19 @@ namespace ArtTherapy.Settings
 {
     public sealed class DesktopFactorySettings : BaseFactorySettings
     {
-        public DesktopFactorySettings(Frame rootFrame) : base(rootFrame)
+        public DesktopFactorySettings() : base()
         {
 
         }
 
-        public override BaseSettings Create() => new DesktopSettings(RootFrame);
+        public override BaseSettings Create(Frame frame) => new BaseDesktopSettings(frame);
     }
 
-    public sealed class DesktopSettings : BaseSettings
+    public class BaseDesktopSettings : BaseSettings
     {
         KeyEventHandler handler;
 
-        public DesktopSettings(Frame rootFrame) : base(rootFrame)
+        public BaseDesktopSettings(Frame rootFrame) : base(rootFrame)
         {
 
         }

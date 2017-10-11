@@ -108,6 +108,7 @@
   <ItemGroup>
     <Compile Include="BaseModels\BaseModel.cs" />
     <Compile Include="BaseSettings\BaseSettings.cs" />
+    <Compile Include="BaseStorage\BaseStorage.cs" />
     <Compile Include="BaseViewModels\BaseViewModel.cs" />
     <Compile Include="Extensions\BooleanExtension.cs" />
     <Compile Include="Extensions\DoubleExtension.cs" />

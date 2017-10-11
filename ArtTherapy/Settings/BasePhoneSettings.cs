@@ -14,19 +14,19 @@ namespace ArtTherapy.Settings
 {
     public sealed class PhoneFactorySettings : BaseFactorySettings
     {
-        public PhoneFactorySettings(Frame rootFrame) : base(rootFrame)
+        public PhoneFactorySettings() : base()
         {
 
         }
 
-        public override BaseSettings Create() => new PhoneSettings(RootFrame);
+        public override BaseSettings Create(Frame frame) => new BasePhoneSettings(frame);
     }
 
-    public sealed class PhoneSettings : BaseSettings
+    public sealed class BasePhoneSettings : BaseSettings
     {
         EventHandler<BackPressedEventArgs> handler;
 
-        public PhoneSettings(Frame rootFrame) : base(rootFrame)
+        public BasePhoneSettings(Frame rootFrame) : base(rootFrame)
         {
 
         }

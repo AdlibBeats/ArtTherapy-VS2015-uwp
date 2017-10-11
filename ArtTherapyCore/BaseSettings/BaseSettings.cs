@@ -1,6 +1,7 @@
 ﻿using Windows.Foundation;
 using Windows.UI;
 using Windows.UI.ViewManagement;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 
@@ -8,24 +9,26 @@ namespace ArtTherapyCore.BaseSettings
 {
     public abstract class BaseFactorySettings
     {
-        protected Frame RootFrame { get; set; }
-
-        public BaseFactorySettings(Frame rootFrame)
+        public BaseFactorySettings()
         {
-            RootFrame = rootFrame;
         }
 
-        public abstract BaseSettings Create();
+        public abstract BaseSettings Create(Frame frame);
     }
 
     public abstract class BaseSettings
     {
         protected Frame RootFrame { get; set; }
 
+        public BaseSettings()
+        {
+            SetPreferredMinSize();
+        }
+
         public BaseSettings(Frame rootFrame)
         {
             RootFrame = rootFrame;
-
+            
             SetBackgroundColor();
 
             SetPreferredMinSize();
