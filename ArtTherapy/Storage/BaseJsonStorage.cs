@@ -8,7 +8,7 @@ using ArtTherapyCore.BaseModels;
 
 namespace ArtTherapy.Storage
 {
-    public class BaseFactoryJsonStorage : BaseFactoryStorage
+    public class JsonFactoryStorage : BaseFactoryStorage
     {
         public override BaseStorage Create(string fileName) =>
             new BaseJsonStorage(fileName); 
