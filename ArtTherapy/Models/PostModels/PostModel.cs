@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using ArtTherapyCore.BaseModels;
+using System.Collections.ObjectModel;
 
 namespace ArtTherapy.Models.PostModels
 {

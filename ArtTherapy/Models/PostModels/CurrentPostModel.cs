@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using ArtTherapyCore.BaseModels;
+using Newtonsoft.Json;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media;
 

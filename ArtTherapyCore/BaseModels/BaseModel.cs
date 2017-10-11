@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace ArtTherapy.Models
+namespace ArtTherapyCore.BaseModels
 {
     public abstract class BaseModel : INotifyPropertyChanged
     {

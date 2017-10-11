@@ -1,18 +1,20 @@
-﻿using ArtTherapy.Models;
+﻿using ArtTherapyCore.BaseModels;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
-using System.Collections.ObjectModel;
-using System.Runtime.CompilerServices;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using Windows.UI.Xaml;
 
-namespace ArtTherapy.ViewModels
+namespace ArtTherapyCore.BaseViewModels
 {
-    public interface IBaseViewModel<out T> : INotifyPropertyChanged where T : BaseModel, new()
+    public interface IBaseViewModel<out T> : INotifyPropertyChanged where T : BaseModel
     {
         T GetModel();
     }
 
-    public abstract class BaseViewModel<T> : DependencyObject, IDisposable, IBaseViewModel<T> where T : BaseModel, new()
+    public abstract class BaseViewModel<T> : DependencyObject, IDisposable, IBaseViewModel<T> where T : BaseModel
     {
         public BaseViewModel()
         {

@@ -18,7 +18,7 @@ namespace ArtTherapyUI.Controls
         public IArrangeAnimator Animator { get; set; }
 
         public AnimatedGridView()
-            : this(new FractionDistanceAnimator(0.3), TimeSpan.FromSeconds(0.05))
+            : this(new FractionDistanceAnimator(0.4), TimeSpan.FromSeconds(0.1))
         {
         }
 

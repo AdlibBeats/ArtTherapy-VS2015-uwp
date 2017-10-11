@@ -7,7 +7,7 @@
     xmlns:dc="using:ArtTherapy.ViewModels"
     xmlns:Interactivity="using:Microsoft.Xaml.Interactivity"
     xmlns:Interactions="using:Microsoft.Xaml.Interactions.Core"
-    xmlns:Ex="using:ArtTherapy.Extensions"
+    xmlns:Ex="using:ArtTherapyCore.ValueConverters"
     mc:Ignorable="d"
     d:DesignHeight="640" d:DesignWidth="360" Loaded="Page_Loaded">
     <Page.Resources>

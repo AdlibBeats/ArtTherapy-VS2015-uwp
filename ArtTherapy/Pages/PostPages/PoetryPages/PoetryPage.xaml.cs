@@ -16,9 +16,11 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
-using ArtTherapy.Extensions;
 using ArtTherapy.Models.PostModels;
 using ArtTherapyUI.Controls;
+using Microsoft.Toolkit.Uwp.UI.Controls;
+using Windows.UI;
+using ArtTherapyCore.Extensions;
 
 namespace ArtTherapy.Pages.PostPages.PoetryPages
 {
@@ -102,9 +104,6 @@ namespace ArtTherapy.Pages.PostPages.PoetryPages
         private void Page_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             _viewModel.LoadData(scrollViewer.GetScrollViewProgress());
-
-            //if (_viewModel.IsFullInitialized)
-            //animationTimer.Start();
         }
 
         #region INotifyPropertyChanged Members
@@ -115,5 +114,68 @@ namespace ArtTherapy.Pages.PostPages.PoetryPages
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
         #endregion
+
+        ContentDialog dialog = new ContentDialog();
+        DispatcherTimer animationTimer = new DispatcherTimer();
+        int angle = 1;
+        bool isLocy = false;
+        private void Page_Loaded(object sender, RoutedEventArgs e)
+        {
+            //animationTimer.Interval = TimeSpan.FromSeconds(0.005);
+            //animationTimer.Tick += (s, args) =>
+            //{
+            //    Task.Factory.StartNew(async () =>
+            //    {
+            //        await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+            //        {
+            //            foreach (Control frame in gridView.ItemsPanelRoot.Children)
+            //            {
+            //                if (frame != null)
+            //                {
+            //                    if (!(frame.RenderTransform is RotateTransform))
+            //                        frame.RenderTransform = new RotateTransform();
+
+            //                    (frame.RenderTransform as RotateTransform).CenterX = 0.5 * frame.ActualWidth;
+            //                    (frame.RenderTransform as RotateTransform).CenterY = 0.5 * frame.ActualHeight;
+
+            //                    (frame.RenderTransform as RotateTransform).Angle += angle;
+            //                }
+            //            }
+            //            if (!isLocy)
+            //                ++angle;
+            //            else
+            //                --angle;
+
+            //            if (angle == 3)
+            //                isLocy = true;
+            //            else if (angle == -3)
+            //                isLocy = false;
+            //        });
+            //    });
+            //};
+
+            //animationTimer.Start();
+        }
+
+        private async void gridView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            //angle *= -1;
+            
+            if (dialog != null)
+            {
+                dialog.FullSizeDesired = true;
+                dialog.Width = Window.Current.Bounds.Width;
+                dialog.Height = Window.Current.Bounds.Height;
+                dialog.Content = new TextBlock();
+                (dialog.Content as TextBlock).FontSize = 24d;
+                (dialog.Content as TextBlock).Foreground = new SolidColorBrush(Colors.White);
+                (dialog.Content as TextBlock).Text = ((sender as AdaptiveGridView).SelectedItem as CurrentPostModel).Id.ToString();
+                dialog.PointerPressed += (s, args) =>
+                {
+                    dialog.Hide();
+                };
+                await dialog.ShowAsync();
+            }
+        }
     }
 }

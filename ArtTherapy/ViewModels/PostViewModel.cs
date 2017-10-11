@@ -1,5 +1,6 @@
 ﻿using ArtTherapy.AppStorage;
 using ArtTherapy.Models.PostModels;
+using ArtTherapyCore.BaseViewModels;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -47,7 +48,7 @@ namespace ArtTherapy.ViewModels
                 {
                     if (scrollViewerProgress > 0.999)
                     {
-                        var postModel = await AppStorage<PostModel>.Get("PoetryRepositoryCount.json");
+                        var postModel = await AppStorage<PostModel>.Get($"{PostModel.GetType().Name}Count.json");
                         if (postModel != null)
                         {
                             Count = postModel.Count;
@@ -70,7 +71,7 @@ namespace ArtTherapy.ViewModels
                                     }
                                     await Task.Delay(1000);
 
-                                    var fullPostModel = await AppStorage<PostModel>.Get("PoetryRepository.json");
+                                    var fullPostModel = await AppStorage<PostModel>.Get($"{PostModel.GetType().Name}.json");
                                     if (fullPostModel != null && fullPostModel.Items != null && fullPostModel.Items.Count > 0)
                                     {
                                         for (int i = startIndex, k = 0; k < 20 && i < Count; i++, k++)
@@ -112,10 +113,10 @@ namespace ArtTherapy.ViewModels
                 });
             }
 
-            await AppStorage<PostModel>.Set(demoPostModel, "PoetryRepository.json");
+            await AppStorage<PostModel>.Set(demoPostModel, $"{PostModel.GetType().Name}.json");
         }
 
-        public override T GetViewModel()
+        public override T GetModel()
         {
             return PostModel;
         }

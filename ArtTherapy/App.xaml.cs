@@ -15,6 +15,8 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using ArtTherapyCore.Extensions;
+using ArtTherapy.Settings;
 
 namespace ArtTherapy
 {
@@ -46,6 +48,7 @@ namespace ArtTherapy
                 this.DebugSettings.EnableFrameRateCounter = false;
             }
 #endif
+            
             Frame rootFrame = Window.Current.Content as Frame;
 
             // Не повторяйте инициализацию приложения, если в окне уже имеется содержимое,
@@ -61,6 +64,8 @@ namespace ArtTherapy
                 {
                     //TODO: Загрузить состояние из ранее приостановленного приложения
                 }
+
+                rootFrame.RenderTransform = new RotateTransform();
 
                 // Размещение фрейма в текущем окне
                 Window.Current.Content = rootFrame;
@@ -90,20 +95,20 @@ namespace ArtTherapy
         /// <param name="rootFrame">Главный фрейм</param>
         private void SetSettings(Frame rootFrame)
         {
-            if (Extensions.AppExtension.IsMobile)
+            if (this.IsPhoneContract())
             {
-                Extensions.AppSettingsExtension settingsEx =
-                    new Extensions.MobileSettingsExtension(rootFrame);
-                Extensions.MobileSettings settings =
-                    (Extensions.MobileSettings)settingsEx.Create();
+                PhoneFactorySettings settingsEx =
+                    new PhoneFactorySettings(rootFrame);
+                PhoneSettings settings =
+                    (PhoneSettings)settingsEx.Create();
                 settings.SetSettings();
             }
             else
             {
-                Extensions.AppSettingsExtension settingsEx =
-                    new Extensions.DesktopSettingsExtension(rootFrame);
-                Extensions.DesktopSettings settings =
-                    (Extensions.DesktopSettings)settingsEx.Create();
+                DesktopFactorySettings settingsEx =
+                    new DesktopFactorySettings(rootFrame);
+                DesktopSettings settings =
+                    (DesktopSettings)settingsEx.Create();
                 settings.SetSettings();
             }
         }

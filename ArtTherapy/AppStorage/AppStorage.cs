@@ -8,6 +8,7 @@ using Windows.Storage;
 using Newtonsoft.Json;
 using System.Diagnostics;
 using ArtTherapy.Models;
+using ArtTherapyCore.BaseModels;
 
 namespace ArtTherapy.AppStorage
 {

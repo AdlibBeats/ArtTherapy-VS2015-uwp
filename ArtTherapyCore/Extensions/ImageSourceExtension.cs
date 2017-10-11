@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 
-namespace ArtTherapy.Extensions
+namespace ArtTherapyCore.Extensions
 {
     public enum DefaultImage
     {

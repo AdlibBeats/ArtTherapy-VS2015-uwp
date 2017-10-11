@@ -1,4 +1,5 @@
 ﻿using ArtTherapy.Pages;
+using ArtTherapyCore.BaseModels;
 using System;
 using Windows.UI.Xaml;
 

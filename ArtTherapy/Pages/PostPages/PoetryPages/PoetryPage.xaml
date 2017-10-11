@@ -7,8 +7,8 @@
     xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
     xmlns:anControls="using:ArtTherapyUI.Controls"
     xmlns:models="using:ArtTherapy.Models.PostModels"
-    xmlns:ex="using:ArtTherapy.Extensions"
-    mc:Ignorable="d" SizeChanged="Page_SizeChanged">
+    xmlns:ex="using:ArtTherapyCore.ValueConverters"
+    mc:Ignorable="d" SizeChanged="Page_SizeChanged" Loaded="Page_Loaded">
     
     <Page.Resources>
         <ex:VisibilityInverseConverter x:Key="visibilityInverseConverter"/>
@@ -16,34 +16,45 @@
     
     <Grid Background="{StaticResource Static.Grid.Background}">
         <ScrollViewer x:Name="scrollViewer" ViewChanged="ScrollViewer_ViewChanged">
-            <Grid Background="White">
-                <GridView x:Name="gridView"
-                        ItemsSource="{x:Bind _viewModel.PostModel.Items}">
-                    <ItemsControl.ItemsPanel>
+            <Grid>
+                <controls:AdaptiveGridView
+                                ItemHeight="200"
+                                DesiredWidth="175"
+                                SelectionMode="Single"
+                                IsItemClickEnabled="True" x:Name="gridView" SelectionChanged="gridView_SelectionChanged"
+                    ItemsSource="{x:Bind _viewModel.PostModel.Items}" ItemContainerStyle="{StaticResource gridViewItemStyle}">
+                    <!--<ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
-                            <anControls:AnimatedWrapPanel/>
+                            <anControls:AnimatedGridView
+                                ItemHeight="200"
+                                DesiredWidth="175"
+                                SelectionMode="Single"
+                                IsItemClickEnabled="True"/>
                         </ItemsPanelTemplate>
-                    </ItemsControl.ItemsPanel>
+                    </ItemsControl.ItemsPanel>-->
                     <ItemsControl.ItemTemplate>
                         <DataTemplate x:DataType="models:CurrentPostModel">
-                            <Grid Margin="5" Background="White" MaxWidth="170">
+                            <Grid Margin="10" Background="{x:Null}" MaxWidth="200">
+                                <Grid.RenderTransform>
+                                    <RotateTransform/>
+                                </Grid.RenderTransform>
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="*"/>
                                     <RowDefinition Height="Auto"/>
                                     <RowDefinition Height="Auto"/>
                                     <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
                                 </Grid.RowDefinitions>
-                                <ProgressRing Height="50" Width="50" BorderBrush="Gray" Foreground="Gray" Grid.RowSpan="5" HorizontalAlignment="Center" VerticalAlignment="Center"
-                                        IsActive="{x:Bind IsLoading}"/>
-                                <controls:ImageEx Grid.Row="0" Stretch="UniformToFill"
+                                <Ellipse Grid.RowSpan="2" Fill="White" Opacity="0.3"/>
+                                <ProgressRing Height="50" Width="50" BorderBrush="Gray" Foreground="{StaticResource Static.Button.Background}" Grid.RowSpan="5" HorizontalAlignment="Center" VerticalAlignment="Center"
+                                        IsActive="{x:Bind IsLoading}" Background="{x:Null}"/>
+                                <controls:ImageEx Grid.Row="0" Stretch="UniformToFill" Background="{x:Null}"
                                         Source="{x:Bind Text}"
                                         Visibility="{x:Bind Path=IsLoading, Converter={StaticResource visibilityInverseConverter}}"/>
-                                <Border Grid.Row="1" Background="LightGray" Opacity="0.5" Height="50" Margin="0, -100"
+                                <Border Grid.Row="1" Background="LightGray" Opacity="0.5" Height="75" Margin="0, -100"
                                         Visibility="{x:Bind Path=IsLoading, Converter={StaticResource visibilityInverseConverter}}"/>
                                 <TextBlock Grid.Row="1" FontSize="12" HorizontalAlignment="Left" VerticalAlignment="Center" TextAlignment="Center" TextWrapping="Wrap"
                                         Text="{x:Bind Name}"/>
-                                <Grid Grid.Row="2" Background="White"
+                                <Grid Grid.Row="2" Background="{StaticResource Static.Grid.Background}"
                                       Visibility="{x:Bind Path=IsLoading, Converter={StaticResource visibilityInverseConverter}}">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition/>
@@ -51,23 +62,25 @@
                                     </Grid.ColumnDefinitions>
                                     <TextBlock Grid.Column="0" FontSize="12"  TextWrapping="Wrap"
                                         Text="{x:Bind Description}"/>
-                                    <Button Grid.Column="1" Width="50" Height="20" Background="Red">
+                                    <Button Grid.Column="1" Width="50" Height="20">
                                         <Button.Content>
                                             <TextBlock FontSize="12" FontFamily="Segoe MDL2 Assets"
                                                 Text="{x:Bind BuyIcon}"/>
                                         </Button.Content>
                                     </Button>
                                 </Grid>
-                                <TextBlock Grid.Row="3" FontSize="12" HorizontalAlignment="Left" VerticalAlignment="Center" TextAlignment="Center"  TextWrapping="Wrap"
-                                    Text="{x:Bind Id}"
-                                    Visibility="{x:Bind Path=IsLoading, Converter={StaticResource visibilityInverseConverter}}"/>
-                                <TextBlock Grid.Row="4" FontSize="12" HorizontalAlignment="Left" VerticalAlignment="Center" TextAlignment="Center"  TextWrapping="Wrap"
-                                    Text="{x:Bind Type}"
-                                    Visibility="{x:Bind Path=IsLoading, Converter={StaticResource visibilityInverseConverter}}"/>
+                                <StackPanel Grid.Row="3" Background="{StaticResource Static.Grid.Background}">
+                                    <TextBlock FontSize="12" HorizontalAlignment="Left" VerticalAlignment="Center" TextAlignment="Center"  TextWrapping="Wrap"
+                                        Text="{x:Bind Id}"
+                                        Visibility="{x:Bind Path=IsLoading, Converter={StaticResource visibilityInverseConverter}}"/>
+                                    <TextBlock FontSize="12" HorizontalAlignment="Left" VerticalAlignment="Center" TextAlignment="Center"  TextWrapping="Wrap"
+                                        Text="{x:Bind Type}"
+                                        Visibility="{x:Bind Path=IsLoading, Converter={StaticResource visibilityInverseConverter}}"/>
+                                </StackPanel>
                             </Grid>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
-                </GridView>
+                </controls:AdaptiveGridView>
             </Grid>
         </ScrollViewer>
     </Grid>

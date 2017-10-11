@@ -1,4 +1,5 @@
-﻿using Windows.UI.Xaml.Media;
+﻿using ArtTherapyCore.BaseModels;
+using Windows.UI.Xaml.Media;
 
 namespace ArtTherapy.Models.ProfileModels
 {
