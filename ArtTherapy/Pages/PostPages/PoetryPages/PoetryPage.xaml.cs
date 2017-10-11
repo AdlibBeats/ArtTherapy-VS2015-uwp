@@ -121,7 +121,7 @@ namespace ArtTherapy.Pages.PostPages.PoetryPages
         bool isLocy = false;
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            //animationTimer.Interval = TimeSpan.FromSeconds(0.005);
+            animationTimer.Interval = TimeSpan.FromSeconds(0.005);
             //animationTimer.Tick += (s, args) =>
             //{
             //    Task.Factory.StartNew(async () =>
@@ -146,9 +146,9 @@ namespace ArtTherapy.Pages.PostPages.PoetryPages
             //            else
             //                --angle;
 
-            //            if (angle == 3)
+            //            if (angle == 50)
             //                isLocy = true;
-            //            else if (angle == -3)
+            //            else if (angle == -50)
             //                isLocy = false;
             //        });
             //    });

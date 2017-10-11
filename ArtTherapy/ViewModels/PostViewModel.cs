@@ -52,7 +52,7 @@ namespace ArtTherapy.ViewModels
                         if (postModel != null)
                         {
                             Count = postModel.Count;
-                            if (Count > 0 && CurrentCount < postModel.Count)
+                            if (Count > 0 && CurrentCount < Count)
                             {
                                 for (int i = 0; i < Count; i++)
                                 {
