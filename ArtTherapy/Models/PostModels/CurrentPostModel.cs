@@ -11,68 +11,43 @@ namespace ArtTherapy.Models.PostModels
 
         public uint Id
         {
-            get { return _Id; }
-            set
-            {
-                _Id = value;
-                OnPropertyChanged(nameof(Id));
-            }
+            get => _Id;
+            set => SetValue(ref _Id, value);
         }
         private uint _Id;
 
-
         public string BuyIcon
         {
-            get { return _BuyIcon; }
-            set
-            {
-                _BuyIcon = value;
-                OnPropertyChanged(nameof(BuyIcon));
-            }
+            get => _BuyIcon;
+            set => SetValue(ref _BuyIcon, value);
         }
         private string _BuyIcon;
 
         public string Name
         {
-            get { return _Name; }
-            set
-            {
-                _Name = value;
-                OnPropertyChanged(nameof(Name));
-            }
+            get => _Name;
+            set => SetValue(ref _Name, value);
         }
         private string _Name;
 
         public string Description
         {
-            get { return _Description; }
-            set
-            {
-                _Description = value;
-                OnPropertyChanged(nameof(Description));
-            }
+            get => _Description;
+            set => SetValue(ref _Description, value);
         }
         private string _Description;
 
         public string Text
         {
-            get { return _Text; }
-            set
-            {
-                _Text = value;
-                OnPropertyChanged(nameof(Text));
-            }
+            get => _Text;
+            set => SetValue(ref _Text, value);
         }
         private string _Text;
         
         public string Type
         {
-            get { return _Type; }
-            set
-            {
-                _Type = value;
-                OnPropertyChanged(nameof(Type));
-            }
+            get => _Type;
+            set => SetValue(ref _Type, value);
         }
         private string _Type;
 
@@ -83,24 +58,16 @@ namespace ArtTherapy.Models.PostModels
         [JsonIgnore]
         public ImageSource Image
         {
-            get { return _Image; }
-            set
-            {
-                _Image = value;
-                OnPropertyChanged(nameof(Image));
-            }
+            get => _Image;
+            set => SetValue(ref _Image, value);
         }
         private ImageSource _Image;
 
         [JsonIgnore]
         public bool IsLoading
         {
-            get { return _IsLoading; }
-            set
-            {
-                _IsLoading = value;
-                OnPropertyChanged(nameof(IsLoading));
-            }
+            get => _IsLoading;
+            set => SetValue(ref _IsLoading, value);
         }
         private bool _IsLoading;
 

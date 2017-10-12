@@ -17,67 +17,43 @@ namespace ArtTherapy.Models.ItemsModels
     {
         public uint Id
         {
-            get { return _Id; }
-            set
-            {
-                _Id = value;
-                OnPropertyChanged(nameof(Id));
-            }
+            get => _Id;
+            set => SetValue(ref _Id, value);
         }
         private uint _Id;
 
         public string Icon
         {
-            get { return _Icon; }
-            set
-            {
-                _Icon = value;
-                OnPropertyChanged(nameof(Icon));
-            }
+            get => _Icon;
+            set => SetValue(ref _Icon, value);
         }
         private string _Icon;
 
         public ItemsGroup ItemsGroup
         {
-            get { return _ItemsGroup; }
-            set
-            {
-                _ItemsGroup = value;
-                OnPropertyChanged(nameof(ItemsGroup));
-            }
+            get => _ItemsGroup;
+            set => SetValue(ref _ItemsGroup, value);
         }
         private ItemsGroup _ItemsGroup;
 
         public string Title
         {
-            get { return _Title; }
-            set
-            {
-                _Title = value;
-                OnPropertyChanged(nameof(Title));
-            }
+            get => _Title;
+            set => SetValue(ref _Title, value);
         }
         private string _Title;
 
         public string Description
         {
-            get { return _Description; }
-            set
-            {
-                _Description = value;
-                OnPropertyChanged(nameof(Description));
-            }
+            get => _Description;
+            set => SetValue(ref _Description, value);
         }
         private string _Description;
 
         public Type Type
         {
-            get { return _Type; }
-            set
-            {
-                _Type = value;
-                OnPropertyChanged(nameof(Type));
-            }
+            get => _Type;
+            set => SetValue(ref _Type, value);
         }
         private Type _Type;
     }

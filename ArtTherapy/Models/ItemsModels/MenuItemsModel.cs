@@ -8,45 +8,29 @@ namespace ArtTherapy.Models.ItemsModels
     {
         public bool CanGoBack
         {
-            get { return _CanGoBack; }
-            set
-            {
-                _CanGoBack = value;
-                OnPropertyChanged(nameof(CanGoBack));
-            }
+            get => _CanGoBack;
+            set => SetValue(ref _CanGoBack, value);
         }
         private bool _CanGoBack;
 
         public bool IsMenuPaneOpen
         {
-            get { return _IsMenuPaneOpen; }
-            set
-            {
-                _IsMenuPaneOpen = value;
-                OnPropertyChanged(nameof(IsMenuPaneOpen));
-            }
+            get => _IsMenuPaneOpen;
+            set => SetValue(ref _IsMenuPaneOpen, value);
         }
         private bool _IsMenuPaneOpen;
 
         public int SelectedIndex
         {
-            get { return _SelectedIndex; }
-            set
-            {
-                _SelectedIndex = value;
-                OnPropertyChanged(nameof(SelectedIndex));
-            }
+            get => _SelectedIndex;
+            set => SetValue(ref _SelectedIndex, value);
         }
         private int _SelectedIndex;
 
         public CollectionViewSource Items
         {
-            get { return _Items; }
-            set
-            {
-                _Items = value;
-                OnPropertyChanged(nameof(Items));
-            }
+            get => _Items;
+            set => SetValue(ref _Items, value);
         }
         private CollectionViewSource _Items;
     }

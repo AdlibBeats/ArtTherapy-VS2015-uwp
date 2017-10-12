@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
 namespace ArtTherapyCore.BaseModels
 {
@@ -8,8 +9,11 @@ namespace ArtTherapyCore.BaseModels
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        protected virtual void OnPropertyChanged(string propertyName) =>
+        protected virtual void SetValue<T>(ref T oldValue, T newValue, [CallerMemberName]string propertyName = null)
+        {
+            oldValue = newValue;
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
 
         #endregion
     }

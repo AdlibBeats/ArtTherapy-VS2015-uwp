@@ -7,122 +7,78 @@ namespace ArtTherapy.Models.ProfileModels
     {
         public uint Id
         {
-            get { return _Id; }
-            set
-            {
-                _Id = value;
-                OnPropertyChanged(nameof(Id));
-            }
+            get => _Id;
+            set => SetValue(ref _Id, value);
         }
         private uint _Id;
 
         public string Icon
         {
-            get { return _Icon; }
-            set
-            {
-                _Icon = value;
-                OnPropertyChanged(nameof(Icon));
-            }
+            get => _Icon;
+            set => SetValue(ref _Icon, value);
         }
         private string _Icon;
 
         public bool IsChecked
         {
-            get { return _IsChecked; }
-            set
-            {
-                _IsChecked = value;
-                OnPropertyChanged(nameof(IsChecked));
-            }
+            get => _IsChecked;
+            set => SetValue(ref _IsChecked, value);
         }
         private bool _IsChecked;
 
         public ImageSource Avatar
         {
-            get { return _Avatar; }
-            set
-            {
-                _Avatar = value;
-                OnPropertyChanged(nameof(Avatar));
-            }
+            get => _Avatar;
+            set => SetValue(ref _Avatar, value);
         }
         private ImageSource _Avatar;
 
         public string FirstName
         {
-            get { return _FirstName; }
-            set
-            {
-                _FirstName = value;
-                OnPropertyChanged(nameof(FirstName));
-            }
+            get => _FirstName;
+            set => SetValue(ref _FirstName, value);
         }
         private string _FirstName;
 
         public string LastName
         {
-            get { return _LastName; }
-            set
-            {
-                _LastName = value;
-                OnPropertyChanged(nameof(LastName));
-            }
+            get => _LastName;
+            set => SetValue(ref _LastName, value);
         }
         private string _LastName;
 
         public string MiddleName
         {
-            get { return _MiddleName; }
-            set
-            {
-                _MiddleName = value;
-                OnPropertyChanged(nameof(MiddleName));
-            }
+            get => _MiddleName;
+            set => SetValue(ref _MiddleName, value);
         }
         private string _MiddleName;
 
         public string Email
         {
-            get { return _Email; }
-            set
-            {
-                _Email = value;
-                OnPropertyChanged(nameof(Email));
-            }
+            get => _Email;
+            set => SetValue(ref _Email, value);
         }
         private string _Email;
 
         public string Phone
         {
-            get { return _Phone; }
-            set
-            {
-                _Phone = value;
-                OnPropertyChanged(nameof(Phone));
-            }
+            get => _Phone;
+            set => SetValue(ref _Phone, value);
         }
         private string _Phone;
 
         public string Company
         {
-            get { return _Company; }
-            set
-            {
-                _Company = value;
-                OnPropertyChanged(nameof(Company));
-            }
+            get => _Company;
+            set => SetValue(ref _Company, value);
         }
         private string _Company;
 
         public string Job
         {
-            get { return _Job; }
-            set
-            {
-                _Job = value;
-                OnPropertyChanged(nameof(Job));
-            }
+            get => _Job;
+            set => SetValue(ref _Job, value);
         }
         private string _Job;
     }
