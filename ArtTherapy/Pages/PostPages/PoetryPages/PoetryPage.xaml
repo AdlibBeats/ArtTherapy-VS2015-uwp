@@ -22,7 +22,7 @@
                                 DesiredWidth="175"
                                 SelectionMode="Single"
                                 IsItemClickEnabled="True" x:Name="gridView" SelectionChanged="gridView_SelectionChanged"
-                    ItemsSource="{x:Bind _viewModel.PostModel.Items}" ItemContainerStyle="{StaticResource gridViewItemStyle}">
+                    ItemsSource="{x:Bind _ViewModel.PostModel.Items}" ItemContainerStyle="{StaticResource gridViewItemStyle}">
                     <!--<ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
                             <anControls:AnimatedGridView

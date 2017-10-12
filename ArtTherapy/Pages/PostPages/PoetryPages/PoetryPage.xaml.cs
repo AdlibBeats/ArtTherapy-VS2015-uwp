@@ -21,43 +21,40 @@ using ArtTherapyUI.Controls;
 using Microsoft.Toolkit.Uwp.UI.Controls;
 using Windows.UI;
 using ArtTherapyCore.Extensions;
+using System.Runtime.CompilerServices;
+using ArtTherapyCore.BaseViewModels;
+using ArtTherapyCore.BaseModels;
 
 namespace ArtTherapy.Pages.PostPages.PoetryPages
 {
-    public sealed partial class PoetryPage : Page, IPage
+    public sealed partial class PoetryPage : Page, IPage<PostViewModel<PostModel>>
     {
         public uint Id
         {
-            get { return _Id; }
-            set
-            {
-                _Id = value;
-                OnPropertyChanged(nameof(Id));
-            }
+            get => _Id;
+            set => SetValue(ref _Id, value);
         }
         private uint _Id;
 
         public string Title
         {
-            get { return _Title; }
-            set
-            {
-                _Title = value;
-                OnPropertyChanged(nameof(Title));
-            }
+            get => _Title;
+            set => SetValue(ref _Title, value);
         }
         private string _Title;
 
         public NavigateEventTypes NavigateEventType
         {
-            get { return _NavigateEventType; }
-            set
-            {
-                _NavigateEventType = value;
-                OnPropertyChanged(nameof(NavigateEventType));
-            }
+            get => _NavigateEventType;
+            set => SetValue(ref _NavigateEventType, value);
         }
         private NavigateEventTypes _NavigateEventType;
+
+        public PostViewModel<PostModel> ViewModel
+        {
+            get => _ViewModel;
+        }
+        private PostViewModel<PostModel> _ViewModel;
 
         public event EventHandler<EventArgs> Initialized;
 
@@ -68,15 +65,14 @@ namespace ArtTherapy.Pages.PostPages.PoetryPages
             Id = 2;
             Title = "Стихи";
             NavigateEventType = NavigateEventTypes.ListBoxSelectionChanged;
+            _ViewModel =  new PostViewModel<PostModel>();
         }
-
-        private PostViewModel<PostModel> _viewModel = new PostViewModel<PostModel>();
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
 
-            _viewModel.Loaded += _viewModel_Loaded;
+            _ViewModel.Loaded += _viewModel_Loaded;
 
             Initialized?.Invoke(this, new EventArgs());
         }
@@ -85,33 +81,36 @@ namespace ArtTherapy.Pages.PostPages.PoetryPages
         {
             base.OnNavigatedFrom(e);
 
-            _viewModel.Loaded -= _viewModel_Loaded;
+            _ViewModel.Loaded -= _viewModel_Loaded;
 
-            _viewModel.Dispose();
+            _ViewModel.Dispose();
         }
 
         private void _viewModel_Loaded(object sender, PostEventArgs e)
         {
             if (!e.IsFullInitialized)
-                _viewModel.LoadData(scrollViewer.GetScrollViewProgress());
+                _ViewModel.LoadData(scrollViewer.GetScrollViewProgress());
         }
 
         private void ScrollViewer_ViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
         {
-            _viewModel.LoadData(scrollViewer.GetScrollViewProgress());
+            _ViewModel.LoadData(scrollViewer.GetScrollViewProgress());
         }
 
         private void Page_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            _viewModel.LoadData(scrollViewer.GetScrollViewProgress());
+            _ViewModel.LoadData(scrollViewer.GetScrollViewProgress());
         }
 
         #region INotifyPropertyChanged Members
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        private void OnPropertyChanged(string propertyName) =>
+        public void SetValue<T>(ref T oldValue, T newValue, [CallerMemberName]string propertyName = null)
+        {
+            oldValue = newValue;
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
 
         #endregion
 

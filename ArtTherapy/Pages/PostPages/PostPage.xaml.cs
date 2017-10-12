@@ -19,52 +19,45 @@ using Windows.Storage;
 using System.Diagnostics;
 using Newtonsoft.Json;
 using System.Threading.Tasks;
+using System.Runtime.CompilerServices;
+using ArtTherapyCore.BaseViewModels;
+using ArtTherapyCore.BaseModels;
 
 namespace ArtTherapy.Pages.PostPages
 {
-    public sealed partial class PostPage : Page, IPage
+    public sealed partial class PostPage : Page, IPage<BaseViewModel<BaseModel>>
     {
         public uint Id
         {
-            get { return _Id; }
-            set
-            {
-                _Id = value;
-                OnPropertyChanged(nameof(Id));
-            }
+            get => _Id;
+            set => SetValue(ref _Id, value);
         }
         private uint _Id;
 
         public string Title
         {
-            get { return _Title; }
-            set
-            {
-                _Title = value;
-                OnPropertyChanged(nameof(Title));
-            }
+            get => _Title;
+            set => SetValue(ref _Title, value);
         }
         private string _Title;
 
         public NavigateEventTypes NavigateEventType
         {
-            get { return _NavigateEventType; }
-            set
-            {
-                _NavigateEventType = value;
-                OnPropertyChanged(nameof(NavigateEventType));
-            }
+            get => _NavigateEventType;
+            set => SetValue(ref _NavigateEventType, value);
         }
         private NavigateEventTypes _NavigateEventType;
 
+        public BaseViewModel<BaseModel> ViewModel
+        {
+            get => _ViewModel;
+        }
+        private BaseViewModel<BaseModel> _ViewModel;
+
         public Frame RootFrame
         {
-            get { return _RootFrame; }
-            set
-            {
-                _RootFrame = value;
-                OnPropertyChanged(nameof(RootFrame));
-            }
+            get => _RootFrame;
+            set => SetValue(ref _RootFrame, value);
         }
         private Frame _RootFrame;
 
@@ -94,8 +87,11 @@ namespace ArtTherapy.Pages.PostPages
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        private void OnPropertyChanged(string propertyName) =>
+        public void SetValue<T>(ref T oldValue, T newValue, [CallerMemberName]string propertyName = null)
+        {
+            oldValue = newValue;
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
 
         #endregion
 

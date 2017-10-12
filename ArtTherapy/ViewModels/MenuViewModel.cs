@@ -21,6 +21,8 @@ using Windows.UI.Xaml.Navigation;
 using ArtTherapy.Pages.PostPages.StoryPages;
 using ArtTherapy.Pages.PostPages.PoetryPages;
 using ArtTherapy.Pages.PostPages.ArticlePages;
+using ArtTherapyCore.BaseViewModels;
+using ArtTherapyCore.BaseModels;
 
 namespace ArtTherapy.ViewModels
 {
@@ -118,7 +120,7 @@ namespace ArtTherapy.ViewModels
             ViewModel.SetMenuSelectedIndex(-1);
             ViewModel.SetProfileChecked(true);
 
-            var currentPage = ViewModel.Frame.Content as IPage;
+            var currentPage = ViewModel.Frame.Content as IPage<BaseViewModel<BaseModel>>;
             if (currentPage != null && currentPage.Id != 1)
             {
                 ViewModel.SetMenuPaneOpen(false);
@@ -159,7 +161,7 @@ namespace ArtTherapy.ViewModels
             var newItemModel = parameter as CurrentMenuItemModel;
             if (newItemModel != null)
             {
-                var currentPage = ViewModel.Frame.Content as IPage;
+                var currentPage = ViewModel.Frame.Content as IPage<IBaseViewModel<BaseModel>>;
                 if (currentPage != null && currentPage.Id != newItemModel.Id)
                 {
                     ViewModel.SetProfileChecked(false);

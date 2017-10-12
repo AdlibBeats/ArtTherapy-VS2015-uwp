@@ -1,8 +1,11 @@
-﻿using System;
+﻿using ArtTherapyCore.BaseModels;
+using ArtTherapyCore.BaseViewModels;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
@@ -16,40 +19,34 @@ using Windows.UI.Xaml.Navigation;
 
 namespace ArtTherapy.Pages.ProfilePages
 {
-    public sealed partial class ProfilePage : Page, IPage
+    public sealed partial class ProfilePage : Page, IPage<BaseViewModel<BaseModel>>
     {
         public uint Id
         {
-            get { return _Id; }
-            set
-            {
-                _Id = value;
-                OnPropertyChanged(nameof(Id));
-            }
+            get => _Id;
+            set => SetValue(ref _Id, value);
         }
         private uint _Id;
 
         public string Title
         {
-            get { return _Title; }
-            set
-            {
-                _Title = value;
-                OnPropertyChanged(nameof(Title));
-            }
+            get => _Title;
+            set => SetValue(ref _Title, value);
         }
         private string _Title;
 
         public NavigateEventTypes NavigateEventType
         {
-            get { return _NavigateEventType; }
-            set
-            {
-                _NavigateEventType = value;
-                OnPropertyChanged(nameof(NavigateEventType));
-            }
+            get => _NavigateEventType;
+            set => SetValue(ref _NavigateEventType, value);
         }
         private NavigateEventTypes _NavigateEventType;
+
+        public BaseViewModel<BaseModel> ViewModel
+        {
+            get => _ViewModel;
+        }
+        private BaseViewModel<BaseModel> _ViewModel;
 
         public event EventHandler<EventArgs> Initialized;
         public ProfilePage()
@@ -66,8 +63,11 @@ namespace ArtTherapy.Pages.ProfilePages
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        private void OnPropertyChanged(string propertyName) =>
+        public void SetValue<T>(ref T oldValue, T newValue, [CallerMemberName]string propertyName = null)
+        {
+            oldValue = newValue;
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
 
         #endregion
     }

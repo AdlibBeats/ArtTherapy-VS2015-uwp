@@ -1,4 +1,6 @@
-﻿using System;
+﻿using ArtTherapyCore.BaseModels;
+using ArtTherapyCore.BaseViewModels;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -14,16 +16,18 @@ namespace ArtTherapy.Pages
         FrameNavigated
     }
 
-    public interface IDataContextElement : INotifyPropertyChanged
+    public interface IDataContextElement : IBaseModel
     {
         object DataContext { get; set; }
     }
 
-    public interface IPage : IDataContextElement
+    public interface IPage<T> : IDataContextElement
+        where T : IBaseViewModel<BaseModel>
     {
         uint Id { get; set; }
         string Title { get; set; }
         NavigateEventTypes NavigateEventType { get; set; }
         event EventHandler<EventArgs> Initialized;
+        T ViewModel { get; }
     }
 }

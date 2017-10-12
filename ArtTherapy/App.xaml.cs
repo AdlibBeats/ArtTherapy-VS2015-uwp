@@ -78,7 +78,7 @@ namespace ArtTherapy
                     // Если стек навигации не восстанавливается для перехода к первой странице,
                     // настройка новой страницы путем передачи необходимой информации в качестве параметра
                     // параметр
-                    rootFrame.Navigate(typeof(MenuPage), e.Arguments);
+                    rootFrame.Navigate(typeof(MenuPage), e.Arguments); // <- ошибка здесь вылетает
                 }
 
                 //Настройка окна и фрейма
