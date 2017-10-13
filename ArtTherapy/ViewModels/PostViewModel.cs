@@ -50,7 +50,7 @@ namespace ArtTherapy.ViewModels
 
         public bool IsFullInitialized { get => Count.Equals(CurrentCount); }
 
-        public void LoadData(double scrollViewerProgress, int page = 1)
+        public void LoadData(double scrollViewerProgress, int page = 1, int startCountLoad = 10)
         {
             if (scrollViewerProgress > 0.999)
             {
@@ -66,16 +66,16 @@ namespace ArtTherapy.ViewModels
                             {
                                 for (int i = 0; i < Count; i++)
                                 {
-                                    if (i == 20 || CurrentCount == Count) break;
+                                    if (i == startCountLoad || CurrentCount == Count) break;
                                     PostModel.Items.Add(new CurrentPostModel());
                                     Debug.WriteLine($"Добавлено {CurrentCount} из {Count}");
                                 }
                                 int startIndex = PostModel.Items.IndexOf(PostModel.Items.LastOrDefault());
-                                if (startIndex >= 19)
+                                if (startIndex >= startCountLoad - 1)
                                 {
                                     _IsLoadedList.Add(new TaskCompletionSource<bool>());
-                                    startIndex -= 19;
-                                    for (int i = startIndex, k = 0; k < 20 && i < Count; i++, k++)
+                                    startIndex -= startCountLoad - 1;
+                                    for (int i = startIndex, k = 0; k < startCountLoad && i < Count; i++, k++)
                                     {
                                         PostModel.Items[i].IsLoading = true;
                                     }
@@ -84,7 +84,7 @@ namespace ArtTherapy.ViewModels
                                     var fullPostModel = Storage.GetModel($"{PostModel.GetType().Name}.json") as PostModel;
                                     if (fullPostModel != null && fullPostModel.Items != null && fullPostModel.Items.Count > 0)
                                     {
-                                        for (int i = startIndex, k = 0; k < 20 && i < Count; i++, k++)
+                                        for (int i = startIndex, k = 0; k < startCountLoad && i < Count; i++, k++)
                                         {
                                             PostModel.Items[i] = fullPostModel.Items[i];
                                             PostModel.Items[i].IsLoading = false;
