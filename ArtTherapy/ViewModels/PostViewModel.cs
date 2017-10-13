@@ -13,7 +13,7 @@ namespace ArtTherapy.ViewModels
 {
     public class PostEventArgs : EventArgs
     {
-        public bool IsFullInitialized { get; private set; }
+        public bool IsFullInitialized { get; }
 
         public PostEventArgs(bool isFullInitialized)
         {
@@ -22,12 +22,13 @@ namespace ArtTherapy.ViewModels
     }
     public class PostViewModel<T> : BaseViewModel<T> where T : PostModel, new()
     {
-        private BaseJsonStorage<T> storage = null;
-        private JsonFactoryStorage<T> jsonFactoryStorage = new JsonFactoryStorage<T>();
+        public BaseJsonStorage<T> Storage { get; set; }
+
+        private JsonFactoryStorage<T> _JsonFactoryStorage = new JsonFactoryStorage<T>();
 
         public event EventHandler<PostEventArgs> Loaded;
 
-        private List<TaskCompletionSource<bool>> IsLoadedList = new List<TaskCompletionSource<bool>>();
+        private List<TaskCompletionSource<bool>> _IsLoadedList = new List<TaskCompletionSource<bool>>();
 
         public PostViewModel()
         {
@@ -35,8 +36,13 @@ namespace ArtTherapy.ViewModels
             {
                 Items = new ObservableCollection<CurrentPostModel>()
             };
-            storage = (BaseJsonStorage<T>)jsonFactoryStorage.Create();
+
+            Storage = (BaseJsonStorage<T>)_JsonFactoryStorage.Create();
+
+            PageSize = 2;
         }
+
+        public int PageSize { get; set; }
 
         public int Count { get; private set; }
 
@@ -44,7 +50,7 @@ namespace ArtTherapy.ViewModels
 
         public bool IsFullInitialized { get => Count.Equals(CurrentCount); }
 
-        public void LoadData(double scrollViewerProgress)
+        public void LoadData(double scrollViewerProgress, int page = 1)
         {
             Task.Factory.StartNew(async () =>
             {
@@ -52,7 +58,7 @@ namespace ArtTherapy.ViewModels
                 {
                     if (scrollViewerProgress > 0.999)
                     {
-                        var postModel = storage.GetModel($"{PostModel.GetType().Name}Count.json") as PostModel;
+                        var postModel = Storage.GetModel($"{PostModel.GetType().Name}Count.json") as PostModel;
                         if (postModel != null)
                         {
                             Count = postModel.Count;
@@ -67,15 +73,15 @@ namespace ArtTherapy.ViewModels
                                 int startIndex = PostModel.Items.IndexOf(PostModel.Items.LastOrDefault());
                                 if (startIndex >= 19)
                                 {
-                                    IsLoadedList.Add(new TaskCompletionSource<bool>());
+                                    _IsLoadedList.Add(new TaskCompletionSource<bool>());
                                     startIndex -= 19;
                                     for (int i = startIndex, k = 0; k < 20 && i < Count; i++, k++)
                                     {
                                         PostModel.Items[i].IsLoading = true;
                                     }
-                                    await Task.Delay(1000);
+                                    await Task.Delay(500);
 
-                                    var fullPostModel = storage.GetModel($"{PostModel.GetType().Name}.json") as PostModel;
+                                    var fullPostModel = Storage.GetModel($"{PostModel.GetType().Name}.json") as PostModel;
                                     if (fullPostModel != null && fullPostModel.Items != null && fullPostModel.Items.Count > 0)
                                     {
                                         for (int i = startIndex, k = 0; k < 20 && i < Count; i++, k++)
@@ -84,7 +90,7 @@ namespace ArtTherapy.ViewModels
                                             PostModel.Items[i].IsLoading = false;
                                             await Task.Delay(50);
                                         }
-                                        IsLoadedList.LastOrDefault().TrySetResult(true);
+                                        _IsLoadedList.LastOrDefault().TrySetResult(true);
                                     }
                                 }
                             }
@@ -117,7 +123,7 @@ namespace ArtTherapy.ViewModels
                 });
             }
 
-            storage.SetModel($"{PostModel.GetType().Name}.json", demoPostModel);
+            Storage.SetModel($"{PostModel.GetType().Name}.json", demoPostModel);
         }
 
         public override T GetModel()
@@ -127,14 +133,14 @@ namespace ArtTherapy.ViewModels
 
         public override async void Dispose()
         {
-            foreach (var x in IsLoadedList)
+            foreach (var x in _IsLoadedList)
                 await x.Task;
 
             PostModel.Items.Clear();
             PostModel = null;
 
-            IsLoadedList.Clear();
-            IsLoadedList = null;
+            _IsLoadedList.Clear();
+            _IsLoadedList = null;
         }
         public T PostModel
         {

@@ -95,6 +95,7 @@
     <Compile Include="AppStorage\AppStorage.cs" />
     <Compile Include="Models\ItemsModels\CurrentMenuItemModel.cs" />
     <Compile Include="Models\ItemsModels\MenuItemsModel.cs" />
+    <Compile Include="Models\InfoModels\PagingInfo.cs" />
     <Compile Include="Models\PostModels\CurrentPostModel.cs" />
     <Compile Include="Models\PostModels\PostModel.cs" />
     <Compile Include="Models\ProfileModels\ProfileModel.cs" />

@@ -48,7 +48,7 @@ namespace ArtTherapyCore.BaseSettings
         /// </summary>
         protected virtual void SetPreferredMinSize()
         {
-            ApplicationView.GetForCurrentView().SetPreferredMinSize(new Size(300, 300));
+            ApplicationView.GetForCurrentView().SetPreferredMinSize(new Size(400, 400));
         }
 
         /// <summary>

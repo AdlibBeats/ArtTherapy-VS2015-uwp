@@ -66,6 +66,19 @@ namespace ArtTherapy.Pages.PostPages.PoetryPages
             Title = "Стихи";
             NavigateEventType = NavigateEventTypes.ListBoxSelectionChanged;
             _ViewModel =  new PostViewModel<PostModel>();
+
+            _ContentDialog.FullSizeDesired = true;
+            _ContentDialog.MinWidth = 10;
+            _ContentDialog.MinHeight = 10;
+            _ContentDialog.MaxWidth = 5000;
+            _ContentDialog.MaxHeight = 5000;
+            _ContentDialog.Width = Window.Current.Bounds.Width;
+            _ContentDialog.Height = Window.Current.Bounds.Height;
+
+            _ContentDialog.PointerPressed += (s, args) =>
+            {
+                _ContentDialog.Hide();
+            };
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
@@ -99,6 +112,9 @@ namespace ArtTherapy.Pages.PostPages.PoetryPages
 
         private void Page_SizeChanged(object sender, SizeChangedEventArgs e)
         {
+            _ContentDialog.Width = Window.Current.Bounds.Width;
+            _ContentDialog.Height = Window.Current.Bounds.Height;
+
             _ViewModel.LoadData(scrollViewer.GetScrollViewProgress());
         }
 
@@ -114,14 +130,15 @@ namespace ArtTherapy.Pages.PostPages.PoetryPages
 
         #endregion
 
-        ContentDialog dialog = new ContentDialog();
-        DispatcherTimer animationTimer = new DispatcherTimer();
+        ContentDialog _ContentDialog = new ContentDialog();
+        DispatcherTimer _DispatcherTimer = new DispatcherTimer();
+
         int angle = 1;
         bool isLocy = false;
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            animationTimer.Interval = TimeSpan.FromSeconds(0.005);
-            //animationTimer.Tick += (s, args) =>
+            //_DispatcherTimer.Interval = TimeSpan.FromSeconds(0.005);
+            //_DispatcherTimer.Tick += (s, args) =>
             //{
             //    Task.Factory.StartNew(async () =>
             //    {
@@ -153,27 +170,29 @@ namespace ArtTherapy.Pages.PostPages.PoetryPages
             //    });
             //};
 
-            //animationTimer.Start();
+            //_DispatcherTimer.Start();
         }
 
         private async void gridView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            //angle *= -1;
-            
-            if (dialog != null)
+            var textBlock = new TextBlock();
+
+            var adaptiveGridView = sender as AdaptiveGridView;
+            if (adaptiveGridView != null)
             {
-                dialog.FullSizeDesired = true;
-                dialog.Width = Window.Current.Bounds.Width;
-                dialog.Height = Window.Current.Bounds.Height;
-                dialog.Content = new TextBlock();
-                (dialog.Content as TextBlock).FontSize = 24d;
-                (dialog.Content as TextBlock).Foreground = new SolidColorBrush(Colors.White);
-                (dialog.Content as TextBlock).Text = ((sender as AdaptiveGridView).SelectedItem as CurrentPostModel).Id.ToString();
-                dialog.PointerPressed += (s, args) =>
+                var selectedItem = adaptiveGridView.SelectedItem as CurrentPostModel;
+                if (selectedItem != null && selectedItem.Id > 0)
                 {
-                    dialog.Hide();
-                };
-                await dialog.ShowAsync();
+                    textBlock.FontSize = 24d;
+                    textBlock.TextWrapping = TextWrapping.WrapWholeWords;
+                    textBlock.HorizontalAlignment = HorizontalAlignment.Center;
+                    textBlock.VerticalAlignment = VerticalAlignment.Center;
+                    textBlock.Foreground = new SolidColorBrush(Colors.White);
+                    textBlock.Text = $"{selectedItem.Id}: {selectedItem.Name}";
+
+                    _ContentDialog.Content = textBlock;
+                    await _ContentDialog.ShowAsync();
+                }
             }
         }
     }
