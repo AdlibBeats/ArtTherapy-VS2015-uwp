@@ -24,17 +24,17 @@ namespace ArtTherapyCore.BaseViewModels
 
         public Action Command
         {
-            get => _command;
-            set => SetValue(ref _command, value);
+            get => _Command;
+            set => SetValue(ref _Command, value);
         }
-        private Action _command;
+        private Action _Command;
 
         public Action<object> CommandParameter
         {
-            get => _commandParameter;
-            set => SetValue(ref _commandParameter, value);
+            get => _CommandParameter;
+            set => SetValue(ref _CommandParameter, value);
         }
-        private Action<object> _commandParameter;
+        private Action<object> _CommandParameter;
 
         #region INotifyPropertyChanged Members
 
