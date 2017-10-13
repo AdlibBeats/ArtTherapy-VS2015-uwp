@@ -20,7 +20,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace ArtTherapy.Pages.MenuPages
 {
-    public sealed partial class MenuPage : Page, IPage<BaseViewModel<BaseModel>>
+    public sealed partial class MenuPage : Page, IPage
     {
         public uint Id
         {

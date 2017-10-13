@@ -19,7 +19,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace ArtTherapy.Pages.SettingsPages
 {
-    public sealed partial class SettingsPage : Page, IPage<BaseViewModel<BaseModel>>
+    public sealed partial class SettingsPage : Page, IPage
     {
         public uint Id
         {

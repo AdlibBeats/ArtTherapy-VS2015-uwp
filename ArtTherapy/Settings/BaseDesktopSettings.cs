@@ -1,14 +1,9 @@
 ﻿using ArtTherapyCore.BaseSettings;
-using System;
-using Windows.Foundation;
-using Windows.Foundation.Metadata;
-using Windows.Phone.UI.Input;
 using Windows.System;
 using Windows.UI;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
 
 namespace ArtTherapy.Settings
 {

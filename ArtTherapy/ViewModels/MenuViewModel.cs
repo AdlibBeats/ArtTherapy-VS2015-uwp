@@ -1,28 +1,24 @@
-﻿using System;
-
-using ArtTherapy.Models.ItemsModels;
-using ArtTherapy.Pages.PostPages;
+﻿using ArtTherapy.Pages;
+using ArtTherapy.Pages.ProfilePages;
 using ArtTherapy.Pages.SettingsPages;
 using ArtTherapy.Pages.AboutAppPages;
-
-using System.Collections.ObjectModel;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Data;
-using System.Collections.Generic;
-using System.Linq;
-using System.Windows.Input;
-using System.Diagnostics;
-using ArtTherapy.Models.ProfileModels;
-using Windows.UI.Xaml.Media.Imaging;
-using Windows.UI.Xaml.Controls;
-using ArtTherapy.Pages.ProfilePages;
-using ArtTherapy.Pages;
-using Windows.UI.Xaml.Navigation;
 using ArtTherapy.Pages.PostPages.StoryPages;
 using ArtTherapy.Pages.PostPages.PoetryPages;
 using ArtTherapy.Pages.PostPages.ArticlePages;
-using ArtTherapyCore.BaseViewModels;
-using ArtTherapyCore.BaseModels;
+using ArtTherapy.Models.ProfileModels;
+using ArtTherapy.Models.ItemsModels;
+
+using System;
+using System.Collections.ObjectModel;
+using System.Diagnostics;
+using System.Linq;
+using System.Windows.Input;
+
+using Windows.UI.Xaml;
+using Windows.UI.Xaml.Data;
+using Windows.UI.Xaml.Media.Imaging;
+using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Navigation;
 
 namespace ArtTherapy.ViewModels
 {
@@ -120,7 +116,7 @@ namespace ArtTherapy.ViewModels
             ViewModel.SetMenuSelectedIndex(-1);
             ViewModel.SetProfileChecked(true);
 
-            var currentPage = ViewModel.Frame.Content as IPage<BaseViewModel<BaseModel>>;
+            var currentPage = ViewModel.Frame.Content as IPage;
             if (currentPage != null && currentPage.Id != 1)
             {
                 ViewModel.SetMenuPaneOpen(false);
@@ -161,7 +157,7 @@ namespace ArtTherapy.ViewModels
             var newItemModel = parameter as CurrentMenuItemModel;
             if (newItemModel != null)
             {
-                var currentPage = ViewModel.Frame.Content as IPage<IBaseViewModel<BaseModel>>;
+                var currentPage = ViewModel.Frame.Content as IPage;
                 if (currentPage != null && currentPage.Id != newItemModel.Id)
                 {
                     ViewModel.SetProfileChecked(false);

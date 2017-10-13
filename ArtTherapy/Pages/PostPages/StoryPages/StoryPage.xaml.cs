@@ -19,7 +19,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace ArtTherapy.Pages.PostPages.StoryPages
 {
-    public sealed partial class StoryPage : Page, IPage<BaseViewModel<BaseModel>>
+    public sealed partial class StoryPage : Page, IPage
     {
         public uint Id
         {

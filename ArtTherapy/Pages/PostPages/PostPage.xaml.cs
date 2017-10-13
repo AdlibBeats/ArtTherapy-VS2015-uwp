@@ -25,7 +25,7 @@ using ArtTherapyCore.BaseModels;
 
 namespace ArtTherapy.Pages.PostPages
 {
-    public sealed partial class PostPage : Page, IPage<BaseViewModel<BaseModel>>
+    public sealed partial class PostPage : Page, IPage
     {
         public uint Id
         {

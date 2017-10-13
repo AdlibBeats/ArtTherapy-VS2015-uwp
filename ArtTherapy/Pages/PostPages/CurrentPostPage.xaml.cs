@@ -19,7 +19,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace ArtTherapy.Pages.PostPages
 {
-    public sealed partial class CurrentPostPage : Page, IPage<BaseViewModel<BaseModel>>
+    public sealed partial class CurrentPostPage : Page, IPage
     {
         public uint Id
         {
@@ -62,7 +62,7 @@ namespace ArtTherapy.Pages.PostPages
         {
             base.OnNavigatedTo(e);
 
-            var parameter = e.Parameter as IPage<BaseViewModel<BaseModel>>;
+            var parameter = e.Parameter as IPage;
             if (parameter != null)
             {
                 this.Title = parameter.Title;
