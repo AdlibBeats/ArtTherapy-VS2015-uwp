@@ -118,18 +118,6 @@ namespace ArtTherapy.Pages.PostPages.PoetryPages
             _ViewModel.LoadData(scrollViewer.GetScrollViewProgress());
         }
 
-        #region INotifyPropertyChanged Members
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        public void SetValue<T>(ref T oldValue, T newValue, [CallerMemberName]string propertyName = null)
-        {
-            oldValue = newValue;
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-
-        #endregion
-
         ContentDialog _ContentDialog = new ContentDialog();
         DispatcherTimer _DispatcherTimer = new DispatcherTimer();
 
@@ -195,5 +183,17 @@ namespace ArtTherapy.Pages.PostPages.PoetryPages
                 }
             }
         }
+
+        #region INotifyPropertyChanged Members
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public void SetValue<T>(ref T oldValue, T newValue, [CallerMemberName]string propertyName = null)
+        {
+            oldValue = newValue;
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        #endregion
     }
 }
