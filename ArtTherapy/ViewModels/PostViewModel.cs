@@ -52,11 +52,11 @@ namespace ArtTherapy.ViewModels
 
         public void LoadData(double scrollViewerProgress, int page = 1)
         {
-            Task.Factory.StartNew(async () =>
+            if (scrollViewerProgress > 0.999)
             {
-                await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
+                Task.Factory.StartNew(async () =>
                 {
-                    if (scrollViewerProgress > 0.999)
+                    await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
                     {
                         var postModel = Storage.GetModel($"{PostModel.GetType().Name}Count.json") as PostModel;
                         if (postModel != null)
@@ -94,11 +94,11 @@ namespace ArtTherapy.ViewModels
                                     }
                                 }
                             }
+                            Loaded?.Invoke(this, new PostEventArgs(Count.Equals(CurrentCount)));
                         }
-                        Loaded?.Invoke(this, new PostEventArgs(Count.Equals(CurrentCount)));
-                    }
-                 });
-            });
+                    });
+                });
+            }
         }
 
         public void AddDemoData()
