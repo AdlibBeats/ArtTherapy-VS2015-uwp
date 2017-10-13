@@ -8,6 +8,8 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
+using ArtTherapyCore.Extensions;
 
 namespace ArtTherapy.ViewModels
 {
@@ -50,9 +52,9 @@ namespace ArtTherapy.ViewModels
 
         public bool IsFullInitialized { get => Count.Equals(CurrentCount); }
 
-        public void LoadData(double scrollViewerProgress, int page = 1, int startCountLoad = 10)
+        public void LoadData(ScrollViewer scrollViewer, int page = 1, int startCountLoad = 5)
         {
-            if (scrollViewerProgress > 0.999)
+            if (scrollViewer.GetScrollViewProgress() > 0.999)
             {
                 Task.Factory.StartNew(async () =>
                 {
