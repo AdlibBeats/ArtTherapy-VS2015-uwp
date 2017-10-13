@@ -2,28 +2,21 @@
 
 namespace ArtTherapyCore.BaseStorage
 {
-    public abstract class BaseFactoryStorage
+    public abstract class BaseFactoryStorage<T> where T : BaseModel
     {
         public BaseFactoryStorage()
         {
         }
 
-        public abstract BaseStorage Create(string fileName);
+        public abstract BaseStorage<T> Create();
     }
 
-    public abstract class BaseStorage
+    public abstract class BaseStorage<T> where T : BaseModel
     {
-        protected string FileName { get; }
+        public abstract T GetModel(string fileName);
 
-        public BaseStorage(string fileName)
-        {
-            FileName = fileName;
-        }
+        public abstract bool SetModel(string fileName, T model);
 
-        public abstract BaseModel GetModel();
-
-        public abstract bool SetModel(BaseModel model);
-
-        public abstract bool DeleteModel();
+        public abstract bool DeleteModel(string fileName);
     }
 }

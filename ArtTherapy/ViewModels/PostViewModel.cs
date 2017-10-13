@@ -1,5 +1,5 @@
-﻿using ArtTherapy.AppStorage;
-using ArtTherapy.Models.PostModels;
+﻿using ArtTherapy.Models.PostModels;
+using ArtTherapy.Storage;
 using ArtTherapyCore.BaseViewModels;
 using System;
 using System.Collections.Generic;
@@ -22,6 +22,9 @@ namespace ArtTherapy.ViewModels
     }
     public class PostViewModel<T> : BaseViewModel<T> where T : PostModel, new()
     {
+        private BaseJsonStorage<T> storage = null;
+        private JsonFactoryStorage<T> jsonFactoryStorage = new JsonFactoryStorage<T>();
+
         public event EventHandler<PostEventArgs> Loaded;
 
         private List<TaskCompletionSource<bool>> IsLoadedList = new List<TaskCompletionSource<bool>>();
@@ -32,6 +35,7 @@ namespace ArtTherapy.ViewModels
             {
                 Items = new ObservableCollection<CurrentPostModel>()
             };
+            storage = (BaseJsonStorage<T>)jsonFactoryStorage.Create();
         }
 
         public int Count { get; private set; }
@@ -48,7 +52,7 @@ namespace ArtTherapy.ViewModels
                 {
                     if (scrollViewerProgress > 0.999)
                     {
-                        var postModel = await AppStorage<PostModel>.Get($"{PostModel.GetType().Name}Count.json");
+                        var postModel = storage.GetModel($"{PostModel.GetType().Name}Count.json") as PostModel;
                         if (postModel != null)
                         {
                             Count = postModel.Count;
@@ -71,7 +75,7 @@ namespace ArtTherapy.ViewModels
                                     }
                                     await Task.Delay(1000);
 
-                                    var fullPostModel = await AppStorage<PostModel>.Get($"{PostModel.GetType().Name}.json");
+                                    var fullPostModel = storage.GetModel($"{PostModel.GetType().Name}.json") as PostModel;
                                     if (fullPostModel != null && fullPostModel.Items != null && fullPostModel.Items.Count > 0)
                                     {
                                         for (int i = startIndex, k = 0; k < 20 && i < Count; i++, k++)
@@ -91,9 +95,9 @@ namespace ArtTherapy.ViewModels
             });
         }
 
-        public async void AddDemoData()
+        public void AddDemoData()
         {
-            var demoPostModel = new PostModel()
+            var demoPostModel = new T()
             {
                 Items = new ObservableCollection<CurrentPostModel>()
             };
@@ -113,7 +117,7 @@ namespace ArtTherapy.ViewModels
                 });
             }
 
-            await AppStorage<PostModel>.Set(demoPostModel, $"{PostModel.GetType().Name}.json");
+            storage.SetModel($"{PostModel.GetType().Name}.json", demoPostModel);
         }
 
         public override T GetModel()
