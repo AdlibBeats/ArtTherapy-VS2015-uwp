@@ -24,7 +24,7 @@ namespace ArtTherapy.ViewModels
     }
     public class PostViewModel<T> : BaseViewModel<T> where T : PostModel, new()
     {
-        public BaseJsonStorage<T> Storage { get; set; }
+        public BaseJsonStorage<T> Storage { get; private set; }
 
         private JsonFactoryStorage<T> _JsonFactoryStorage = new JsonFactoryStorage<T>();
 
