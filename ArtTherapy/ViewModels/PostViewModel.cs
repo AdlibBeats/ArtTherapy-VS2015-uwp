@@ -52,8 +52,9 @@ namespace ArtTherapy.ViewModels
 
         public bool IsFullInitialized { get => Count.Equals(CurrentCount); }
 
-        public void LoadData(ScrollViewer scrollViewer, int page = 1, int startCountLoad = 5)
+        public void LoadData(ScrollViewer scrollViewer, int page = 1, int startCountLoad = 10)
         {
+            //AddDemoData();
             if (scrollViewer.GetScrollViewProgress() > 0.999)
             {
                 Task.Factory.StartNew(async () =>
@@ -80,8 +81,9 @@ namespace ArtTherapy.ViewModels
                                     for (int i = startIndex, k = 0; k < startCountLoad && i < Count; i++, k++)
                                     {
                                         PostModel.Items[i].IsLoading = true;
+                                        PostModel.Items[i].IsEnabledBuy = false;
                                     }
-                                    await Task.Delay(500);
+                                    await Task.Delay(1000);
 
                                     var fullPostModel = Storage.GetModel($"{PostModel.GetType().Name}.json") as PostModel;
                                     if (fullPostModel != null && fullPostModel.Items != null && fullPostModel.Items.Count > 0)
@@ -90,10 +92,38 @@ namespace ArtTherapy.ViewModels
                                         {
                                             PostModel.Items[i] = fullPostModel.Items[i];
                                             PostModel.Items[i].IsLoading = false;
-                                            await Task.Delay(50);
+                                            PostModel.Items[i].IsLoadingPrices = true;
+                                            PostModel.Items[i].IsLoadingRemains = true;
+                                            await Task.Delay(15);
                                         }
-                                        _IsLoadedList.LastOrDefault().TrySetResult(true);
+                                        
                                     }
+                                    await Task.Delay(1000);
+
+                                    var prices = Storage.GetModel($"{PostModel.GetType().Name}Prices.json") as PostModel;
+                                    if (prices != null && prices.Items != null && prices.Items.Count > 0)
+                                    {
+                                        for (int i = startIndex, k = 0; k < startCountLoad && i < Count; i++, k++)
+                                        {
+                                            PostModel.Items[i].Description = prices.Items[i].Description;
+                                            PostModel.Items[i].IsLoadingPrices = false;
+                                            await Task.Delay(15);
+                                        }
+                                    }
+                                    await Task.Delay(1000);
+
+                                    var remains = Storage.GetModel($"{PostModel.GetType().Name}Remains.json") as PostModel;
+                                    if (remains != null && remains.Items != null && remains.Items.Count > 0)
+                                    {
+                                        for (int i = startIndex, k = 0; k < startCountLoad && i < Count; i++, k++)
+                                        {
+                                            PostModel.Items[i].Type = remains.Items[i].Type;
+                                            PostModel.Items[i].IsLoadingRemains = false;
+                                            PostModel.Items[i].IsEnabledBuy = true;
+                                            await Task.Delay(15);
+                                        }
+                                    }
+                                    _IsLoadedList.LastOrDefault().TrySetResult(true);
                                 }
                             }
                             Loaded?.Invoke(this, new PostEventArgs(Count.Equals(CurrentCount)));
@@ -115,13 +145,13 @@ namespace ArtTherapy.ViewModels
                 demoPostModel.Items.Add(new CurrentPostModel()
                 {
                     Id = (uint)(i + 1),
-                    Description = "108990р.",
+                    //Description = "108990р.",
                     Image = null,
                     BuyIcon = "\xE7BF",
                     IsLoading = false,
-                    Name = "Apple MacBook Pro 2017",
+                    Name = "Ноутбук Apple MacBook Pro 2017 Core i7/16/256 SSD Gold (MNYK2RU/A)",
                     Text = "https://rebabaskett.com/wp-content/uploads/2017/01/u_10150899.jpg",
-                    Type = "4 шт."
+                    //Type = "4 шт."
                 });
             }
 

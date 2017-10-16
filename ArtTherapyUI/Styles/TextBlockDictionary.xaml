@@ -10,6 +10,7 @@
         <Style.Setters>
             <Setter Property="Foreground" Value="{StaticResource Static.TextBlock.Foreground}"/>
             <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontFamily" Value="FontFamily/M.Video_regular.otf#M.Video"/>
         </Style.Setters>
     </Style>
 

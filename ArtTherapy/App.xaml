@@ -19,6 +19,7 @@
                 <ResourceDictionary Source="ms-appx:///ArtTherapyUI/Styles/ToggleSwitchDictionary.xaml"/>
                 <ResourceDictionary Source="ms-appx:///ArtTherapyUI/Styles/ScrollBarDictionary.xaml"/>
                 <ResourceDictionary Source="ms-appx:///ArtTherapyUI/Styles/GridViewItemDictionary.xaml"/>
+                <ResourceDictionary Source="DemoControl.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

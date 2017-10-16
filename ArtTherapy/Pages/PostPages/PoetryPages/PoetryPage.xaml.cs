@@ -148,24 +148,28 @@ namespace ArtTherapy.Pages.PostPages.PoetryPages
 
         private async void gridView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            var textBlock = new TextBlock();
-
-            var adaptiveGridView = sender as AdaptiveGridView;
-            if (adaptiveGridView != null)
+            if (gridView.SelectedIndex > -1)
             {
-                var selectedItem = adaptiveGridView.SelectedItem as CurrentPostModel;
-                if (selectedItem != null && selectedItem.Id > 0)
-                {
-                    textBlock.FontSize = 24d;
-                    textBlock.TextWrapping = TextWrapping.WrapWholeWords;
-                    textBlock.HorizontalAlignment = HorizontalAlignment.Center;
-                    textBlock.VerticalAlignment = VerticalAlignment.Center;
-                    textBlock.Foreground = new SolidColorBrush(Colors.White);
-                    textBlock.Text = $"{selectedItem.Id}: {selectedItem.Name}";
+                var textBlock = new TextBlock();
 
-                    _ContentDialog.Content = textBlock;
-                    await _ContentDialog.ShowAsync();
+                var adaptiveGridView = sender as AdaptiveGridView;
+                if (adaptiveGridView != null)
+                {
+                    var selectedItem = adaptiveGridView.SelectedItem as CurrentPostModel;
+                    if (selectedItem != null && selectedItem.Id > 0)
+                    {
+                        textBlock.FontSize = 24d;
+                        textBlock.TextWrapping = TextWrapping.WrapWholeWords;
+                        textBlock.HorizontalAlignment = HorizontalAlignment.Center;
+                        textBlock.VerticalAlignment = VerticalAlignment.Center;
+                        textBlock.Foreground = new SolidColorBrush(Colors.White);
+                        textBlock.Text = $"{selectedItem.Id}: {selectedItem.Name}";
+
+                        _ContentDialog.Content = textBlock;
+                        await _ContentDialog.ShowAsync();
+                    }
                 }
+                gridView.SelectedIndex = -1;
             }
         }
 

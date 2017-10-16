@@ -104,6 +104,12 @@
   </PropertyGroup>
   <ItemGroup>
     <!-- A reference to the entire .Net Framework and Windows SDK are automatically included -->
+    <Content Include="FontFamily\M.Video_bold.otf" />
+    <Content Include="FontFamily\M.Video_bold_cond.otf" />
+    <Content Include="FontFamily\M.Video_light.otf" />
+    <Content Include="FontFamily\M.Video_regular.otf" />
+    <Content Include="FontFamily\MVideo_icon_font.ttf" />
+    <Content Include="FontFamily\PTMono.ttf" />
     <None Include="project.json" />
   </ItemGroup>
   <ItemGroup>
@@ -165,7 +171,12 @@
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\ArtTherapyCore\ArtTherapyCore.csproj">
+      <Project>{78842eb2-bb0c-4230-957d-c1cdd4e8c1c2}</Project>
+      <Name>ArtTherapyCore</Name>
+    </ProjectReference>
+  </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>

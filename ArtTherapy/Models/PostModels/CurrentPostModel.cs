@@ -71,6 +71,30 @@ namespace ArtTherapy.Models.PostModels
         }
         private bool _IsLoading;
 
+        [JsonIgnore]
+        public bool IsLoadingPrices
+        {
+            get => _IsLoadingPrices;
+            set => SetValue(ref _IsLoadingPrices, value);
+        }
+        private bool _IsLoadingPrices;
+
+        [JsonIgnore]
+        public bool IsLoadingRemains
+        {
+            get => _IsLoadingRemains;
+            set => SetValue(ref _IsLoadingRemains, value);
+        }
+        private bool _IsLoadingRemains;
+
+        [JsonIgnore]
+        public bool IsEnabledBuy
+        {
+            get => _IsEnabledBuy;
+            set => SetValue(ref _IsEnabledBuy, value);
+        }
+        private bool _IsEnabledBuy;
+
         #endregion
     }
 }

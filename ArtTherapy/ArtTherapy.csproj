@@ -93,6 +93,7 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="AppStorage\AppStorage.cs" />
+    <Compile Include="DemoControl.cs" />
     <Compile Include="Models\ItemsModels\CurrentMenuItemModel.cs" />
     <Compile Include="Models\ItemsModels\MenuItemsModel.cs" />
     <Compile Include="Models\InfoModels\PagingInfo.cs" />
@@ -148,8 +149,17 @@
       <SubType>Designer</SubType>
     </AppxManifest>
     <None Include="ArtTherapy_TemporaryKey.pfx" />
+    <Content Include="Assets\M.Video_bold.otf" />
+    <Content Include="Assets\M.Video_bold_cond.otf" />
+    <Content Include="Assets\M.Video_light.otf" />
+    <Content Include="Assets\M.Video_regular.otf" />
+    <Content Include="Assets\MVideo_icon_font.ttf" />
+    <Content Include="Assets\packed-box%403x.png" />
+    <Content Include="Assets\PTMono.ttf" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Assets\icon-empty-shopping-cart%403x.png" />
+    <Content Include="Assets\trolley-cart%403x.png" />
     <Content Include="Avatar\avatar.jpg" />
     <Content Include="Properties\Default.rd.xml" />
     <Content Include="Assets\LockScreenLogo.scale-200.png" />
@@ -165,6 +175,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="DemoControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Page>
     <Page Include="Pages\AboutAppPages\AboutAppPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
