@@ -71,8 +71,6 @@ namespace ArtTherapy.Pages.PostPages.PoetryPages
             base.OnNavigatedTo(e);
 
             _ViewModel.Loaded += _viewModel_Loaded;
-
-            Initialized?.Invoke(this, new EventArgs());
         }
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)
@@ -110,6 +108,8 @@ namespace ArtTherapy.Pages.PostPages.PoetryPages
         bool isLocy = false;
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
+            Initialized?.Invoke(this, new EventArgs());
+
             //_DispatcherTimer.Interval = TimeSpan.FromSeconds(0.005);
             //_DispatcherTimer.Tick += (s, args) =>
             //{

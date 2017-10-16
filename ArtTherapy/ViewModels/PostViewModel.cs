@@ -44,6 +44,12 @@ namespace ArtTherapy.ViewModels
             PageSize = 2;
         }
 
+        ~PostViewModel()
+        {
+            Debug.WriteLine("--- PostViewModel Finalized. ---");
+            Dispose();
+        }
+
         public int PageSize { get; set; }
 
         public int Count { get; private set; }
@@ -52,15 +58,15 @@ namespace ArtTherapy.ViewModels
 
         public bool IsFullInitialized { get => Count.Equals(CurrentCount); }
 
-        public void LoadData(ScrollViewer scrollViewer, int page = 1, int startCountLoad = 5)
+        public void LoadData(ScrollViewer scrollViewer, int page = 1, int startCountLoad = 20)
         {
-            if (scrollViewer.GetScrollViewProgress() > 0.999)
+            if (scrollViewer.GetScrollViewProgress() > 0.999 && page > 0 && startCountLoad > 0)
             {
                 Task.Factory.StartNew(async () =>
                 {
                     await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
                     {
-                        var postModel = Storage.GetModel($"{PostModel.GetType().Name}Count.json") as PostModel;
+                        var postModel = Storage.GetModel($"{PostModel.GetType().Name}Count.json") as T;
                         if (postModel != null)
                         {
                             Count = postModel.Count;
@@ -77,13 +83,13 @@ namespace ArtTherapy.ViewModels
                                 {
                                     _IsLoadedList.Add(new TaskCompletionSource<bool>());
                                     startIndex -= startCountLoad - 1;
+
                                     for (int i = startIndex, k = 0; k < startCountLoad && i < Count; i++, k++)
-                                    {
                                         PostModel.Items[i].IsLoading = true;
-                                    }
+
                                     await Task.Delay(500);
 
-                                    var fullPostModel = Storage.GetModel($"{PostModel.GetType().Name}.json") as PostModel;
+                                    var fullPostModel = Storage.GetModel($"{PostModel.GetType().Name}.json") as T;
                                     if (fullPostModel != null && fullPostModel.Items != null && fullPostModel.Items.Count > 0)
                                     {
                                         for (int i = startIndex, k = 0; k < startCountLoad && i < Count; i++, k++)
@@ -143,6 +149,10 @@ namespace ArtTherapy.ViewModels
 
             _IsLoadedList.Clear();
             _IsLoadedList = null;
+
+            Debug.WriteLine("--- PostViewModel Disposed. ---");
+
+            GC.SuppressFinalize(this);
         }
         public T PostModel
         {
