@@ -56,7 +56,7 @@ namespace ArtTherapy
                     //TODO: Загрузить состояние из ранее приостановленного приложения
                 }
 
-                rootFrame.RenderTransform = new RotateTransform();
+                //rootFrame.RenderTransform = new RotateTransform();
 
                 // Размещение фрейма в текущем окне
                 Window.Current.Content = rootFrame;
@@ -74,7 +74,7 @@ namespace ArtTherapy
 
                 //Настройка окна и фрейма
                 SetSettings(rootFrame);
-
+                //var p = Package.Current.InstalledLocation;
                 // Обеспечение активности текущего окна
                 Window.Current.Activate();
             }

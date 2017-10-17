@@ -22,13 +22,14 @@ namespace ArtTherapy.Storage
 
         public override Task<bool> DeleteModel(string fileName)
         {
+            //var p = Windows.ApplicationModel.Package.Current.InstalledLocation.Path;
             StorageFile file = null;
 
             return Task.Run(async () =>
             {
                 try
                 {
-                    file = await StorageFile.GetFileFromPathAsync(ApplicationData.Current.LocalFolder.Path + @"\" + fileName);
+                    file = await StorageFile.GetFileFromPathAsync(Windows.ApplicationModel.Package.Current.InstalledLocation.Path + @"\ArtTherapyCore\Repository" + @"\" + fileName);
                 }
                 catch (Exception ex)
                 {
@@ -56,14 +57,36 @@ namespace ArtTherapy.Storage
         public override Task<T> GetModel(string fileName)
         {
             StorageFile file = null;
+            StorageFolder folder1 = null;
+            StorageFolder folder2 = null;
 
             return Task.Run(async () =>
             {
                 string reader = String.Empty;
-                Debug.WriteLine($"{fileName}: {ApplicationData.Current.LocalFolder.Path}");
+                Debug.WriteLine($"{fileName}: {Windows.ApplicationModel.Package.Current.InstalledLocation.Path}");
                 try
                 {
-                    file = await StorageFile.GetFileFromPathAsync(ApplicationData.Current.LocalFolder.Path + @"\" + fileName);
+                    try
+                    {
+                        folder1 = await Windows.ApplicationModel.Package.Current.InstalledLocation.GetFolderAsync("ArtTherapyCore");
+                    }
+                    catch (Exception ex1)
+                    {
+                        Debug.WriteLine(ex1.Message);
+                        folder1 = await Windows.ApplicationModel.Package.Current.InstalledLocation.CreateFolderAsync("ArtTherapyCore", CreationCollisionOption.OpenIfExists);
+                    }
+
+                    try
+                    {
+                        folder2 = await folder1.GetFolderAsync("Repository");
+                    }
+                    catch (Exception ex2)
+                    {
+                        Debug.WriteLine(ex2.Message);
+                        folder2 = await folder1.CreateFolderAsync("Repository", CreationCollisionOption.OpenIfExists);
+                    }
+
+                    file = await StorageFile.GetFileFromPathAsync(folder2.Path + @"\" + fileName);
                 }
                 catch (Exception exception)
                 {
@@ -71,7 +94,7 @@ namespace ArtTherapy.Storage
 
                     try
                     {
-                        file = await ApplicationData.Current.LocalFolder.CreateFileAsync(@"\" + fileName, CreationCollisionOption.ReplaceExisting);
+                        file = await folder2.CreateFileAsync(@"\" + fileName, CreationCollisionOption.ReplaceExisting);
                     }
                     catch (Exception ex)
                     {
@@ -81,25 +104,47 @@ namespace ArtTherapy.Storage
                 }
                 reader = await FileIO.ReadTextAsync(file);
 
-                return String.IsNullOrEmpty(reader) ? null : Task.Run(() => { return JsonConvert.DeserializeObject<T>(reader); }).GetAwaiter().GetResult();
+                return String.IsNullOrEmpty(reader) ? null : JsonConvert.DeserializeObject<T>(reader);
             });
         }
 
         public override Task<bool> SetModel(string fileName, T model)
         {
-            Debug.WriteLine(ApplicationData.Current.LocalFolder.Path);
+            Debug.WriteLine($"{fileName}: {Windows.ApplicationModel.Package.Current.InstalledLocation.Path}");
 
             StorageFile file = null;
+            StorageFolder folder1 = null;
+            StorageFolder folder2 = null;
 
             return Task.Run(async () =>
             {
                 try
                 {
-                    file = await ApplicationData.Current.LocalFolder.CreateFileAsync(@"\" + fileName, CreationCollisionOption.ReplaceExisting);
+                    try
+                    {
+                        folder1 = await Windows.ApplicationModel.Package.Current.InstalledLocation.GetFolderAsync("ArtTherapyCore");
+                    }
+                    catch (Exception ex1)
+                    {
+                        Debug.WriteLine(ex1.Message);
+                        folder1 = await Windows.ApplicationModel.Package.Current.InstalledLocation.CreateFolderAsync("ArtTherapyCore", CreationCollisionOption.OpenIfExists);
+                    }
+
+                    try
+                    {
+                        folder2 = await folder1.GetFolderAsync(@"Repository");
+                    }
+                    catch (Exception ex2)
+                    {
+                        Debug.WriteLine(ex2.Message);
+                        folder2 = await folder1.CreateFolderAsync(@"Repository", CreationCollisionOption.OpenIfExists);
+                    }
+
+                    file = await folder2.CreateFileAsync(@"\" + fileName, CreationCollisionOption.ReplaceExisting);
                 }
-                catch (Exception ex)
+                catch (Exception exception)
                 {
-                    Debug.WriteLine(ex.Message);
+                    Debug.WriteLine(exception.Message);
                     return false;
                 }
 

@@ -128,6 +128,14 @@
       <Version>2.0.147</Version>
     </PackageReference>
   </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <Content Include="Repository\PostModel.json" />
+    <Content Include="Repository\PostModelCount.json" />
+    <Content Include="Repository\PostModelImages.json" />
+    <Content Include="Repository\PostModelPrices.json" />
+    <Content Include="Repository\PostModelRemains.json" />
+  </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>

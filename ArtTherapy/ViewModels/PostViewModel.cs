@@ -84,7 +84,7 @@ namespace ArtTherapy.ViewModels
                                     startIndex -= startCountLoad - 1;
 
                                     var fullPostModel = await Storage.GetModel($"{PostModel.GetType().Name}.json") as PostModel;
-                                    await Task.Delay(1000);
+                                    await Task.Delay(500);
                                     if (fullPostModel != null && fullPostModel.Items != null && fullPostModel.Items.Count > 0)
                                     {
                                         for (int i = startIndex, k = 0; k < startCountLoad && i < Count; i++, k++)
@@ -100,8 +100,11 @@ namespace ArtTherapy.ViewModels
                                             await Task.Delay(15);
                                         }
                                     }
+
+                                    Loaded?.Invoke(this, new PostEventArgs(Count.Equals(CurrentCount)));
+
                                     var images = await Storage.GetModel($"{PostModel.GetType().Name}Images.json") as PostModel;
-                                    await Task.Delay(1000);
+                                    await Task.Delay(500);
                                     await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
                                     {
                                         if (images != null && images.Items != null && images.Items.Count > 0)
@@ -116,9 +119,7 @@ namespace ArtTherapy.ViewModels
                                     });
 
                                     var prices = await Storage.GetModel($"{PostModel.GetType().Name}Prices.json") as PostModel;
-                                    var startLoadinPrice = new Task(() => { });
-
-                                    await Task.Delay(1000);
+                                    await Task.Delay(500);
                                     await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
                                     {
                                         if (prices != null && prices.Items != null && prices.Items.Count > 0)
@@ -133,7 +134,7 @@ namespace ArtTherapy.ViewModels
                                     });
 
                                     var remains = await Storage.GetModel($"{PostModel.GetType().Name}Remains.json") as PostModel;
-                                    await Task.Delay(1000);
+                                    await Task.Delay(500);
                                     await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
                                     {
                                         if (remains != null && remains.Items != null && remains.Items.Count > 0)
@@ -150,7 +151,6 @@ namespace ArtTherapy.ViewModels
                                     _IsLoadedList.LastOrDefault().TrySetResult(true);
                                 }
                             }
-                            Loaded?.Invoke(this, new PostEventArgs(Count.Equals(CurrentCount)));
                         }
                     });
                 });
@@ -169,13 +169,13 @@ namespace ArtTherapy.ViewModels
                 demoPostModel.Items.Add(new CurrentPostModel()
                 {
                     Id = (uint)(i + 1),
-                    //Description = "108990р.",
-                    //Image = null,
-                    //BuyIcon = "\xE7BF",
-                    //IsLoading = false,
-                    //Name = "Ноутбук Apple MacBook Pro 2017 Core i7/16/256 SSD Gold (MNYK2RU/A)",
+                    Description = "108990р.",
+                    Image = null,
+                    BuyIcon = "\xE7BF",
+                    IsLoading = false,
+                    Name = "Ноутбук Apple MacBook Pro 2017 Core i7/16/256 SSD Gold (MNYK2RU/A)",
                     Text = "https://rebabaskett.com/wp-content/uploads/2017/01/u_10150899.jpg",
-                    //Type = "4 шт."
+                    Type = "4 шт."
                 });
             }
 
