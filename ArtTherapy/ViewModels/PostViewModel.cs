@@ -148,7 +148,7 @@ namespace ArtTherapy.ViewModels
                                             }
                                         }
                                     });
-                                    _IsLoadedList.LastOrDefault().TrySetResult(true);
+                                    _IsLoadedList.LastOrDefault().TrySetResult(true);//
                                 }
                             }
                         }
