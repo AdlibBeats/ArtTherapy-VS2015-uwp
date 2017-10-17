@@ -23,7 +23,19 @@ namespace ArtTherapy
 
         private static void OnModelChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
+            var itemControl = d as DemoControl;
+            itemControl?.UpdateState();
 
+            var product = e.NewValue as CurrentPostModel;
+            product.PropertyChanged += (sender, args) => { itemControl?.UpdateState(); };
+        }
+
+        public void UpdateState()
+        {
+            VisualStateManager.GoToState(this, Model.IsLoading ? "Loading" : "Loaded", true);
+            VisualStateManager.GoToState(this, Model.IsLoadingImage ? "ImageLoading" : "ImageLoaded", true);
+            VisualStateManager.GoToState(this, Model.IsLoadingPrices ? "PricesLoading" : "PricesLoaded", true);
+            VisualStateManager.GoToState(this, Model.IsLoadingRemains ? "RemainsLoading" : "RemainsLoaded", true);
         }
 
         public DemoControl()
@@ -35,6 +47,8 @@ namespace ArtTherapy
         protected override void OnApplyTemplate()
         {
             base.OnApplyTemplate();
+
+            //UpdateState();
         }
     }
 }

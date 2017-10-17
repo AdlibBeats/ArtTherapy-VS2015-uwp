@@ -20,7 +20,7 @@ namespace ArtTherapy.Storage
         {
         }
 
-        public override bool DeleteModel(string fileName)
+        public override Task<bool> DeleteModel(string fileName)
         {
             StorageFile file = null;
 
@@ -50,12 +50,10 @@ namespace ArtTherapy.Storage
                 }
                 else
                     return false;
-            })
-            .GetAwaiter()
-            .GetResult();
+            });
         }
 
-        public override T GetModel(string fileName)
+        public override Task<T> GetModel(string fileName)
         {
             StorageFile file = null;
 
@@ -83,13 +81,11 @@ namespace ArtTherapy.Storage
                 }
                 reader = await FileIO.ReadTextAsync(file);
 
-                return String.IsNullOrEmpty(reader) ? null : JsonConvert.DeserializeObject<T>(reader);
-            })
-            .GetAwaiter()
-            .GetResult();
+                return String.IsNullOrEmpty(reader) ? null : Task.Run(() => { return JsonConvert.DeserializeObject<T>(reader); }).GetAwaiter().GetResult();
+            });
         }
 
-        public override bool SetModel(string fileName, T model)
+        public override Task<bool> SetModel(string fileName, T model)
         {
             Debug.WriteLine(ApplicationData.Current.LocalFolder.Path);
 
@@ -114,9 +110,7 @@ namespace ArtTherapy.Storage
                     await FileIO.WriteTextAsync(file, writer);
                     return true;
                 }
-            })
-            .GetAwaiter()
-            .GetResult();
+            });
         }
     }
 }

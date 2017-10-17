@@ -9,6 +9,8 @@ using ArtTherapy.Models.PostModels;
 using Microsoft.Toolkit.Uwp.UI.Controls;
 using Windows.UI;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
+using ArtTherapyCore.Extensions;
 
 namespace ArtTherapy.Pages.PostPages.PoetryPages
 {
@@ -84,23 +86,33 @@ namespace ArtTherapy.Pages.PostPages.PoetryPages
             _ViewModel.Dispose();
         }
 
-        private void _viewModel_Loaded(object sender, PostEventArgs e)
+        private async void _viewModel_Loaded(object sender, PostEventArgs e)
         {
-            if (!e.IsFullInitialized)
-                _ViewModel.LoadData(scrollViewer);
+            double value = 0;
+            await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+            {
+                value = scrollViewer.GetScrollViewProgress();
+            });
+
+            if (!e.IsFullInitialized && value > 0.999)
+                await Task.Run(() => _ViewModel.LoadData(value));
         }
 
-        private void ScrollViewer_ViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
+        private async void ScrollViewer_ViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
         {
-            _ViewModel.LoadData(scrollViewer);
+            double value = scrollViewer.GetScrollViewProgress();
+            if (value > 0.999)
+                await Task.Run(() => _ViewModel.LoadData(value));
         }
 
-        private void Page_SizeChanged(object sender, SizeChangedEventArgs e)
+        private async void Page_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             _ContentDialog.Width = Window.Current.Bounds.Width;
             _ContentDialog.Height = Window.Current.Bounds.Height;
 
-            _ViewModel.LoadData(scrollViewer);
+            double value = scrollViewer.GetScrollViewProgress();
+            if (value > 0.999)
+                await Task.Run(() => _ViewModel.LoadData(value));
         }
 
         ContentDialog _ContentDialog = new ContentDialog();

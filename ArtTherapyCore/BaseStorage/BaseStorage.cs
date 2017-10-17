@@ -1,4 +1,5 @@
 ﻿using ArtTherapyCore.BaseModels;
+using System.Threading.Tasks;
 
 namespace ArtTherapyCore.BaseStorage
 {
@@ -13,10 +14,10 @@ namespace ArtTherapyCore.BaseStorage
 
     public abstract class BaseStorage<T> where T : BaseModel
     {
-        public abstract T GetModel(string fileName);
+        public abstract Task<T> GetModel(string fileName);
 
-        public abstract bool SetModel(string fileName, T model);
+        public abstract Task<bool> SetModel(string fileName, T model);
 
-        public abstract bool DeleteModel(string fileName);
+        public abstract Task<bool> DeleteModel(string fileName);
     }
 }
