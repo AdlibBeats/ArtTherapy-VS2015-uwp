@@ -84,33 +84,28 @@ namespace ArtTherapy.Pages.PostPages.PoetryPages
             _ViewModel.Dispose();
         }
 
-        private async void _viewModel_Loaded(object sender, PostEventArgs e)
+        private void _viewModel_Loaded(object sender, PostEventArgs e)
         {
-            double value = 0;
-            await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
-            {
-                value = scrollViewer.GetScrollViewProgress();
-            });
-
+            double value = value = scrollViewer.GetScrollViewProgress();
             if (!e.IsFullInitialized && value > 0.999)
-                await Task.Run(() => _ViewModel.LoadData(value));
+                _ViewModel.LoadData(value);
         }
 
-        private async void ScrollViewer_ViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
+        private void ScrollViewer_ViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
         {
             double value = scrollViewer.GetScrollViewProgress();
             if (value > 0.999)
-                await Task.Run(() => _ViewModel.LoadData(value));
+                _ViewModel.LoadData(value);
         }
 
-        private async void Page_SizeChanged(object sender, SizeChangedEventArgs e)
+        private void Page_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             _ContentDialog.Width = Window.Current.Bounds.Width;
             _ContentDialog.Height = Window.Current.Bounds.Height;
 
             double value = scrollViewer.GetScrollViewProgress();
             if (value > 0.999)
-                await Task.Run(() => _ViewModel.LoadData(value));
+                _ViewModel.LoadData(value);
         }
 
         ContentDialog _ContentDialog = new ContentDialog();

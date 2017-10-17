@@ -67,19 +67,16 @@ namespace ArtTherapy.ViewModels
                             Count = postModel.Count;
                             if (Count > 0 && CurrentCount < Count)
                             {
-                                await Dispatcher.TryRunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+                                for (int i = 0; i < Count; i++)
                                 {
-                                    for (int i = 0; i < Count; i++)
+                                    if (i == startCountLoad || CurrentCount == Count) break;
+                                    PostModel.Items.Add(new CurrentPostModel()
                                     {
-                                        if (i == startCountLoad || CurrentCount == Count) break;
-                                        PostModel.Items.Add(new CurrentPostModel()
-                                        {
-                                            IsEnabledBuy = false,
-                                            IsLoading = true
-                                        });
-                                        Debug.WriteLine($"Добавлено {CurrentCount} из {Count}");
-                                    }
-                                });
+                                        IsEnabledBuy = false,
+                                        IsLoading = true
+                                    });
+                                    Debug.WriteLine($"Добавлено {CurrentCount} из {Count}");
+                                }
                                 int startIndex = PostModel.Items.IndexOf(PostModel.Items.LastOrDefault());
                                 if (startIndex >= startCountLoad - 1)
                                 {
@@ -87,7 +84,7 @@ namespace ArtTherapy.ViewModels
                                     startIndex -= startCountLoad - 1;
 
                                     var fullPostModel = await Storage.GetModel($"{PostModel.GetType().Name}.json") as PostModel;
-                                    await Task.Delay(500);
+                                    await Task.Delay(1000);
                                     if (fullPostModel != null && fullPostModel.Items != null && fullPostModel.Items.Count > 0)
                                     {
                                         for (int i = startIndex, k = 0; k < startCountLoad && i < Count; i++, k++)
@@ -100,47 +97,56 @@ namespace ArtTherapy.ViewModels
                                             PostModel.Items[i].IsLoadingPrices = true;
                                             PostModel.Items[i].IsLoadingRemains = true;
 
-                                            //await Task.Delay(30);
+                                            await Task.Delay(15);
                                         }
                                     }
                                     var images = await Storage.GetModel($"{PostModel.GetType().Name}Images.json") as PostModel;
-                                    await Task.Delay(500);
-                                    if (images != null && images.Items != null && images.Items.Count > 0)
+                                    await Task.Delay(1000);
+                                    await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
                                     {
-                                        for (int i = startIndex, k = 0; k < startCountLoad && i < Count; i++, k++)
+                                        if (images != null && images.Items != null && images.Items.Count > 0)
                                         {
-                                            PostModel.Items[i].Text = images.Items[i].Text;
-                                            PostModel.Items[i].IsLoadingImage = false;
-                                            await Task.Delay(30);
+                                            for (int i = startIndex, k = 0; k < startCountLoad && i < Count; i++, k++)
+                                            {
+                                                PostModel.Items[i].Text = images.Items[i].Text;
+                                                PostModel.Items[i].IsLoadingImage = false;
+                                                //await Task.Delay(15);
+                                            }
                                         }
-                                    }
+                                    });
 
                                     var prices = await Storage.GetModel($"{PostModel.GetType().Name}Prices.json") as PostModel;
                                     var startLoadinPrice = new Task(() => { });
 
-                                    await Task.Delay(500);
-                                    if (prices != null && prices.Items != null && prices.Items.Count > 0)
+                                    await Task.Delay(1000);
+                                    await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
                                     {
-                                        for (int i = startIndex, k = 0; k < startCountLoad && i < Count; i++, k++)
+                                        if (prices != null && prices.Items != null && prices.Items.Count > 0)
                                         {
-                                            PostModel.Items[i].Description = prices.Items[i].Description;
-                                            PostModel.Items[i].IsLoadingPrices = false;
-                                            await Task.Delay(30);
+                                            for (int i = startIndex, k = 0; k < startCountLoad && i < Count; i++, k++)
+                                            {
+                                                PostModel.Items[i].Description = prices.Items[i].Description;
+                                                PostModel.Items[i].IsLoadingPrices = false;
+                                                //await Task.Delay(15);
+                                            }
                                         }
-                                    }
+                                    });
 
                                     var remains = await Storage.GetModel($"{PostModel.GetType().Name}Remains.json") as PostModel;
-                                    await Task.Delay(500);
-                                    if (remains != null && remains.Items != null && remains.Items.Count > 0)
+                                    await Task.Delay(1000);
+                                    await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
                                     {
-                                        for (int i = startIndex, k = 0; k < startCountLoad && i < Count; i++, k++)
+                                        if (remains != null && remains.Items != null && remains.Items.Count > 0)
                                         {
-                                            PostModel.Items[i].Type = remains.Items[i].Type;
-                                            PostModel.Items[i].IsLoadingRemains = false;
-                                            PostModel.Items[i].IsEnabledBuy = true;
-                                            await Task.Delay(30);
+                                            for (int i = startIndex, k = 0; k < startCountLoad && i < Count; i++, k++)
+                                            {
+                                                PostModel.Items[i].Type = remains.Items[i].Type;
+                                                PostModel.Items[i].IsLoadingRemains = false;
+                                                PostModel.Items[i].IsEnabledBuy = true;
+                                                //await Task.Delay(15);
+                                            }
                                         }
-                                    }
+                                    });
                                     _IsLoadedList.LastOrDefault().TrySetResult(true);
                                 }
                             }

@@ -8,6 +8,9 @@
     <converters:VisibilityInverseConverter x:Key="visibilityInverseConverter"/>
     <converters:VisibilityConverter x:Key="visibilityConverter"/>
     <converters:UInt32Converter x:Key="uint32Converter"/>
+    <!--<converters:CustomStringConverter x:Key="customStringConverter"/>-->
+    <!--<converters:-->
+    <converters:StringProConverter x:Key="stringProConverter"/>
 
     <Style TargetType="custom:DemoControl">
         <Style.Setters>
@@ -33,7 +36,7 @@
                                     Visibility="Collapsed"/>
                                 <TextBlock x:Name="ProductName" Grid.Row="1" FontSize="13" Margin="4,7" TextAlignment="Left" TextWrapping="Wrap" Foreground="White"
                                     HorizontalAlignment="Left" VerticalAlignment="Center"
-                                    Text="{Binding Name}"
+                                    Text="{Binding Name, Converter={StaticResource stringProConverter}}"
                                     Visibility="Collapsed"/>
                                 <Grid x:Name="ProductPriceBorder" Grid.Row="2" Background="{StaticResource Static.Grid.Background}">
                                     <Grid.ColumnDefinitions>
