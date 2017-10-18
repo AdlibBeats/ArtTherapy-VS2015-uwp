@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using ArtTherapyCore.Extensions;
+using System.ComponentModel;
 
 namespace ArtTherapy.ViewModels
 {
@@ -22,6 +23,50 @@ namespace ArtTherapy.ViewModels
             IsFullInitialized = isFullInitialized;
         }
     }
+
+    public enum LoadingType : byte
+    {
+        GetCount,
+        GetFullData,
+        GetImagesData,
+        GetPricesData,
+        GetRemainsData
+    }
+
+    public class LoadingHelper
+    {
+        public LoadingHelper(LoadingType loadingType)
+        {
+            LoadingType = loadingType;
+        }
+
+        public int StartIndex { get; set; }
+
+        public int OnStartLoadingCount { get; set; }
+
+        public string Path
+        {
+            get
+            {
+                switch (LoadingType)
+                {
+                    case LoadingType.GetCount: return "PostModelCount.json";
+                    case LoadingType.GetFullData: return "PostModel.json";
+                    case LoadingType.GetImagesData: return "PostModelImages.json";
+                    case LoadingType.GetPricesData: return "PostModelPrices.json";
+                    case LoadingType.GetRemainsData: return "PostModelRemains.json";
+                    default: return String.Empty;
+                }
+            }
+        }
+
+        public PostModel PostModel { get; set; }
+
+        public bool IsLoaded { get; set; }
+
+        public LoadingType LoadingType { get; set; }
+    }
+
     public class PostViewModel<T> : BaseViewModel<T> where T : PostModel, new()
     {
         public BaseJsonStorage<T> Storage { get; private set; }
@@ -30,7 +75,11 @@ namespace ArtTherapy.ViewModels
 
         public event EventHandler<PostEventArgs> Loaded;
 
-        private List<TaskCompletionSource<bool>> _IsLoadedList = new List<TaskCompletionSource<bool>>();
+        private BackgroundWorker getCountWorker = new BackgroundWorker();
+        private BackgroundWorker fullDataWorker = new BackgroundWorker();
+        private BackgroundWorker imagesDataWorker = new BackgroundWorker();
+        private BackgroundWorker pricesDataWorker = new BackgroundWorker();
+        private BackgroundWorker remainsDataWorker = new BackgroundWorker();
 
         public PostViewModel()
         {
@@ -42,6 +91,22 @@ namespace ArtTherapy.ViewModels
             Storage = (BaseJsonStorage<T>)_JsonFactoryStorage.Create();
 
             PageSize = 2;
+
+            getCountWorker.WorkerReportsProgress = true;
+            getCountWorker.DoWork += OnGetCountBackgroundWorker;
+            getCountWorker.RunWorkerCompleted += GetCountBackgroundWorker_Completed;
+            fullDataWorker.WorkerReportsProgress = true;
+            fullDataWorker.DoWork += OnFullDataBackgroundWorker;
+            fullDataWorker.RunWorkerCompleted += FullDataBackgroundWorker_Completed;
+            imagesDataWorker.WorkerReportsProgress = true;
+            imagesDataWorker.DoWork += OnDataBackgroundWorkerOne;
+            imagesDataWorker.RunWorkerCompleted += DataBackgroundWorkerOne_Completed;
+            pricesDataWorker.WorkerReportsProgress = true;
+            pricesDataWorker.DoWork += OnDataBackgroundWorkerTwo;
+            pricesDataWorker.RunWorkerCompleted += DataBackgroundWorkerTwo_Completed;
+            remainsDataWorker.WorkerReportsProgress = true;
+            remainsDataWorker.DoWork += OnDataBackgroundWorkerThree;
+            remainsDataWorker.RunWorkerCompleted += DataBackgroundWorkerThree_Completed;
         }
 
         public int PageSize { get; set; }
@@ -52,112 +117,192 @@ namespace ArtTherapy.ViewModels
 
         public bool IsFullInitialized { get => Count.Equals(CurrentCount); }
 
-        public void LoadData(double scrollViewerProgress, int page = 1, int startCountLoad = 10)
+        private void OnGetCountBackgroundWorker(object sender, DoWorkEventArgs e)
         {
-            //AddDemoData();
-            if (scrollViewerProgress > 0.999)
+            var loadingHelper = e.Argument as LoadingHelper;
+            if (loadingHelper != null)
             {
-                Task.Factory.StartNew(async () =>
+                var postModel = Storage.GetModel(loadingHelper.Path).ConfigureAwait(false).GetAwaiter().GetResult();
+                if (postModel != null)
                 {
-                    await Dispatcher.TryRunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
-                    {
-                        var postModel = await Storage.GetModel($"{PostModel.GetType().Name}Count.json") as PostModel;
-                        if (postModel != null)
-                        {
-                            Count = postModel.Count;
-                            if (Count > 0 && CurrentCount < Count)
-                            {
-                                for (int i = 0; i < Count; i++)
-                                {
-                                    if (i == startCountLoad || CurrentCount == Count) break;
-                                    PostModel.Items.Add(new CurrentPostModel()
-                                    {
-                                        IsEnabledBuy = false,
-                                        IsLoading = true
-                                    });
-                                    Debug.WriteLine($"Добавлено {CurrentCount} из {Count}");
-                                }
-                                int startIndex = PostModel.Items.IndexOf(PostModel.Items.LastOrDefault());
-                                if (startIndex >= startCountLoad - 1)
-                                {
-                                    _IsLoadedList.Add(new TaskCompletionSource<bool>());
-                                    startIndex -= startCountLoad - 1;
-
-                                    var fullPostModel = await Storage.GetModel($"{PostModel.GetType().Name}.json") as PostModel;
-                                    await Task.Delay(500);
-                                    if (fullPostModel != null && fullPostModel.Items != null && fullPostModel.Items.Count > 0)
-                                    {
-                                        for (int i = startIndex, k = 0; k < startCountLoad && i < Count; i++, k++)
-                                        {
-
-                                            PostModel.Items[i] = fullPostModel.Items[i];
-                                            PostModel.Items[i].IsLoading = false;
-
-                                            PostModel.Items[i].IsLoadingImage = true;
-                                            PostModel.Items[i].IsLoadingPrices = true;
-                                            PostModel.Items[i].IsLoadingRemains = true;
-
-                                            await Task.Delay(15);
-                                        }
-                                    }
-
-                                    Loaded?.Invoke(this, new PostEventArgs(Count.Equals(CurrentCount)));
-
-                                    var images = await Storage.GetModel($"{PostModel.GetType().Name}Images.json") as PostModel;
-                                    await Task.Delay(500);
-                                    await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
-                                    {
-                                        if (images != null && images.Items != null && images.Items.Count > 0)
-                                        {
-                                            for (int i = startIndex, k = 0; k < startCountLoad && i < Count; i++, k++)
-                                            {
-                                                PostModel.Items[i].Text = images.Items[i].Text;
-                                                PostModel.Items[i].IsLoadingImage = false;
-                                                //await Task.Delay(15);
-                                            }
-                                        }
-                                    });
-
-                                    var prices = await Storage.GetModel($"{PostModel.GetType().Name}Prices.json") as PostModel;
-                                    await Task.Delay(500);
-                                    await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
-                                    {
-                                        if (prices != null && prices.Items != null && prices.Items.Count > 0)
-                                        {
-                                            for (int i = startIndex, k = 0; k < startCountLoad && i < Count; i++, k++)
-                                            {
-                                                PostModel.Items[i].Description = prices.Items[i].Description;
-                                                PostModel.Items[i].IsLoadingPrices = false;
-                                                //await Task.Delay(15);
-                                            }
-                                        }
-                                    });
-
-                                    var remains = await Storage.GetModel($"{PostModel.GetType().Name}Remains.json") as PostModel;
-                                    await Task.Delay(500);
-                                    await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
-                                    {
-                                        if (remains != null && remains.Items != null && remains.Items.Count > 0)
-                                        {
-                                            for (int i = startIndex, k = 0; k < startCountLoad && i < Count; i++, k++)
-                                            {
-                                                PostModel.Items[i].Type = remains.Items[i].Type;
-                                                PostModel.Items[i].IsLoadingRemains = false;
-                                                PostModel.Items[i].IsEnabledBuy = true;
-                                                //await Task.Delay(15);
-                                            }
-                                        }
-                                    });
-                                    _IsLoadedList.LastOrDefault().TrySetResult(true);//
-                                }
-                            }
-                        }
-                    });
-                });
+                    Count = postModel.Count;
+                    if (Count > 0 && CurrentCount < Count)
+                        e.Result = loadingHelper;
+                }
             }
         }
 
-        public void AddDemoData()
+        private void GetCountBackgroundWorker_Completed(object sender, RunWorkerCompletedEventArgs e)
+        {
+            var loadingHelper = e.Result as LoadingHelper;
+            if (loadingHelper != null)
+            {
+                for (int i = 0; i < Count; i++)
+                {
+                    if (i == loadingHelper.OnStartLoadingCount || CurrentCount == Count) break;
+
+                    PostModel.Items.Add(new CurrentPostModel()
+                    {
+                        IsEnabledBuy = false,
+                        IsLoading = true
+                    });
+                    Debug.WriteLine($"Добавлено {CurrentCount} из {Count}");
+                }
+
+                loadingHelper.StartIndex = PostModel.Items.IndexOf(PostModel.Items.LastOrDefault());
+                if (loadingHelper.StartIndex != -1 && loadingHelper.StartIndex >= loadingHelper.OnStartLoadingCount - 1)
+                {
+                    loadingHelper.StartIndex -= loadingHelper.OnStartLoadingCount - 1;
+                    loadingHelper.LoadingType = LoadingType.GetFullData;
+                    if (fullDataWorker.IsBusy != true)
+                        fullDataWorker.RunWorkerAsync(loadingHelper);
+                }
+            }
+        }
+
+        private void OnFullDataBackgroundWorker(object sender, DoWorkEventArgs e)
+        {
+            var loadingHelper = e.Argument as LoadingHelper;
+            if (loadingHelper != null)
+            {
+                loadingHelper.PostModel = Storage.GetModel(loadingHelper.Path).ConfigureAwait(false).GetAwaiter().GetResult();
+                //Task.Delay(500).Wait();
+                e.Result = loadingHelper;
+            }
+        }
+
+        private void FullDataBackgroundWorker_Completed(object sender, RunWorkerCompletedEventArgs e)
+        {
+            var loadingHelper = e.Result as LoadingHelper;
+            if (loadingHelper != null)
+            {
+                if (loadingHelper.PostModel != null && loadingHelper.PostModel.Items != null && loadingHelper.PostModel.Items.Count > 0)
+                {
+                    Loaded?.Invoke(this, new PostEventArgs(IsFullInitialized));
+                    for (int i = loadingHelper.StartIndex, k = 0; k < loadingHelper.OnStartLoadingCount && i < Count; i++, k++)
+                    {
+                        PostModel.Items[i] = loadingHelper.PostModel.Items[i];
+                        PostModel.Items[i].IsLoading = false;
+
+                        PostModel.Items[i].IsLoadingImage = true;
+                        PostModel.Items[i].IsLoadingPrices = true;
+                        PostModel.Items[i].IsLoadingRemains = true;
+                    }
+                    //Loaded?.Invoke(this, new PostEventArgs(IsFullInitialized));
+
+                    Debug.WriteLine(loadingHelper.LoadingType);
+                    loadingHelper.LoadingType = LoadingType.GetImagesData;
+                    if (imagesDataWorker.IsBusy != true)
+                        imagesDataWorker.RunWorkerAsync(loadingHelper);
+                }
+            }
+        }
+
+        private void OnDataBackgroundWorkerOne(object sender, DoWorkEventArgs e)
+        {
+            var loadingHelper = e.Argument as LoadingHelper;
+            if (loadingHelper != null)
+            {
+                loadingHelper.PostModel = Storage.GetModel(loadingHelper.Path).ConfigureAwait(false).GetAwaiter().GetResult();
+                //Task.Delay(500).Wait();
+                e.Result = loadingHelper;
+            }
+        }
+
+        private void DataBackgroundWorkerOne_Completed(object sender, RunWorkerCompletedEventArgs e)
+        {
+            var loadingHelper = e.Result as LoadingHelper;
+            if (loadingHelper != null)
+            {
+                if (loadingHelper.PostModel != null && loadingHelper.PostModel.Items != null && loadingHelper.PostModel.Items.Count > 0)
+                {
+                    for (int i = loadingHelper.StartIndex, k = 0; k < loadingHelper.OnStartLoadingCount && i < Count; i++, k++)
+                    {
+                        PostModel.Items[i].Text = loadingHelper.PostModel.Items[i].Text;
+                        PostModel.Items[i].IsLoadingImage = false;
+                    }
+
+                    Debug.WriteLine(loadingHelper.LoadingType);
+                    loadingHelper.LoadingType = LoadingType.GetPricesData;
+                    if (pricesDataWorker.IsBusy != true)
+                        pricesDataWorker.RunWorkerAsync(loadingHelper);
+                }
+            }
+        }
+
+        private void OnDataBackgroundWorkerTwo(object sender, DoWorkEventArgs e)
+        {
+            var loadingHelper = e.Argument as LoadingHelper;
+            if (loadingHelper != null)
+            {
+                loadingHelper.PostModel = Storage.GetModel(loadingHelper.Path).ConfigureAwait(false).GetAwaiter().GetResult();
+                //Task.Delay(500).Wait();
+                e.Result = loadingHelper;
+            }
+        }
+
+        private void DataBackgroundWorkerTwo_Completed(object sender, RunWorkerCompletedEventArgs e)
+        {
+            var loadingHelper = e.Result as LoadingHelper;
+            if (loadingHelper != null)
+            {
+                if (loadingHelper.PostModel != null && loadingHelper.PostModel.Items != null && loadingHelper.PostModel.Items.Count > 0)
+                {
+                    for (int i = loadingHelper.StartIndex, k = 0; k < loadingHelper.OnStartLoadingCount && i < Count; i++, k++)
+                    {
+                        PostModel.Items[i].Description = loadingHelper.PostModel.Items[i].Description;
+                        PostModel.Items[i].IsLoadingPrices = false;
+                    }
+
+                    Debug.WriteLine(loadingHelper.LoadingType);
+                    loadingHelper.LoadingType = LoadingType.GetRemainsData;
+                    if (remainsDataWorker.IsBusy != true)
+                        remainsDataWorker.RunWorkerAsync(loadingHelper);
+                }
+            }
+        }
+
+        private void OnDataBackgroundWorkerThree(object sender, DoWorkEventArgs e)
+        {
+            var loadingHelper = e.Argument as LoadingHelper;
+            if (loadingHelper != null)
+            {
+                loadingHelper.PostModel = Storage.GetModel(loadingHelper.Path).ConfigureAwait(false).GetAwaiter().GetResult();
+                //Task.Delay(500).Wait();
+                e.Result = loadingHelper;
+            }
+        }
+
+        private void DataBackgroundWorkerThree_Completed(object sender, RunWorkerCompletedEventArgs e)
+        {
+            var loadingHelper = e.Result as LoadingHelper;
+            if (loadingHelper != null)
+            {
+                if (loadingHelper.PostModel != null && loadingHelper.PostModel.Items != null && loadingHelper.PostModel.Items.Count > 0)
+                {
+                    for (int i = loadingHelper.StartIndex, k = 0; k < loadingHelper.OnStartLoadingCount && i < Count; i++, k++)
+                    {
+                        PostModel.Items[i].Type = loadingHelper.PostModel.Items[i].Type;
+                        PostModel.Items[i].IsLoadingRemains = false;
+                        PostModel.Items[i].IsEnabledBuy = true;
+                    }
+                    Debug.WriteLine(loadingHelper.LoadingType);
+                }
+            }
+        }
+
+        public void LoadData(double scrollViewerProgress, int page = 1, int startCountLoad = 10)
+        {
+            if (scrollViewerProgress > 0.999)
+            {
+                LoadingHelper loadingHelper = new LoadingHelper(LoadingType.GetCount);
+                loadingHelper.OnStartLoadingCount = startCountLoad;
+                if (getCountWorker.IsBusy != true)
+                    getCountWorker.RunWorkerAsync(loadingHelper);
+            }
+        }
+
+        public void AddDemoData(LoadingHelper loadingHelper)
         {
             var demoPostModel = new T()
             {
@@ -179,7 +324,7 @@ namespace ArtTherapy.ViewModels
                 });
             }
 
-            Storage.SetModel($"{PostModel.GetType().Name}Images.json", demoPostModel);
+            Storage.SetModel(loadingHelper.Path, demoPostModel);
         }
 
         public override T GetModel()
@@ -187,24 +332,11 @@ namespace ArtTherapy.ViewModels
             return PostModel;
         }
 
-        public override async void Dispose()
-        {
-            foreach (var x in _IsLoadedList)
-                await x.Task;
-
-            PostModel.Items.Clear();
-            PostModel = null;
-
-            _IsLoadedList.Clear();
-            _IsLoadedList = null;
-        }
         public T PostModel
         {
-            get { return (T)GetValue(PostModelProperty); }
-            set { SetValue(PostModelProperty, value); }
+            get => _PostModel;
+            set => SetValue(ref _PostModel, value);
         }
-        
-        public static readonly DependencyProperty PostModelProperty =
-            DependencyProperty.Register("PostModel", typeof(T), typeof(PostViewModel<T>), new PropertyMetadata(null));
+        private T _PostModel;
     }
 }
