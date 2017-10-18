@@ -54,6 +54,9 @@ namespace ArtTherapy.Pages.PostPages.PoetryPages
             NavigateEventType = NavigateEventTypes.ListBoxSelectionChanged;
             _ViewModel =  new PostViewModel<ProductModel>();
 
+            _ContentDialog.Background = new SolidColorBrush(Colors.Black);
+            _ContentDialog.BorderThickness = new Thickness(0);
+            _ContentDialog.BorderBrush = _ContentDialog.Background;
             _ContentDialog.FullSizeDesired = true;
             _ContentDialog.MinWidth = 10;
             _ContentDialog.MinHeight = 10;
@@ -87,7 +90,7 @@ namespace ArtTherapy.Pages.PostPages.PoetryPages
         private void _viewModel_Loaded(object sender, PostEventArgs e)
         {
             double value = value = scrollViewer.GetScrollViewProgress();
-            //if (!e.IsFullInitialized)
+            if (!e.IsFullInitialized)
                 _ViewModel.LoadData(value);
         }
 

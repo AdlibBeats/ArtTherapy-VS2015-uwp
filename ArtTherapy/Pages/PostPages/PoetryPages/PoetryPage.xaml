@@ -22,7 +22,7 @@
                         ItemHeight="288"
                         MinWidth="155"
                         DesiredWidth="175"
-                        SelectionMode="Single"
+                        SelectionMode="Single" DataFetchSize="10"
                         IsItemClickEnabled="True" x:Name="gridView" SelectionChanged="gridView_SelectionChanged"
                         ItemsSource="{x:Bind _ViewModel.ProductModel.Items, Mode=OneWay}"
                         ItemContainerStyle="{StaticResource gridViewItemStyle}">

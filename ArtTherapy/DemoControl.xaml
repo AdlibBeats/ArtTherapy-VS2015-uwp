@@ -9,8 +9,7 @@
     <converters:VisibilityConverter x:Key="visibilityConverter"/>
     <converters:UInt32Converter x:Key="uint32Converter"/>
     <converters:Int32Converter x:Key="int32Converter"/>
-    <!--<converters:CustomStringConverter x:Key="customStringConverter"/>-->
-    <!--<converters:-->
+    
     <converters:StringProConverter x:Key="stringProConverter"/>
 
     <Style TargetType="custom:DemoControl">
