@@ -1,5 +1,7 @@
-﻿using ArtTherapyCore.BaseModels;
+﻿using ArtTherapy.ViewModels;
+using ArtTherapyCore.BaseModels;
 using Newtonsoft.Json;
+using System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media;
 
@@ -37,6 +39,13 @@ namespace ArtTherapy.Models.PostModels
         }
         private string _Description;
 
+        public string DiscountDescription
+        {
+            get => _DiscountDescription;
+            set => SetValue(ref _DiscountDescription, value);
+        }
+        private string _DiscountDescription;
+
         public string Text
         {
             get => _Text;
@@ -54,6 +63,8 @@ namespace ArtTherapy.Models.PostModels
         #endregion
 
         #region JsonIgnore
+
+        
 
         [JsonIgnore]
         public ImageSource Image

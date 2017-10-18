@@ -113,34 +113,34 @@ namespace ArtTherapy.Storage
             Debug.WriteLine($"{fileName}: {Windows.ApplicationModel.Package.Current.InstalledLocation.Path}");
 
             StorageFile file = null;
-            StorageFolder folder1 = null;
-            StorageFolder folder2 = null;
+            StorageFolder folder1 = ApplicationData.Current.LocalFolder;
+            //StorageFolder folder2 = null;
 
             return Task.Run(async () =>
             {
                 try
                 {
-                    try
-                    {
-                        folder1 = await Windows.ApplicationModel.Package.Current.InstalledLocation.GetFolderAsync("ArtTherapyCore");
-                    }
-                    catch (Exception ex1)
-                    {
-                        Debug.WriteLine(ex1.Message);
-                        folder1 = await Windows.ApplicationModel.Package.Current.InstalledLocation.CreateFolderAsync("ArtTherapyCore", CreationCollisionOption.OpenIfExists);
-                    }
+                    //try
+                    //{
+                    //    folder1 = await Windows.ApplicationModel.Package.Current.InstalledLocation.GetFolderAsync("ArtTherapyCore");
+                    //}
+                    //catch (Exception ex1)
+                    //{
+                    //    Debug.WriteLine(ex1.Message);
+                    //    folder1 = await Windows.ApplicationModel.Package.Current.InstalledLocation.CreateFolderAsync("ArtTherapyCore", CreationCollisionOption.OpenIfExists);
+                    //}
 
-                    try
-                    {
-                        folder2 = await folder1.GetFolderAsync(@"Repository");
-                    }
-                    catch (Exception ex2)
-                    {
-                        Debug.WriteLine(ex2.Message);
-                        folder2 = await folder1.CreateFolderAsync(@"Repository", CreationCollisionOption.OpenIfExists);
-                    }
+                    //try
+                    //{
+                    //    folder2 = await folder1.GetFolderAsync(@"Repository");
+                    //}
+                    //catch (Exception ex2)
+                    //{
+                    //    Debug.WriteLine(ex2.Message);
+                    //    folder2 = await folder1.CreateFolderAsync(@"Repository", CreationCollisionOption.ReplaceExisting);
+                    //}
 
-                    file = await folder2.CreateFileAsync(@"\" + fileName, CreationCollisionOption.ReplaceExisting);
+                    file = await folder1.CreateFileAsync(@"\" + fileName, CreationCollisionOption.ReplaceExisting);
                 }
                 catch (Exception exception)
                 {
