@@ -97,8 +97,8 @@
     <Compile Include="Models\ItemsModels\CurrentMenuItemModel.cs" />
     <Compile Include="Models\ItemsModels\MenuItemsModel.cs" />
     <Compile Include="Models\InfoModels\PagingInfo.cs" />
-    <Compile Include="Models\PostModels\CurrentPostModel.cs" />
-    <Compile Include="Models\PostModels\PostModel.cs" />
+    <Compile Include="Models\ProductModels\CurrentProductModel.cs" />
+    <Compile Include="Models\ProductModels\ProductModel.cs" />
     <Compile Include="Models\ProfileModels\ProfileModel.cs" />
     <Compile Include="Pages\AboutAppPages\AboutAppPage.xaml.cs">
       <DependentUpon>AboutAppPage.xaml</DependentUpon>

@@ -1,16 +1,16 @@
 ﻿using ArtTherapyCore.BaseModels;
 using System.Collections.ObjectModel;
 
-namespace ArtTherapy.Models.PostModels
+namespace ArtTherapy.Models.ProductModels
 {
-    public class PostModel : BaseModel
+    public class ProductModel : BaseModel
     {
-        public ObservableCollection<CurrentPostModel> Items
+        public ObservableCollection<CurrentProductModel> Items
         {
             get => _Items;
             set => _Items = value;
         }
-        private ObservableCollection<CurrentPostModel> _Items;
+        private ObservableCollection<CurrentProductModel> _Items;
 
         public int Count
         {

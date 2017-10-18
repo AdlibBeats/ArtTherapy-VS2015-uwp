@@ -14,7 +14,7 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using ArtTherapy.AppStorage;
-using ArtTherapy.Models.PostModels;
+using ArtTherapy.Models.ProductModels;
 using Windows.Storage;
 using System.Diagnostics;
 using Newtonsoft.Json;

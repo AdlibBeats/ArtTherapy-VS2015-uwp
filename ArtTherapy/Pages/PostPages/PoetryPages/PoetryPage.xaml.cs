@@ -5,7 +5,7 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
-using ArtTherapy.Models.PostModels;
+using ArtTherapy.Models.ProductModels;
 using Microsoft.Toolkit.Uwp.UI.Controls;
 using Windows.UI;
 using System.Runtime.CompilerServices;
@@ -37,11 +37,11 @@ namespace ArtTherapy.Pages.PostPages.PoetryPages
         }
         private NavigateEventTypes _NavigateEventType;
 
-        public PostViewModel<PostModel> ViewModel
+        public PostViewModel<ProductModel> ViewModel
         {
             get => _ViewModel;
         }
-        private PostViewModel<PostModel> _ViewModel;
+        private PostViewModel<ProductModel> _ViewModel;
 
         public event EventHandler<EventArgs> Initialized;
 
@@ -52,7 +52,7 @@ namespace ArtTherapy.Pages.PostPages.PoetryPages
             Id = 2;
             Title = "Стихи";
             NavigateEventType = NavigateEventTypes.ListBoxSelectionChanged;
-            _ViewModel =  new PostViewModel<PostModel>();
+            _ViewModel =  new PostViewModel<ProductModel>();
 
             _ContentDialog.FullSizeDesired = true;
             _ContentDialog.MinWidth = 10;
@@ -160,15 +160,15 @@ namespace ArtTherapy.Pages.PostPages.PoetryPages
                 var adaptiveGridView = sender as AdaptiveGridView;
                 if (adaptiveGridView != null)
                 {
-                    var selectedItem = adaptiveGridView.SelectedItem as CurrentPostModel;
-                    if (selectedItem != null && selectedItem.Id > 0)
+                    var selectedItem = adaptiveGridView.SelectedItem as CurrentProductModel;
+                    if (selectedItem != null && selectedItem.Sku > 0)
                     {
                         textBlock.FontSize = 24d;
                         textBlock.TextWrapping = TextWrapping.WrapWholeWords;
                         textBlock.HorizontalAlignment = HorizontalAlignment.Center;
                         textBlock.VerticalAlignment = VerticalAlignment.Center;
                         textBlock.Foreground = new SolidColorBrush(Colors.White);
-                        textBlock.Text = $"{selectedItem.Id}: {selectedItem.Name}";
+                        textBlock.Text = $"{selectedItem.Sku}: {selectedItem.Name}";
 
                         _ContentDialog.Content = textBlock;
                         await _ContentDialog.ShowAsync();

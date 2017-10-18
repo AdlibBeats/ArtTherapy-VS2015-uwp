@@ -6,7 +6,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
     xmlns:anControls="using:ArtTherapyUI.Controls"
-    xmlns:models="using:ArtTherapy.Models.PostModels"
+    xmlns:models="using:ArtTherapy.Models.ProductModels"
     xmlns:ex="using:ArtTherapyCore.ValueConverters"
     xmlns:local="using:ArtTherapy"
     mc:Ignorable="d" SizeChanged="Page_SizeChanged" Loaded="Page_Loaded">
@@ -20,14 +20,14 @@
             <Grid Margin="5">
                 <controls:AdaptiveGridView
                         ItemHeight="288"
-                        MinWidth="160"
-                        DesiredWidth="170"
+                        MinWidth="155"
+                        DesiredWidth="175"
                         SelectionMode="Single"
                         IsItemClickEnabled="True" x:Name="gridView" SelectionChanged="gridView_SelectionChanged"
-                        ItemsSource="{x:Bind _ViewModel.PostModel.Items, Mode=OneWay}"
+                        ItemsSource="{x:Bind _ViewModel.ProductModel.Items, Mode=OneWay}"
                         ItemContainerStyle="{StaticResource gridViewItemStyle}">
                     <ItemsControl.ItemTemplate>
-                        <DataTemplate x:DataType="models:CurrentPostModel">
+                        <DataTemplate x:DataType="models:CurrentProductModel">
                             <local:DemoControl Model="{x:Bind}"/>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>

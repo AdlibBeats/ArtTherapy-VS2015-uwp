@@ -5,18 +5,18 @@ using System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media;
 
-namespace ArtTherapy.Models.PostModels
+namespace ArtTherapy.Models.ProductModels
 {
-    public class CurrentPostModel : BaseModel
+    public class CurrentProductModel : BaseModel
     {
         #region Json Serialized
 
-        public uint Id
+        public uint Sku
         {
-            get => _Id;
-            set => SetValue(ref _Id, value);
+            get => _Sku;
+            set => SetValue(ref _Sku, value);
         }
-        private uint _Id;
+        private uint _Sku;
 
         public string BuyIcon
         {
@@ -32,47 +32,45 @@ namespace ArtTherapy.Models.PostModels
         }
         private string _Name;
 
-        public string Description
+        public int Price
         {
-            get => _Description;
-            set => SetValue(ref _Description, value);
+            get => _Price;
+            set => SetValue(ref _Price, value);
         }
-        private string _Description;
+        private int _Price;
 
-        public string DiscountDescription
+        public int DiscountPrice
         {
-            get => _DiscountDescription;
-            set => SetValue(ref _DiscountDescription, value);
+            get => _DiscountPrice;
+            set => SetValue(ref _DiscountPrice, value);
         }
-        private string _DiscountDescription;
+        private int _DiscountPrice;
 
-        public string Text
+        public string ImageUrl
         {
-            get => _Text;
-            set => SetValue(ref _Text, value);
+            get => _ImageUrl;
+            set => SetValue(ref _ImageUrl, value);
         }
-        private string _Text;
+        private string _ImageUrl;
         
-        public string Type
+        public uint Remains
         {
-            get => _Type;
-            set => SetValue(ref _Type, value);
+            get => _Remains;
+            set => SetValue(ref _Remains, value);
         }
-        private string _Type;
+        private uint _Remains;
 
         #endregion
 
         #region JsonIgnore
 
-        
-
         [JsonIgnore]
-        public ImageSource Image
+        public int PriceDifference
         {
-            get => _Image;
-            set => SetValue(ref _Image, value);
+            get => _PriceDifference;
+            set => SetValue(ref _PriceDifference, value);
         }
-        private ImageSource _Image;
+        private int _PriceDifference;
 
         [JsonIgnore]
         public bool IsLoading
@@ -91,12 +89,12 @@ namespace ArtTherapy.Models.PostModels
         private bool _IsLoadingImage;
 
         [JsonIgnore]
-        public bool IsLoadingPrices
+        public bool IsLoadingPrice
         {
-            get => _IsLoadingPrices;
-            set => SetValue(ref _IsLoadingPrices, value);
+            get => _IsLoadingPrice;
+            set => SetValue(ref _IsLoadingPrice, value);
         }
-        private bool _IsLoadingPrices;
+        private bool _IsLoadingPrice;
 
         [JsonIgnore]
         public bool IsLoadingRemains

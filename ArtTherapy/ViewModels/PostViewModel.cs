@@ -1,4 +1,4 @@
-﻿using ArtTherapy.Models.PostModels;
+﻿using ArtTherapy.Models.ProductModels;
 using ArtTherapy.Storage;
 using ArtTherapyCore.BaseViewModels;
 using System;
@@ -22,7 +22,7 @@ namespace ArtTherapy.ViewModels
             IsFullInitialized = isFullInitialized;
         }
     }
-    public class PostViewModel<T> : BaseViewModel<T> where T : PostModel, new()
+    public class PostViewModel<T> : BaseViewModel<T> where T : ProductModel, new()
     {
         public BaseJsonStorage<T> Storage { get; private set; }
 
@@ -34,9 +34,9 @@ namespace ArtTherapy.ViewModels
 
         public PostViewModel()
         {
-            PostModel = new T()
+            ProductModel = new T()
             {
-                Items = new ObservableCollection<CurrentPostModel>()
+                Items = new ObservableCollection<CurrentProductModel>()
             };
 
             Storage = (BaseJsonStorage<T>)_JsonFactoryStorage.Create();
@@ -48,12 +48,13 @@ namespace ArtTherapy.ViewModels
 
         public int Count { get; private set; }
 
-        public int CurrentCount { get => PostModel.Items.Count; }
+        public int CurrentCount { get => ProductModel.Items.Count; }
 
         public bool IsFullInitialized { get => Count.Equals(CurrentCount); }
 
         public void LoadData(double scrollViewerProgress, int page = 1, int startCountLoad = 10)
         {
+            //await AddDemoData(new LoadingHelper(LoadingType.GetRemainsData));
             if (scrollViewerProgress > 0.9999)
             {
                 Task.Run(async () =>
@@ -70,7 +71,7 @@ namespace ArtTherapy.ViewModels
                                 for (int i = 0; i < Count; i++)
                                 {
                                     if (i == startCountLoad || CurrentCount == Count) break;
-                                    PostModel.Items.Add(new CurrentPostModel()
+                                    ProductModel.Items.Add(new CurrentProductModel()
                                     {
                                         IsEnabledBuy = false,
                                         IsLoading = true
@@ -80,7 +81,7 @@ namespace ArtTherapy.ViewModels
 
                                 _IsLoadedList.Add(new TaskCompletionSource<bool>());
 
-                                int startIndex = PostModel.Items.IndexOf(PostModel.Items.LastOrDefault());
+                                int startIndex = ProductModel.Items.IndexOf(ProductModel.Items.LastOrDefault());
                                 if (startIndex >= startCountLoad - 1)
                                 {
                                     startIndex -= startCountLoad - 1;
@@ -98,12 +99,12 @@ namespace ArtTherapy.ViewModels
                                                 for (int i = startIndex, k = 0; k < startCountLoad && i < Count; i++, k++)
                                                 {
 
-                                                    PostModel.Items[i] = fullPostModel.Items[i];
-                                                    PostModel.Items[i].IsLoading = false;
+                                                    ProductModel.Items[i] = fullPostModel.Items[i];
+                                                    ProductModel.Items[i].IsLoading = false;
 
-                                                    PostModel.Items[i].IsLoadingImage = true;
-                                                    PostModel.Items[i].IsLoadingPrices = true;
-                                                    PostModel.Items[i].IsLoadingRemains = true;
+                                                    ProductModel.Items[i].IsLoadingImage = true;
+                                                    ProductModel.Items[i].IsLoadingPrice = true;
+                                                    ProductModel.Items[i].IsLoadingRemains = true;
 
                                                     //await Task.Delay(15);
                                                 }
@@ -124,8 +125,8 @@ namespace ArtTherapy.ViewModels
                                             {
                                                 for (int i = startIndex, k = 0; k < startCountLoad && i < Count; i++, k++)
                                                 {
-                                                    PostModel.Items[i].Text = images.Items[i].Text;
-                                                    PostModel.Items[i].IsLoadingImage = false;
+                                                    ProductModel.Items[i].ImageUrl = images.Items[i].ImageUrl;
+                                                    ProductModel.Items[i].IsLoadingImage = false;
                                                     //await Task.Delay(15);
                                                 }
                                             }
@@ -144,9 +145,12 @@ namespace ArtTherapy.ViewModels
                                             {
                                                 for (int i = startIndex, k = 0; k < startCountLoad && i < Count; i++, k++)
                                                 {
-                                                    PostModel.Items[i].DiscountDescription = prices.Items[i].DiscountDescription;
-                                                    PostModel.Items[i].Description = prices.Items[i].Description;
-                                                    PostModel.Items[i].IsLoadingPrices = false;
+                                                    ProductModel.Items[i].DiscountPrice = prices.Items[i].DiscountPrice;
+                                                    ProductModel.Items[i].Price = prices.Items[i].Price;
+                                                    if (ProductModel.Items[i].DiscountPrice > 0)
+                                                        ProductModel.Items[i].PriceDifference =
+                                                            ProductModel.Items[i].Price - ProductModel.Items[i].DiscountPrice;
+                                                    ProductModel.Items[i].IsLoadingPrice = false;
                                                     //await Task.Delay(15);
                                                 }
                                             }
@@ -165,9 +169,9 @@ namespace ArtTherapy.ViewModels
                                             {
                                                 for (int i = startIndex, k = 0; k < startCountLoad && i < Count; i++, k++)
                                                 {
-                                                    PostModel.Items[i].Type = remains.Items[i].Type;
-                                                    PostModel.Items[i].IsLoadingRemains = false;
-                                                    PostModel.Items[i].IsEnabledBuy = true;
+                                                    ProductModel.Items[i].Remains = remains.Items[i].Remains;
+                                                    ProductModel.Items[i].IsLoadingRemains = false;
+                                                    ProductModel.Items[i].IsEnabledBuy = true;
                                                     //await Task.Delay(15);
                                                 }
                                             }
@@ -186,22 +190,22 @@ namespace ArtTherapy.ViewModels
         {
             var demoPostModel = new T()
             {
-                Items = new ObservableCollection<CurrentPostModel>()
+                Items = new ObservableCollection<CurrentProductModel>()
             };
 
             for (int i = 0, k = 0; i < 175; i++, k++)
             {
-                demoPostModel.Items.Add(new CurrentPostModel()
+                demoPostModel.Items.Add(new CurrentProductModel()
                 {
-                    Id = (uint)(3002550 + (i + 1)),
-                    Description = "108990р.",
-                    DiscountDescription = (i + 1) > 10 && i <= 35 ? "98990р." : null,
+                    //Sku = (uint)(3002550 + (i + 1)),
+                    //Price = 108990,
+                    //DiscountPrice = (i + 1) > 10 && i <= 35 ? 98990 : 0,
                     //Image = null,
                     //BuyIcon = "\xE7BF",
                     //IsLoading = false,
                     //Name = "Ноутбук Apple MacBook Pro 2017 Core i7/16/256 SSD Gold (MNYK2RU/A)",
-                    //Text = "https://rebabaskett.com/wp-content/uploads/2017/01/u_10150899.jpg",
-                    //Type = $"{k + 1} шт."
+                    //ImageUrl = "https://rebabaskett.com/wp-content/uploads/2017/01/u_10150899.jpg",
+                    Remains = (uint)(k + 1)
                 });
                 if ((k + 1) == 10)
                     k = 0;
@@ -212,7 +216,7 @@ namespace ArtTherapy.ViewModels
 
         public override T GetModel()
         {
-            return PostModel;
+            return ProductModel;
         }
 
         public override async void Dispose()
@@ -220,19 +224,19 @@ namespace ArtTherapy.ViewModels
             foreach (var x in _IsLoadedList)
                 await x.Task;
 
-            PostModel.Items.Clear();
-            PostModel = null;
+            ProductModel.Items.Clear();
+            ProductModel = null;
 
             _IsLoadedList.Clear();
             _IsLoadedList = null;
         }
-        public T PostModel
+        public T ProductModel
         {
             get { return (T)GetValue(PostModelProperty); }
             set { SetValue(PostModelProperty, value); }
         }
         
         public static readonly DependencyProperty PostModelProperty =
-            DependencyProperty.Register("PostModel", typeof(T), typeof(PostViewModel<T>), new PropertyMetadata(null));
+            DependencyProperty.Register("ProductModel", typeof(T), typeof(PostViewModel<T>), new PropertyMetadata(null));
     }
 }

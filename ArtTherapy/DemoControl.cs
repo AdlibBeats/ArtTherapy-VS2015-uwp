@@ -1,4 +1,4 @@
-﻿using ArtTherapy.Models.PostModels;
+﻿using ArtTherapy.Models.ProductModels;
 using ArtTherapyCore.BaseModels;
 using System;
 using System.Collections.Generic;
@@ -16,20 +16,20 @@ namespace ArtTherapy
 {
     public class DemoControl : Control
     {
-        public CurrentPostModel Model
+        public CurrentProductModel Model
         {
-            get { return (CurrentPostModel)GetValue(ModelProperty); }
+            get { return (CurrentProductModel)GetValue(ModelProperty); }
             set { SetValue(ModelProperty, value); }
         }
 
         public static readonly DependencyProperty ModelProperty =
-            DependencyProperty.Register("Model", typeof(CurrentPostModel), typeof(DemoControl), new PropertyMetadata(default(CurrentPostModel), OnModelChanged));
+            DependencyProperty.Register("Model", typeof(CurrentProductModel), typeof(DemoControl), new PropertyMetadata(default(CurrentProductModel), OnModelChanged));
 
         private static void OnModelChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var itemControl = d as DemoControl;
 
-            var product = e.NewValue as CurrentPostModel;
+            var product = e.NewValue as CurrentProductModel;
             if (product != null)
             {
                 if (product != null)
@@ -38,21 +38,21 @@ namespace ArtTherapy
             }
         }
 
-        public void UpdateState(CurrentPostModel currentPostModel)
+        public void UpdateState(CurrentProductModel currentPostModel)
         {
             VisualStateManager.GoToState(this, Model.IsLoading ? "Loading" : "Loaded", true);
             VisualStateManager.GoToState(this, Model.IsLoadingImage ? "ImageLoading" : "ImageLoaded", true);
-            if (currentPostModel.DiscountDescription != null)
+            if (currentPostModel.DiscountPrice != 0)
                 VisualStateManager.GoToState(this, Model.IsLoading ? "DiscountPricesLoading" : "DiscountPricesLoaded", true);
             else
-                VisualStateManager.GoToState(this, Model.IsLoadingPrices ? "PricesLoading" : "PricesLoaded", true);
+                VisualStateManager.GoToState(this, Model.IsLoadingPrice ? "PricesLoading" : "PricesLoaded", true);
             VisualStateManager.GoToState(this, Model.IsLoadingRemains ? "RemainsLoading" : "RemainsLoaded", true);
         }
 
         public DemoControl()
         {
             this.DefaultStyleKey = typeof(DemoControl);
-            Model = new CurrentPostModel();
+            Model = new CurrentProductModel();
         }
 
         protected override void OnApplyTemplate()
