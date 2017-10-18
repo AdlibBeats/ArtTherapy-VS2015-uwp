@@ -32,8 +32,6 @@ namespace ArtTherapy
             var product = e.NewValue as CurrentPostModel;
             if (product != null)
             {
-                if (product.DiscountDescription != null)
-                    product.Description = product.DiscountDescription;
                 if (product != null)
                     product.PropertyChanged += (sender, args) =>
                         itemControl?.UpdateState(product);

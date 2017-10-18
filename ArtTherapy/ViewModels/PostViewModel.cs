@@ -58,10 +58,10 @@ namespace ArtTherapy.ViewModels
             {
                 Task.Run(async () =>
                 {
-                    await Dispatcher.TryRunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
+                    await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
                     {
                         LoadingHelper loadingHelper = new LoadingHelper(LoadingType.GetCount);
-                        var postModel = await Storage.GetModel(loadingHelper.Path) as PostModel;
+                        var postModel = await Storage.GetModel(loadingHelper.Path) as T;
                         if (postModel != null)
                         {
                             Count = postModel.Count;
@@ -78,15 +78,16 @@ namespace ArtTherapy.ViewModels
                                     Debug.WriteLine($"Добавлено {CurrentCount} из {Count}");
                                 }
 
+                                _IsLoadedList.Add(new TaskCompletionSource<bool>());
+
                                 int startIndex = PostModel.Items.IndexOf(PostModel.Items.LastOrDefault());
                                 if (startIndex >= startCountLoad - 1)
                                 {
-                                    _IsLoadedList.Add(new TaskCompletionSource<bool>());
                                     startIndex -= startCountLoad - 1;
 
                                     //Назвние и Sku
                                     loadingHelper.LoadingType = LoadingType.GetFullData;
-                                    var fullPostModel = await Storage.GetModel(loadingHelper.Path) as PostModel;
+                                    var fullPostModel = await Storage.GetModel(loadingHelper.Path) as T;
                                     await Task.Run(async () =>
                                     {
                                         await Task.Delay(1000);
@@ -113,10 +114,10 @@ namespace ArtTherapy.ViewModels
 
                                     //Картинки
                                     loadingHelper.LoadingType = LoadingType.GetImagesData;
-                                    var images = await Storage.GetModel(loadingHelper.Path) as PostModel;
+                                    var images = await Storage.GetModel(loadingHelper.Path) as T;
                                     await Task.Run(async () =>
                                     {
-                                        await Task.Delay(500);
+                                        await Task.Delay(50);
                                         await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
                                         {
                                             if (images != null && images.Items != null && images.Items.Count > 0)
@@ -133,10 +134,10 @@ namespace ArtTherapy.ViewModels
 
                                     //Цена
                                     loadingHelper.LoadingType = LoadingType.GetPricesData;
-                                    var prices = await Storage.GetModel(loadingHelper.Path) as PostModel;
+                                    var prices = await Storage.GetModel(loadingHelper.Path) as T;
                                     await Task.Run(async () =>
                                     {
-                                        await Task.Delay(500);
+                                        await Task.Delay(50);
                                         await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
                                         {
                                             if (prices != null && prices.Items != null && prices.Items.Count > 0)
@@ -154,10 +155,10 @@ namespace ArtTherapy.ViewModels
 
                                     //Остатки
                                     loadingHelper.LoadingType = LoadingType.GetRemainsData;
-                                    var remains = await Storage.GetModel(loadingHelper.Path) as PostModel;
+                                    var remains = await Storage.GetModel(loadingHelper.Path) as T;
                                     await Task.Run(async () =>
                                     {
-                                        await Task.Delay(500);
+                                        await Task.Delay(50);
                                         await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
                                         {
                                             if (remains != null && remains.Items != null && remains.Items.Count > 0)

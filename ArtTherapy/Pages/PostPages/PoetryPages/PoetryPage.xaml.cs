@@ -87,15 +87,14 @@ namespace ArtTherapy.Pages.PostPages.PoetryPages
         private void _viewModel_Loaded(object sender, PostEventArgs e)
         {
             double value = value = scrollViewer.GetScrollViewProgress();
-            if (!e.IsFullInitialized && value > 0.999)
+            //if (!e.IsFullInitialized)
                 _ViewModel.LoadData(value);
         }
 
         private void ScrollViewer_ViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
         {
             double value = scrollViewer.GetScrollViewProgress();
-            if (value > 0.999)
-                _ViewModel.LoadData(value);
+            _ViewModel.LoadData(value);
         }
 
         private void Page_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -104,8 +103,7 @@ namespace ArtTherapy.Pages.PostPages.PoetryPages
             _ContentDialog.Height = Window.Current.Bounds.Height;
 
             double value = scrollViewer.GetScrollViewProgress();
-            if (value > 0.999)
-                _ViewModel.LoadData(value);
+            _ViewModel.LoadData(value);
         }
 
         ContentDialog _ContentDialog = new ContentDialog();

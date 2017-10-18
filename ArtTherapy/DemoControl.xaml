@@ -23,37 +23,43 @@
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="*"/>
                                     <RowDefinition Height="Auto" MaxHeight="158"/>
-                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="40"/>
+                                    <RowDefinition Height="30"/>
                                     <RowDefinition Height="Auto"/>
                                 </Grid.RowDefinitions>
+                                <!--Картинка-->
                                 <controls:ImageEx x:Name="ProductImage" Grid.Row="0" Grid.RowSpan="2" Stretch="Uniform" Background="{x:Null}"
                                     Source="{Binding Text}" IsCacheEnabled="False"
                                     Visibility="Collapsed"/>
                                 <ProgressRing x:Name="IsLoadingImageProgress" Grid.Row="0" Grid.RowSpan="2" Height="30" Width="30" BorderBrush="Gray" Foreground="Black"
                                     HorizontalAlignment="Center" VerticalAlignment="Center"
                                     IsActive="{Binding IsLoadingImage}" Background="{x:Null}"/>
+                                <!--Название-->
                                 <Border x:Name="ProductNameBorder" Grid.Row="1" Background="Black" Opacity="0.7" MaxHeight="100"
                                     Visibility="Collapsed"/>
                                 <TextBlock x:Name="ProductName" Grid.Row="1" FontSize="13" Margin="4,7" TextAlignment="Left" TextWrapping="Wrap" Foreground="White"
                                     HorizontalAlignment="Left" VerticalAlignment="Center"
                                     Text="{Binding Name, Converter={StaticResource stringProConverter}}"
                                     Visibility="Collapsed"/>
+                                <!--Цена и кнопка покупки-->
                                 <Grid x:Name="ProductPriceBorder" Grid.Row="2" Background="{StaticResource Static.Grid.Background}">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition/>
                                         <ColumnDefinition Width="Auto"/>
                                     </Grid.ColumnDefinitions>
+                                    <!--Цена базовая-->
                                     <TextBlock x:Name="ProductPrice" Grid.Column="0" Margin="4,0" FontSize="18" TextAlignment="Left" TextWrapping="WrapWholeWords"
-                                        HorizontalAlignment="Left" VerticalAlignment="Center"
+                                        HorizontalAlignment="Left" VerticalAlignment="Top"
                                         Text="{Binding Description}"
                                         Visibility="Collapsed"/>
                                     <Grid x:Name="ProductDiscountPrice" Grid.Column="0"
-                                        VerticalAlignment="Center" HorizontalAlignment="Stretch"
+                                        VerticalAlignment="Top" HorizontalAlignment="Stretch"
                                         Visibility="Collapsed">
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition/>
                                             <ColumnDefinition/>
                                         </Grid.ColumnDefinitions>
+                                        <!--Цена с скидкой-->
                                         <Grid Grid.Column="0">
                                             <TextBlock Margin="4,0" FontSize="13" TextAlignment="Left" TextWrapping="WrapWholeWords" VerticalAlignment="Center"
                                                 Text="{Binding Description}"/>
@@ -65,6 +71,7 @@
                                     <ProgressRing x:Name="IsLoadingPricesProgress" Grid.Column="0" Margin="4,5" Width="15" Height="15" BorderBrush="Gray" Foreground="Black"
                                         HorizontalAlignment="Left" VerticalAlignment="Center"
                                         IsActive="{Binding IsLoadingPrices}"/>
+                                    <!--Кнопка покупки-->
                                     <Button x:Name="ProductTrueBuy" Grid.Column="1" Margin="0,5" Width="30" Height="30"
                                         HorizontalAlignment="Right" VerticalAlignment="Top"
                                         Visibility="Collapsed">
@@ -80,8 +87,20 @@
                                         </Button.Content>
                                     </Button>
                                 </Grid>
-                                <Grid x:Name="ProductRemainsBorder" Grid.Row="3" Background="{StaticResource Static.Grid.Background}"
-                                      Visibility="Visible">
+                                <Grid x:Name="ProductDiscountPriceBorder" Grid.Row="3"
+                                    VerticalAlignment="Center" HorizontalAlignment="Stretch">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition/>
+                                    </Grid.ColumnDefinitions>
+                                    <Border Grid.Column="0" Background="Yellow"/>
+                                    <TextBlock Grid.Column="0" Margin="4,0" FontSize="13" Foreground="DarkGray" TextAlignment="Left" TextWrapping="WrapWholeWords" VerticalAlignment="Center"
+                                                Text="10000"/>
+                                    <TextBlock Grid.Column="1" Margin="4,0" FontSize="13" Foreground="DarkGray" TextAlignment="Left" TextWrapping="WrapWholeWords" VerticalAlignment="Center"
+                                                Text="экономия"/>
+                                </Grid>
+                                <!--Остатки-->
+                                <Grid x:Name="ProductRemainsBorder" Grid.Row="4" Background="{StaticResource Static.Grid.Background}">
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="Auto"/>
                                         <RowDefinition Height="Auto"/>
@@ -89,7 +108,7 @@
                                     <StackPanel x:Name="ProductRemains" Grid.Row="0" Margin="4,2" Orientation="Horizontal"
                                             Visibility="Collapsed">
                                         <Image Width="14" Height="16" Source="/Assets/packed-box@3x.png" Stretch="Uniform"/>
-                                        <TextBlock FontSize="13" Margin="4,0" TextAlignment="Left" TextWrapping="Wrap"
+                                        <TextBlock FontSize="13" Foreground="DarkGray" Margin="4,0" TextAlignment="Left" TextWrapping="Wrap"
                                             HorizontalAlignment="Left" VerticalAlignment="Center"
                                             Text="{Binding Type}"/>
                                     </StackPanel>
@@ -98,7 +117,7 @@
                                         IsActive="{Binding IsLoadingRemains}"/>
                                     <StackPanel x:Name="ProductSku" Grid.Row="1" Margin="4,2"
                                             Visibility="Collapsed">
-                                        <TextBlock  FontSize="13" TextAlignment="Left" TextWrapping="Wrap"
+                                        <TextBlock  FontSize="13" Foreground="DarkGray" TextAlignment="Left" TextWrapping="Wrap"
                                             Text="{Binding Id, Converter={StaticResource uint32Converter}}"
                                             HorizontalAlignment="Left" VerticalAlignment="Center"/>
                                     </StackPanel>
@@ -445,6 +464,14 @@
                                                     </DiscreteObjectKeyFrame.Value>
                                                 </DiscreteObjectKeyFrame>
                                             </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ProductDiscountPriceBorder"
+                                                                       Storyboard.TargetProperty="Visibility">
+                                                <DiscreteObjectKeyFrame KeyTime="0">
+                                                    <DiscreteObjectKeyFrame.Value>
+                                                        <Visibility>Collapsed</Visibility>
+                                                    </DiscreteObjectKeyFrame.Value>
+                                                </DiscreteObjectKeyFrame>
+                                            </ObjectAnimationUsingKeyFrames>
                                             <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ProductTrueBuy"
                                                                        Storyboard.TargetProperty="Visibility">
                                                 <DiscreteObjectKeyFrame KeyTime="0">
@@ -522,6 +549,14 @@
                                                 </DiscreteObjectKeyFrame>
                                             </ObjectAnimationUsingKeyFrames>
                                             <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ProductDiscountPrice"
+                                                                       Storyboard.TargetProperty="Visibility">
+                                                <DiscreteObjectKeyFrame KeyTime="0">
+                                                    <DiscreteObjectKeyFrame.Value>
+                                                        <Visibility>Visible</Visibility>
+                                                    </DiscreteObjectKeyFrame.Value>
+                                                </DiscreteObjectKeyFrame>
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ProductDiscountPriceBorder"
                                                                        Storyboard.TargetProperty="Visibility">
                                                 <DiscreteObjectKeyFrame KeyTime="0">
                                                     <DiscreteObjectKeyFrame.Value>
@@ -615,6 +650,14 @@
                                                     </DiscreteObjectKeyFrame.Value>
                                                 </DiscreteObjectKeyFrame>
                                             </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ProductDiscountPriceBorder"
+                                                                       Storyboard.TargetProperty="Visibility">
+                                                <DiscreteObjectKeyFrame KeyTime="0">
+                                                    <DiscreteObjectKeyFrame.Value>
+                                                        <Visibility>Collapsed</Visibility>
+                                                    </DiscreteObjectKeyFrame.Value>
+                                                </DiscreteObjectKeyFrame>
+                                            </ObjectAnimationUsingKeyFrames>
                                             <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ProductTrueBuy"
                                                                        Storyboard.TargetProperty="Visibility">
                                                 <DiscreteObjectKeyFrame KeyTime="0">
@@ -692,6 +735,14 @@
                                                 </DiscreteObjectKeyFrame>
                                             </ObjectAnimationUsingKeyFrames>
                                             <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ProductDiscountPrice"
+                                                                       Storyboard.TargetProperty="Visibility">
+                                                <DiscreteObjectKeyFrame KeyTime="0">
+                                                    <DiscreteObjectKeyFrame.Value>
+                                                        <Visibility>Collapsed</Visibility>
+                                                    </DiscreteObjectKeyFrame.Value>
+                                                </DiscreteObjectKeyFrame>
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ProductDiscountPriceBorder"
                                                                        Storyboard.TargetProperty="Visibility">
                                                 <DiscreteObjectKeyFrame KeyTime="0">
                                                     <DiscreteObjectKeyFrame.Value>
