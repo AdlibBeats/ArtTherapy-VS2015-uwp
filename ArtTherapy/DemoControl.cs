@@ -46,7 +46,10 @@ namespace ArtTherapy
                 VisualStateManager.GoToState(this, Model.IsLoading ? "DiscountPricesLoading" : "DiscountPricesLoaded", true);
             else
                 VisualStateManager.GoToState(this, Model.IsLoadingPrice ? "PricesLoading" : "PricesLoaded", true);
-            VisualStateManager.GoToState(this, Model.IsLoadingRemains ? "RemainsLoading" : "RemainsLoaded", true);
+            if (currentPostModel.Remains != 0)
+                VisualStateManager.GoToState(this, Model.IsLoadingRemains ? "RemainsLoading" : "RemainsLoaded", true);
+            else
+                VisualStateManager.GoToState(this, Model.IsLoadingRemains ? "NoRemainsLoading" : "NoRemainsLoaded", true);
         }
 
         public DemoControl()

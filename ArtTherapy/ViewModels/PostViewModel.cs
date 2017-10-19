@@ -52,7 +52,7 @@ namespace ArtTherapy.ViewModels
 
         public bool IsFullInitialized { get => Count.Equals(CurrentCount); }
 
-        public void LoadData(double scrollViewerProgress, int page = 1, int startCountLoad = 10)
+        public void LoadData(double scrollViewerProgress, int page = 1, int startCountLoad = 10, int fullDataTimeLoading = 1000, int smallDataTimeLoading = 50)
         {
             //await AddDemoData(new LoadingHelper(LoadingType.GetRemainsData));
             if (scrollViewerProgress > 0.9999)
@@ -90,7 +90,7 @@ namespace ArtTherapy.ViewModels
                                     //Назвние и Sku
                                     loadingHelper.LoadingType = LoadingType.GetFullData;
                                     var fullPostModel = await Storage.GetModel(loadingHelper.Path) as T;
-                                    await Task.Delay(1000);
+                                    await Task.Delay(fullDataTimeLoading);
                                     await Task.Run(async () =>
                                     {
                                         await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
@@ -110,12 +110,13 @@ namespace ArtTherapy.ViewModels
                                             }
                                         });
                                     });
+
                                     Loaded?.Invoke(this, new PostEventArgs(Count.Equals(CurrentCount)));
 
                                     //Картинки
                                     loadingHelper.LoadingType = LoadingType.GetImagesData;
                                     var images = await Storage.GetModel(loadingHelper.Path) as T;
-                                    await Task.Delay(50);
+                                    await Task.Delay(smallDataTimeLoading);
                                     Task t1 = Task.Run(async () =>
                                     {
                                         await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
@@ -134,7 +135,7 @@ namespace ArtTherapy.ViewModels
                                     //Цена
                                     loadingHelper.LoadingType = LoadingType.GetPricesData;
                                     var prices = await Storage.GetModel(loadingHelper.Path) as T;
-                                    await Task.Delay(50);
+                                    await Task.Delay(smallDataTimeLoading);
                                     Task t2 = Task.Run(async () =>
                                     {
                                         await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
@@ -143,7 +144,8 @@ namespace ArtTherapy.ViewModels
                                             {
                                                 for (int i = startIndex, k = 0; k < startCountLoad && i < Count; i++, k++)
                                                 {
-                                                    ProductModel.Items[i].DiscountPrice = prices.Items[i].DiscountPrice;
+                                                    ProductModel.Items[i].DiscountPrice =
+                                                        prices.Items[i].DiscountPrice < prices.Items[i].Price ? prices.Items[i].DiscountPrice : 0;
                                                     ProductModel.Items[i].Price = prices.Items[i].Price;
                                                     if (ProductModel.Items[i].DiscountPrice > 0)
                                                         ProductModel.Items[i].PriceDifference =
@@ -157,7 +159,7 @@ namespace ArtTherapy.ViewModels
                                     //Остатки
                                     loadingHelper.LoadingType = LoadingType.GetRemainsData;
                                     var remains = await Storage.GetModel(loadingHelper.Path) as T;
-                                    await Task.Delay(50);
+                                    await Task.Delay(smallDataTimeLoading);
                                     Task t3 = Task.Run(async () =>
                                     {
                                         await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
@@ -173,6 +175,7 @@ namespace ArtTherapy.ViewModels
                                             }
                                         });
                                     });
+
                                     await Task.WhenAll(new[] { t1, t2, t3 });
 
                                     _IsLoadedList.LastOrDefault().TrySetResult(true);

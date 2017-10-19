@@ -116,6 +116,7 @@
     <Compile Include="Extensions\StringExtension.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ValueConverters\Int32Converter.cs" />
+    <Compile Include="ValueConverters\PriceConverter.cs" />
     <Compile Include="ValueConverters\StringProConverter.cs" />
     <Compile Include="ValueConverters\UInt32Converter.cs" />
     <Compile Include="ValueConverters\VisibilityConverter.cs" />
