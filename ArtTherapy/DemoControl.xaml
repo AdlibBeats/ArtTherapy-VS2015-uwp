@@ -31,7 +31,7 @@
                                 <controls:ImageEx x:Name="ProductImage" Grid.Row="0" Grid.RowSpan="2" Stretch="Uniform" Background="{x:Null}"
                                     Source="{Binding ImageUrl}" IsCacheEnabled="False"
                                     Visibility="Collapsed"/>
-                                <ProgressRing Grid.Row="0" Grid.RowSpan="2" Height="30" Width="30" BorderBrush="Gray" Foreground="Black"
+                                <ProgressRing Grid.Row="0" Height="30" Width="30" BorderBrush="Gray" Foreground="Black"
                                     HorizontalAlignment="Center" VerticalAlignment="Center"
                                     IsActive="{Binding IsLoadingImage}" Background="{x:Null}"/>
                                 <!--Название-->
@@ -354,6 +354,34 @@
                                                 <DiscreteObjectKeyFrame KeyTime="0">
                                                     <DiscreteObjectKeyFrame.Value>
                                                         <Visibility>Visible</Visibility>
+                                                    </DiscreteObjectKeyFrame.Value>
+                                                </DiscreteObjectKeyFrame>
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ProductNameBorder"
+                                                                       Storyboard.TargetProperty="Visibility">
+                                                <DiscreteObjectKeyFrame KeyTime="0">
+                                                    <DiscreteObjectKeyFrame.Value>
+                                                        <Visibility>Visible</Visibility>
+                                                    </DiscreteObjectKeyFrame.Value>
+                                                </DiscreteObjectKeyFrame>
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ProductName"
+                                                                       Storyboard.TargetProperty="Visibility">
+                                                <DiscreteObjectKeyFrame KeyTime="0">
+                                                    <DiscreteObjectKeyFrame.Value>
+                                                        <Visibility>Visible</Visibility>
+                                                    </DiscreteObjectKeyFrame.Value>
+                                                </DiscreteObjectKeyFrame>
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="NoImageLoaded">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ProductImage"
+                                                                       Storyboard.TargetProperty="Visibility">
+                                                <DiscreteObjectKeyFrame KeyTime="0">
+                                                    <DiscreteObjectKeyFrame.Value>
+                                                        <Visibility>Collapsed</Visibility>
                                                     </DiscreteObjectKeyFrame.Value>
                                                 </DiscreteObjectKeyFrame>
                                             </ObjectAnimationUsingKeyFrames>

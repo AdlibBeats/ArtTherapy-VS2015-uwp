@@ -41,7 +41,14 @@ namespace ArtTherapy
         public void UpdateState(CurrentProductModel currentPostModel)
         {
             VisualStateManager.GoToState(this, Model.IsLoading ? "Loading" : "Loaded", true);
+
+            //Debug.WriteLine(currentPostModel.CanLoadingImage);
+
+            //if (currentPostModel.CanLoadingImage)
             VisualStateManager.GoToState(this, Model.IsLoadingImage ? "ImageLoading" : "ImageLoaded", true);
+            //else
+                //VisualStateManager.GoToState(this, "NoImageLoaded", true);
+
             if (currentPostModel.DiscountPrice != 0)
                 VisualStateManager.GoToState(this, Model.IsLoading ? "DiscountPricesLoading" : "DiscountPricesLoaded", true);
             else

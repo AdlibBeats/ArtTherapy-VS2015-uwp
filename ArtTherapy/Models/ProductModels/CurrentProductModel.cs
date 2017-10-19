@@ -9,6 +9,11 @@ namespace ArtTherapy.Models.ProductModels
 {
     public class CurrentProductModel : BaseModel
     {
+        public CurrentProductModel()
+        {
+            _CanLoadingImage = true;
+        }
+
         #region Json Serialized
 
         public uint Sku
@@ -63,6 +68,14 @@ namespace ArtTherapy.Models.ProductModels
         #endregion
 
         #region JsonIgnore
+
+        [JsonIgnore]
+        public bool CanLoadingImage
+        {
+            get => _CanLoadingImage;
+            set => SetValue(ref _CanLoadingImage, value);
+        }
+        private bool _CanLoadingImage;
 
         [JsonIgnore]
         public int PriceDifference

@@ -52,7 +52,7 @@ namespace ArtTherapy.ViewModels
 
         public bool IsFullInitialized { get => Count.Equals(CurrentCount); }
 
-        public void LoadData(double scrollViewerProgress, int page = 1, int startCountLoad = 10, int fullDataTimeLoading = 1000, int smallDataTimeLoading = 50)
+        public void LoadData(double scrollViewerProgress, bool canLoadingImages = true, int page = 1, int startCountLoad = 10, int fullDataTimeLoading = 1000, int smallDataTimeLoading = 50)
         {
             //await AddDemoData(new LoadingHelper(LoadingType.GetRemainsData));
             if (scrollViewerProgress > 0.9999)
@@ -114,23 +114,27 @@ namespace ArtTherapy.ViewModels
                                     Loaded?.Invoke(this, new PostEventArgs(Count.Equals(CurrentCount)));
 
                                     //Картинки
-                                    loadingHelper.LoadingType = LoadingType.GetImagesData;
-                                    var images = await Storage.GetModel(loadingHelper.Path) as T;
-                                    await Task.Delay(smallDataTimeLoading);
-                                    Task t1 = Task.Run(async () =>
-                                    {
-                                        await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+                                    Task t1 = null;
+                                    //if (canLoadingImages)
+                                    //{
+                                        loadingHelper.LoadingType = LoadingType.GetImagesData;
+                                        var images = await Storage.GetModel(loadingHelper.Path) as T;
+                                        await Task.Delay(smallDataTimeLoading);
+                                        t1 = Task.Run(async () =>
                                         {
-                                            if (images != null && images.Items != null && images.Items.Count > 0)
+                                            await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
                                             {
-                                                for (int i = startIndex, k = 0; k < startCountLoad && i < Count; i++, k++)
+                                                if (images != null && images.Items != null && images.Items.Count > 0)
                                                 {
-                                                    ProductModel.Items[i].ImageUrl = images.Items[i].ImageUrl;
-                                                    ProductModel.Items[i].IsLoadingImage = false;
+                                                    for (int i = startIndex, k = 0; k < startCountLoad && i < Count; i++, k++)
+                                                    {
+                                                        ProductModel.Items[i].ImageUrl = images.Items[i].ImageUrl;
+                                                        ProductModel.Items[i].IsLoadingImage = false;
+                                                    }
                                                 }
-                                            }
+                                            });
                                         });
-                                    });
+                                    //}
 
                                     //Цена
                                     loadingHelper.LoadingType = LoadingType.GetPricesData;
@@ -176,7 +180,10 @@ namespace ArtTherapy.ViewModels
                                         });
                                     });
 
-                                    await Task.WhenAll(new[] { t1, t2, t3 });
+                                    if (canLoadingImages && t1 != null)
+                                        await Task.WhenAll(new[] {t1, t2, t3 });
+                                    else
+                                        await Task.WhenAll(new[] { t2, t3 });
 
                                     _IsLoadedList.LastOrDefault().TrySetResult(true);
                                 }
