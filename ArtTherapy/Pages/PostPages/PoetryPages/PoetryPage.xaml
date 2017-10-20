@@ -16,12 +16,28 @@
     </Page.Resources>
     
     <Grid Background="{StaticResource Static.Grid.Background}">
-        <ScrollViewer x:Name="scrollViewer" ViewChanged="ScrollViewer_ViewChanged">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <StackPanel Grid.Row="0" Orientation="Horizontal">
+            <ToggleSwitch Grid.Row="1" Margin="5,0" x:Name="loadImages" IsOn="True" Toggled="canLoadImages_Toggled">
+                <ToggleSwitch.OnContent>
+                    <TextBlock Text="Включено"/>
+                </ToggleSwitch.OnContent>
+                <ToggleSwitch.OffContent>
+                    <TextBlock Text="Выключено"/>
+                </ToggleSwitch.OffContent>
+            </ToggleSwitch>
+            <TextBlock Text="Загрузка изображений" HorizontalAlignment="Left" TextAlignment="Left" VerticalAlignment="Center"/>
+        </StackPanel>
+        <ScrollViewer Grid.Row="1" x:Name="scrollViewer" ViewChanged="ScrollViewer_ViewChanged">
             <Grid Margin="5">
                 <controls:AdaptiveGridView
+                        Grid.Row="1"
                         ItemHeight="288"
                         MinWidth="155"
-                        DesiredWidth="175"
+                        DesiredWidth="170"
                         SelectionMode="Single" DataFetchSize="10"
                         IsItemClickEnabled="True" x:Name="gridView" SelectionChanged="gridView_SelectionChanged"
                         ItemsSource="{x:Bind _ViewModel.ProductModel.Items, Mode=OneWay}"

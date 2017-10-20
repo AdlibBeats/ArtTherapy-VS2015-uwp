@@ -7,10 +7,10 @@ using Windows.UI.Xaml.Data;
 
 namespace ArtTherapyCore.ValueConverters
 {
-    public class PriceConverter : IValueConverter
+    public class RemainsConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, string language) =>
-            (int)value == 0 ? String.Empty : $"{value}р.";
+            (uint)value == 0 ? String.Empty : $"{value} шт.";
 
         public object ConvertBack(object value, Type targetType, object parameter, string language) =>
             String.IsNullOrEmpty(value as String) ? 0 : value;

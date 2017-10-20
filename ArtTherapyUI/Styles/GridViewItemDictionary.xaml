@@ -46,7 +46,7 @@
                                             <!--<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="removeContent">
                                                 <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource Static.Button.Background}"/>
                                             </ObjectAnimationUsingKeyFrames>-->
-                                            <PointerUpThemeAnimation Storyboard.TargetName="RootGrid"/>
+                                            <PointerDownThemeAnimation Storyboard.TargetName="RootGrid"/>
                                         </Storyboard>
                                     </VisualState>
                                     <VisualState x:Name="PointerOver">

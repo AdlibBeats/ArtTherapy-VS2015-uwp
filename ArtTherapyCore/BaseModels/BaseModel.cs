@@ -4,15 +4,6 @@ using System.Runtime.CompilerServices;
 
 namespace ArtTherapyCore.BaseModels
 {
-    public class PriceHelper
-    {
-        public bool IsDiscountPrice { get; }
-        public PriceHelper(bool isDiscountPrice)
-        {
-            IsDiscountPrice = isDiscountPrice;
-        }
-    }
-
     public enum LoadingType : byte
     {
         GetCount,
@@ -48,14 +39,7 @@ namespace ArtTherapyCore.BaseModels
 
         public LoadingType LoadingType { get; set; }
     }
-    public class CustomPropertyChangedEventArgs : PropertyChangedEventArgs
-    {
-        public LoadingHelper LoadingHelper { get; }
-        public CustomPropertyChangedEventArgs(string propertyName, LoadingHelper loadingHelper) : base(propertyName)
-        {
-            LoadingHelper = loadingHelper;
-        }
-    }
+
     public interface IBaseModel : INotifyPropertyChanged
     {
         void SetValue<V>(ref V oldValue, V newValue, [CallerMemberName]string propertyName = null);

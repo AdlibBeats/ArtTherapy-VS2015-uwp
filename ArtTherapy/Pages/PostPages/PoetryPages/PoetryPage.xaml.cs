@@ -11,6 +11,7 @@ using Windows.UI;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using ArtTherapyCore.Extensions;
+using System.Diagnostics;
 
 namespace ArtTherapy.Pages.PostPages.PoetryPages
 {
@@ -52,7 +53,7 @@ namespace ArtTherapy.Pages.PostPages.PoetryPages
             Id = 2;
             Title = "Стихи";
             NavigateEventType = NavigateEventTypes.ListBoxSelectionChanged;
-            _ViewModel =  new PostViewModel<ProductModel>();
+            _ViewModel =  new PostViewModel<ProductModel>(true);
 
             _ContentDialog.Background = new SolidColorBrush(Colors.Black);
             _ContentDialog.BorderThickness = new Thickness(0);
@@ -74,7 +75,7 @@ namespace ArtTherapy.Pages.PostPages.PoetryPages
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
-
+            
             _ViewModel.Loaded += _viewModel_Loaded;
         }
 
@@ -91,13 +92,13 @@ namespace ArtTherapy.Pages.PostPages.PoetryPages
         {
             double value = value = scrollViewer.GetScrollViewProgress();
             if (!e.IsFullInitialized)
-                _ViewModel.LoadData(value, false);
+                _ViewModel.LoadData(value);
         }
 
         private void ScrollViewer_ViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
         {
             double value = scrollViewer.GetScrollViewProgress();
-            _ViewModel.LoadData(value, false);
+            _ViewModel.LoadData(value);
         }
 
         private void Page_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -106,7 +107,7 @@ namespace ArtTherapy.Pages.PostPages.PoetryPages
             _ContentDialog.Height = Window.Current.Bounds.Height;
 
             double value = scrollViewer.GetScrollViewProgress();
-            _ViewModel.LoadData(value, false);
+            _ViewModel.LoadData(value);
         }
 
         ContentDialog _ContentDialog = new ContentDialog();
@@ -117,6 +118,8 @@ namespace ArtTherapy.Pages.PostPages.PoetryPages
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
             Initialized?.Invoke(this, new EventArgs());
+
+            //_ViewModel = new PostViewModel<ProductModel>(loadImages.IsOn);
 
             //_DispatcherTimer.Interval = TimeSpan.FromSeconds(0.005);
             //_DispatcherTimer.Tick += (s, args) =>
@@ -192,5 +195,23 @@ namespace ArtTherapy.Pages.PostPages.PoetryPages
         }
 
         #endregion
+
+        private void canLoadImages_Toggled(object sender, RoutedEventArgs e)
+        {
+            if (gridView != null && scrollViewer != null)
+            {
+                if (loadImages.IsOn)
+                    gridView.ItemHeight = 288;
+                else
+                    gridView.ItemHeight = 160;
+
+                _ViewModel.Loaded -= _viewModel_Loaded;
+                _ViewModel.Dispose();
+                _ViewModel = new PostViewModel<ProductModel>(loadImages.IsOn);
+                _ViewModel.Loaded += _viewModel_Loaded;
+                gridView.ItemsSource = _ViewModel.ProductModel.Items;
+                _ViewModel.LoadData(1);
+            }
+        }
     }
 }
