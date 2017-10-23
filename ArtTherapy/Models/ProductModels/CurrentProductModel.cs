@@ -7,6 +7,13 @@ using Windows.UI.Xaml.Media;
 
 namespace ArtTherapy.Models.ProductModels
 {
+    public enum LoadingType : byte
+    {
+        FullMode,
+        NoImageMode,
+        OnlyPriceMode
+    }
+
     public class CurrentProductModel : BaseModel
     {
         #region Json Serialized
@@ -63,6 +70,14 @@ namespace ArtTherapy.Models.ProductModels
         #endregion
 
         #region JsonIgnore
+
+        [JsonIgnore]
+        public LoadingType LoadingType
+        {
+            get => _LoadingType;
+            set => SetValue(ref _LoadingType, value);
+        }
+        private LoadingType _LoadingType;
 
         [JsonIgnore]
         public int PriceDifference

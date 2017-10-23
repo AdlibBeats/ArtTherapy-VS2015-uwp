@@ -13,7 +13,6 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
-using ArtTherapy.AppStorage;
 using ArtTherapy.Models.ProductModels;
 using Windows.Storage;
 using System.Diagnostics;

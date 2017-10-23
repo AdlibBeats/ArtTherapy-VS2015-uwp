@@ -49,12 +49,9 @@ namespace ArtTherapy.Pages.PostPages.PoetryPages
         public PoetryPage()
         {
             this.InitializeComponent();
-
             Id = 2;
             Title = "Стихи";
             NavigateEventType = NavigateEventTypes.ListBoxSelectionChanged;
-            _ViewModel =  new PostViewModel<ProductModel>(true);
-
             _ContentDialog.Background = new SolidColorBrush(Colors.Black);
             _ContentDialog.BorderThickness = new Thickness(0);
             _ContentDialog.BorderBrush = _ContentDialog.Background;
@@ -75,8 +72,19 @@ namespace ArtTherapy.Pages.PostPages.PoetryPages
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
-            
+
+            ArtTherapy.AppSettings.AppSettings.Current.Get();
+
+            _ViewModel = new PostViewModel<ProductModel>(AppSettings.AppSettings.Current.LoadingType);
+
             _ViewModel.Loaded += _viewModel_Loaded;
+
+            switch (_ViewModel.LoadingType)
+            {
+                case LoadingType.FullMode: r1.IsChecked = true; break;
+                case LoadingType.NoImageMode: r2.IsChecked = true; break;
+                case LoadingType.OnlyPriceMode: r3.IsChecked = true; break;
+            }
         }
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)
@@ -90,7 +98,7 @@ namespace ArtTherapy.Pages.PostPages.PoetryPages
 
         private void _viewModel_Loaded(object sender, PostEventArgs e)
         {
-            double value = value = scrollViewer.GetScrollViewProgress();
+            double value = scrollViewer.GetScrollViewProgress();
             if (!e.IsFullInitialized)
                 _ViewModel.LoadData(value);
         }
@@ -196,21 +204,40 @@ namespace ArtTherapy.Pages.PostPages.PoetryPages
 
         #endregion
 
-        private void canLoadImages_Toggled(object sender, RoutedEventArgs e)
+        private void RadioButton_Checked(object sender, RoutedEventArgs e)
         {
-            if (gridView != null && scrollViewer != null)
+            var radioButton = sender as RadioButton;
+            if (radioButton != null)
             {
-                if (loadImages.IsOn)
-                    gridView.ItemHeight = 288;
-                else
-                    gridView.ItemHeight = 160;
+                var name = radioButton.Content as String;
+                if (name != null)
+                {
+                    _ViewModel.Loaded -= _viewModel_Loaded;
+                    _ViewModel.Dispose();
+                    
+                    switch (name)
+                    {
+                        case "С изображениями":
+                            AppSettings.AppSettings.Current.Set(LoadingType.FullMode);
+                            _ViewModel = new PostViewModel<ProductModel>(LoadingType.FullMode);
+                            gridView.ItemHeight = 288;
+                            break;
+                        case "Без изображений":
+                            AppSettings.AppSettings.Current.Set(LoadingType.NoImageMode);
+                            _ViewModel = new PostViewModel<ProductModel>(LoadingType.NoImageMode);
+                            gridView.ItemHeight = 175;
+                            break;
+                        case "Без Sku":
+                            AppSettings.AppSettings.Current.Set(LoadingType.OnlyPriceMode);
+                            _ViewModel = new PostViewModel<ProductModel>(LoadingType.OnlyPriceMode);
+                            gridView.ItemHeight = 100;
+                            break;
+                    }
 
-                _ViewModel.Loaded -= _viewModel_Loaded;
-                _ViewModel.Dispose();
-                _ViewModel = new PostViewModel<ProductModel>(loadImages.IsOn);
-                _ViewModel.Loaded += _viewModel_Loaded;
-                gridView.ItemsSource = _ViewModel.ProductModel.Items;
-                _ViewModel.LoadData(1);
+                    _ViewModel.Loaded += _viewModel_Loaded;
+                    gridView.ItemsSource = _ViewModel.ProductModel.Items;
+                    _ViewModel.LoadData(1);
+                }
             }
         }
     }

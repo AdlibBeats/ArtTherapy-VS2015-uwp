@@ -14,12 +14,6 @@ using Windows.UI.Xaml.Media;
 
 namespace ArtTherapy
 {
-    public enum VisibilityImages : byte
-    {
-        Visible,
-        Collapsed
-    }
-
     public class DemoControl : Control
     {
         public CurrentProductModel Model
@@ -31,15 +25,15 @@ namespace ArtTherapy
         public static readonly DependencyProperty ModelProperty =
             DependencyProperty.Register("Model", typeof(CurrentProductModel), typeof(DemoControl), new PropertyMetadata(default(CurrentProductModel), OnModelChanged));
         
-        public VisibilityImages VisibilityImages
+        public Models.ProductModels.LoadingType LoadingType
         {
-            get { return (VisibilityImages)GetValue(VisibilityImagesProperty); }
+            get { return (Models.ProductModels.LoadingType)GetValue(VisibilityImagesProperty); }
             set { SetValue(VisibilityImagesProperty, value); }
         }
 
         public static readonly DependencyProperty VisibilityImagesProperty =
-            DependencyProperty.Register("VisibilityImages", typeof(VisibilityImages), typeof(DemoControl), new PropertyMetadata(VisibilityImages.Visible));
-        
+            DependencyProperty.Register("LoadingType", typeof(Models.ProductModels.LoadingType), typeof(DemoControl), new PropertyMetadata(Models.ProductModels.LoadingType.FullMode));
+
         private static void OnModelChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var itemControl = d as DemoControl;
@@ -55,29 +49,19 @@ namespace ArtTherapy
 
         public void UpdateState(CurrentProductModel model)
         {
-            VisualStateManager.GoToState(this, model.IsLoading ? "Loading" : "Loaded", true);
+            if (model.IsLoading)
+            {
+                VisualStateManager.GoToState(this, "Loading", true);
+                VisualStateManager.GoToState(this, "FullMode", true);
+            }
+            else
+            {
+                VisualStateManager.GoToState(this, "Loaded", true);
+                VisualStateManager.GoToState(this, $"{model.LoadingType}", true);
+            }
 
             if (RootProgress != null)
                 RootProgress.IsActive = model.IsLoading;
-
-            //if (Model.IsLoadingImage)
-            //    VisualStateManager.GoToState(this, "ImageLoading", true);
-            //else
-            //{
-            //    VisualStateManager.GoToState(this, "ImageLoaded", true);
-
-            //    if (RootGrid != null)
-            //    {
-            //        //if (VisibilityImages == VisibilityImages.Visible)
-            //        //    RootGrid.RowDefinitions.ElementAt(0).Height = new GridLength(1, GridUnitType.Star);
-            //        //else
-            //        //    RootGrid.RowDefinitions.ElementAt(0).Height = new GridLength(0, GridUnitType.Pixel);
-            //        //if (String.IsNullOrEmpty(model.ImageUrl))
-            //        //    RootGrid.RowDefinitions.ElementAt(0).Height = new GridLength(0, GridUnitType.Pixel);
-            //        //else
-            //        //    RootGrid.RowDefinitions.ElementAt(0).Height = new GridLength(1, GridUnitType.Star);
-            //    }
-            //}
 
             VisualStateManager.GoToState(this, model.IsLoadingImage ? "ImageLoading" : "ImageLoaded", true);
 
@@ -90,6 +74,22 @@ namespace ArtTherapy
                 VisualStateManager.GoToState(this, model.IsLoadingRemains ? "RemainsLoading" : "RemainsLoaded", true);
             else
                 VisualStateManager.GoToState(this, model.IsLoadingRemains ? "NoRemainsLoading" : "NoRemainsLoaded", true);
+
+            if (RootGrid != null)
+            {
+                switch (model.LoadingType)
+                {
+                    case Models.ProductModels.LoadingType.FullMode:
+                        RootGrid.RowDefinitions.ElementAt(0).Height = new GridLength(110, GridUnitType.Pixel);
+                        break;
+                    case Models.ProductModels.LoadingType.NoImageMode:
+                        RootGrid.RowDefinitions.ElementAt(0).Height = new GridLength(0, GridUnitType.Pixel);
+                        break;
+                    case Models.ProductModels.LoadingType.OnlyPriceMode:
+                        RootGrid.RowDefinitions.ElementAt(0).Height = new GridLength(0, GridUnitType.Pixel);
+                        break;
+                }
+            }
         }
 
         public Grid RootGrid { get; set; }
@@ -99,7 +99,6 @@ namespace ArtTherapy
         public DemoControl()
         {
             this.DefaultStyleKey = typeof(DemoControl);
-            Model = new CurrentProductModel();
         }
 
         protected override void OnApplyTemplate()
@@ -108,14 +107,6 @@ namespace ArtTherapy
 
             RootGrid = this.GetTemplateChild("RootGrid") as Grid;
             RootProgress = this.GetTemplateChild("RootProgress") as ProgressRing;
-
-            //if (RootGrid != null)
-            //{
-            //    if (VisibilityImages == VisibilityImages.Visible)
-            //        RootGrid.RowDefinitions.ElementAt(0).Height = new GridLength(1, GridUnitType.Star);
-            //    else
-            //        RootGrid.RowDefinitions.ElementAt(0).Height = new GridLength(0, GridUnitType.Pixel);
-            //}
         }
     }
 }

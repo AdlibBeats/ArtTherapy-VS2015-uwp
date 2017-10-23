@@ -20,35 +20,27 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        <StackPanel Grid.Row="0" Orientation="Horizontal">
-            <ToggleSwitch Grid.Row="1" Margin="5,0" x:Name="loadImages" IsOn="True" Toggled="canLoadImages_Toggled">
-                <ToggleSwitch.OnContent>
-                    <TextBlock Text="Включено"/>
-                </ToggleSwitch.OnContent>
-                <ToggleSwitch.OffContent>
-                    <TextBlock Text="Выключено"/>
-                </ToggleSwitch.OffContent>
-            </ToggleSwitch>
-            <TextBlock Text="Загрузка изображений" HorizontalAlignment="Left" TextAlignment="Left" VerticalAlignment="Center"/>
+        <StackPanel Grid.Row="0" Orientation="Horizontal" Background="Black">
+            <RadioButton x:Name="r1" IsChecked="False" Margin="10,0" Content="С изображениями" Checked="RadioButton_Checked"/>
+            <RadioButton x:Name="r2" IsChecked="False" Margin="10,0" Content="Без изображений" Checked="RadioButton_Checked"/>
+            <RadioButton x:Name="r3" IsChecked="False" Margin="10,0" Content="Без Sku" Checked="RadioButton_Checked"/>
         </StackPanel>
         <ScrollViewer Grid.Row="1" x:Name="scrollViewer" ViewChanged="ScrollViewer_ViewChanged">
-            <Grid Margin="5">
-                <controls:AdaptiveGridView
-                        Grid.Row="1"
-                        ItemHeight="288"
-                        MinWidth="155"
-                        DesiredWidth="170"
-                        SelectionMode="Single" DataFetchSize="10"
-                        IsItemClickEnabled="True" x:Name="gridView" SelectionChanged="gridView_SelectionChanged"
-                        ItemsSource="{x:Bind _ViewModel.ProductModel.Items, Mode=OneWay}"
-                        ItemContainerStyle="{StaticResource gridViewItemStyle}">
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate x:DataType="models:CurrentProductModel">
-                            <local:DemoControl Model="{x:Bind}"/>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </controls:AdaptiveGridView>
-            </Grid>
+            <controls:AdaptiveGridView
+                ItemHeight="288"
+                Margin="5"
+                MinWidth="155"
+                DesiredWidth="170"
+                SelectionMode="Single" DataFetchSize="10"
+                IsItemClickEnabled="True" x:Name="gridView" SelectionChanged="gridView_SelectionChanged"
+                ItemsSource="{x:Bind _ViewModel.ProductModel.Items, Mode=OneTime}"
+                ItemContainerStyle="{StaticResource gridViewItemStyle}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate x:DataType="models:CurrentProductModel">
+                        <local:DemoControl Model="{x:Bind}" LoadingType="{x:Bind LoadingType}"/>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </controls:AdaptiveGridView>
         </ScrollViewer>
     </Grid>
 </Page>

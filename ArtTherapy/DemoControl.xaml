@@ -22,15 +22,16 @@
                             <Grid x:Name="RootGrid" Background="{x:Null}" MaxWidth="200"
                                   Visibility="Collapsed">
                                 <Grid.RowDefinitions>
-                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="110"/>
                                     <RowDefinition Height="52"/>
-                                    <RowDefinition Height="40"/>
-                                    <RowDefinition Height="30"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="25"/>
+                                    <RowDefinition Height="Auto"/>
                                     <RowDefinition Height="Auto"/>
                                 </Grid.RowDefinitions>
                                 <!--Картинка-->
                                 <controls:ImageEx x:Name="ProductImage" Grid.Row="0" Grid.RowSpan="2" Stretch="Uniform" Background="{x:Null}"
-                                    Source="{Binding ImageUrl}" IsCacheEnabled="True"
+                                    Source="{Binding ImageUrl}" IsCacheEnabled="True" Height="160" VerticalAlignment="Top"
                                     Visibility="Collapsed"/>
                                 <ProgressRing Grid.Row="0" Height="30" Width="30" BorderBrush="Gray" Foreground="Black"
                                     HorizontalAlignment="Center" VerticalAlignment="Center"
@@ -57,7 +58,7 @@
                                     </Viewbox>
 
                                     <Grid x:Name="ProductDiscountPrice" Grid.Column="0" 
-                                            VerticalAlignment="Top" HorizontalAlignment="Stretch"
+                                            VerticalAlignment="Center" HorizontalAlignment="Stretch"
                                             Visibility="Collapsed">
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition/>
@@ -80,14 +81,14 @@
                                         HorizontalAlignment="Left" VerticalAlignment="Center"
                                         IsActive="{Binding IsLoadingPrice}"/>
                                     <!--Кнопка покупки-->
-                                    <Button x:Name="ProductTrueBuy" Grid.Column="1" Margin="0,5" Width="30" Height="30"
+                                    <Button x:Name="ProductTrueBuy" Grid.Column="1" Margin="0,5" Width="32" Height="32"
                                         HorizontalAlignment="Right" VerticalAlignment="Top"
                                         Visibility="Collapsed">
                                         <Button.Content>
                                             <Image Stretch="Uniform" Source="/Assets/trolley-cart1@3x.png"/>
                                         </Button.Content>
                                     </Button>
-                                    <Button x:Name="ProductFalseBuy" Grid.Column="1" Margin="0,5" Width="30" Height="30" IsEnabled="False"
+                                    <Button x:Name="ProductFalseBuy" Grid.Column="1" Margin="0,5" Width="32" Height="32" IsEnabled="False"
                                         HorizontalAlignment="Right" VerticalAlignment="Top"
                                         Visibility="Visible">
                                         <Button.Content>
@@ -102,12 +103,12 @@
                                         <ColumnDefinition Width="Auto"/>
                                         <ColumnDefinition/>
                                     </Grid.ColumnDefinitions>
-                                    <Border Grid.Column="0" Margin="0,5" Background="Yellow"/>
-                                    <Viewbox Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Stretch" Stretch="Fill" StretchDirection="DownOnly">
+                                    <Border Grid.Column="0" Margin="0,5" Background="Yellow" VerticalAlignment="Top" Height="15"/>
+                                    <Viewbox Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Top" Stretch="Fill" StretchDirection="DownOnly">
                                         <TextBlock Margin="4,5" FontSize="13" Foreground="DarkGray" TextAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Center"
                                                 Text="{Binding PriceDifference, Converter={StaticResource int32Converter}}"/>
                                     </Viewbox>
-                                    <Viewbox Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Stretch" Stretch="Fill" StretchDirection="DownOnly">
+                                    <Viewbox Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Top" Stretch="Fill" StretchDirection="DownOnly">
                                         <TextBlock Margin="4,5" FontSize="13" Foreground="DarkGray" TextAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Center"
                                                 Text="экономия"/>
                                     </Viewbox>
@@ -135,20 +136,63 @@
                                     <ProgressRing Grid.Row="0" Margin="4,5" Width="15" Height="15" BorderBrush="Gray" Foreground="Black"
                                         HorizontalAlignment="Left" VerticalAlignment="Center"
                                         IsActive="{Binding IsLoadingRemains}"/>
-                                    <StackPanel x:Name="ProductSku" Grid.Row="1" Margin="4,2"
+                                </Grid>
+                                <StackPanel x:Name="ProductSku" Grid.Row="5" Margin="4,2"
                                             Visibility="Collapsed">
-                                        <TextBlock  FontSize="12" Foreground="DarkGray" TextAlignment="Left" TextWrapping="Wrap"
+                                    <TextBlock  FontSize="12" Foreground="DarkGray" TextAlignment="Left" TextWrapping="Wrap"
                                             Text="{Binding Sku, Converter={StaticResource uint32Converter}}"
                                             HorizontalAlignment="Left" VerticalAlignment="Center"/>
-                                    </StackPanel>
-                                </Grid>
+                                </StackPanel>
                             </Grid>
-                            <Border x:Name="ProductBorder" Grid.RowSpan="4" Background="{x:Null}" BorderBrush="#FFE2E2E2" BorderThickness="1"
+                            <Grid x:Name="TriangleShape"  Width="32" Height="32" HorizontalAlignment="Right" VerticalAlignment="Top"
+                                Visibility="Collapsed">
+                                <Polygon Fill="#b3cccc" Points="32,0 0,0 32,32"/>
+                                <Image Width="10" Height="10" Margin="7,-5,-7,5" HorizontalAlignment="Center" VerticalAlignment="Center" Source="/Assets/shape@3x.png" Stretch="Uniform"/>
+                            </Grid>
+                            <Border x:Name="ProductBorder" Background="{x:Null}" BorderBrush="#FFE2E2E2" BorderThickness="1"
                                     Visibility="Collapsed"/>
                             <ProgressRing x:Name="RootProgress" Height="50" Width="50" BorderBrush="Gray" Foreground="Black"
-                                    HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,-50, 0, 50"
+                                    HorizontalAlignment="Center" VerticalAlignment="Center"
                                     IsActive="{Binding IsLoading}" Background="{x:Null}"/>
                             <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="TypeModelGroup">
+                                    <VisualState x:Name="FullMode">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="TriangleShape"
+                                                                       Storyboard.TargetProperty="Visibility">
+                                                <DiscreteObjectKeyFrame KeyTime="0">
+                                                    <DiscreteObjectKeyFrame.Value>
+                                                        <Visibility>Collapsed</Visibility>
+                                                    </DiscreteObjectKeyFrame.Value>
+                                                </DiscreteObjectKeyFrame>
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="NoImageMode">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="TriangleShape"
+                                                                       Storyboard.TargetProperty="Visibility">
+                                                <DiscreteObjectKeyFrame KeyTime="0">
+                                                    <DiscreteObjectKeyFrame.Value>
+                                                        <Visibility>Collapsed</Visibility>
+                                                    </DiscreteObjectKeyFrame.Value>
+                                                </DiscreteObjectKeyFrame>
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="OnlyPriceMode">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="TriangleShape"
+                                                                       Storyboard.TargetProperty="Visibility">
+                                                <DiscreteObjectKeyFrame KeyTime="0">
+                                                    <DiscreteObjectKeyFrame.Value>
+                                                        <Visibility>Visible</Visibility>
+                                                    </DiscreteObjectKeyFrame.Value>
+                                                </DiscreteObjectKeyFrame>
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                </VisualStateGroup>
                                 <VisualStateGroup x:Name="MainLoadingGroup">
                                     <VisualState x:Name="Loading">
                                         <Storyboard>

@@ -92,7 +92,7 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
-    <Compile Include="AppStorage\AppStorage.cs" />
+    <Compile Include="AppSettings\AppSettings.cs" />
     <Compile Include="DemoControl.cs" />
     <Compile Include="Models\ItemsModels\CurrentMenuItemModel.cs" />
     <Compile Include="Models\ItemsModels\MenuItemsModel.cs" />
@@ -171,6 +171,7 @@
     <Content Include="Assets\icon-empty-shopping-cart%403x.png" />
     <Content Include="Assets\right-open%403x.png" />
     <Content Include="Assets\settings%403x.png" />
+    <Content Include="Assets\shape%403x.png" />
     <Content Include="Assets\speedometer%403x.png" />
     <Content Include="Assets\thumbs-up-left%403x.png" />
     <Content Include="Assets\trolley-cart1%403x.png" />
