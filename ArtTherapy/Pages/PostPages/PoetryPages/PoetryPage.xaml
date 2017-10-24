@@ -21,13 +21,12 @@
             <RowDefinition/>
         </Grid.RowDefinitions>
         <StackPanel Grid.Row="0" Orientation="Horizontal" Background="Black">
-            <RadioButton x:Name="r1" IsChecked="False" Margin="10,0" Content="С изображениями" Checked="RadioButton_Checked"/>
+            <RadioButton x:Name="r1" IsChecked="True" Margin="10,0" Content="С изображениями" Checked="RadioButton_Checked"/>
             <RadioButton x:Name="r2" IsChecked="False" Margin="10,0" Content="Без изображений" Checked="RadioButton_Checked"/>
             <RadioButton x:Name="r3" IsChecked="False" Margin="10,0" Content="Без Sku" Checked="RadioButton_Checked"/>
         </StackPanel>
         <ScrollViewer Grid.Row="1" x:Name="scrollViewer" ViewChanged="ScrollViewer_ViewChanged">
             <controls:AdaptiveGridView
-                ItemHeight="288"
                 Margin="5"
                 MinWidth="155"
                 DesiredWidth="170"

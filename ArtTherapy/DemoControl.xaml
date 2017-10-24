@@ -12,37 +12,40 @@
     <converters:StringProConverter x:Key="stringProConverter"/>
     <converters:PriceConverter x:Key="priceConverter"/>
     <converters:RemainsConverter x:Key="remainsConverter"/>
-    
+
     <Style TargetType="custom:DemoControl">
         <Style.Setters>
+            <Setter Property="Background" Value="{StaticResource Static.Grid.Background}"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="custom:DemoControl">
-                        <Grid>
-                            <Grid x:Name="RootGrid" Background="{x:Null}" MaxWidth="200"
+                        <Grid x:Name="Root" Height="288" Background="{TemplateBinding Background}">
+                            <Grid x:Name="RootGrid"
                                   Visibility="Collapsed">
                                 <Grid.RowDefinitions>
-                                    <RowDefinition Height="110"/>
-                                    <RowDefinition Height="52"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
                                     <RowDefinition Height="Auto"/>
                                     <RowDefinition Height="25"/>
                                     <RowDefinition Height="Auto"/>
                                     <RowDefinition Height="Auto"/>
                                 </Grid.RowDefinitions>
                                 <!--Картинка-->
-                                <controls:ImageEx x:Name="ProductImage" Grid.Row="0" Grid.RowSpan="2" Stretch="Uniform" Background="{x:Null}"
-                                    Source="{Binding ImageUrl}" IsCacheEnabled="True" Height="160" VerticalAlignment="Top"
+                                <controls:ImageEx x:Name="ProductImage" Grid.Row="0" Grid.RowSpan="2" Stretch="UniformToFill" Background="{x:Null}"
+                                    Source="{Binding ImageUrl}" IsCacheEnabled="True" Height="110" VerticalAlignment="Top"
                                     Visibility="Collapsed"/>
-                                <ProgressRing Grid.Row="0" Height="30" Width="30" BorderBrush="Gray" Foreground="Black"
-                                    HorizontalAlignment="Center" VerticalAlignment="Center"
-                                    IsActive="{Binding IsLoadingImage}" Background="{x:Null}"/>
+                                <Border x:Name="ProgressRingImage" Grid.Row="0" Height="110">
+                                    <ProgressRing Grid.Row="0" Height="30" Width="30" BorderBrush="Gray" Foreground="Black"
+                                        HorizontalAlignment="Center" VerticalAlignment="Center"
+                                        IsActive="{Binding IsLoadingImage}" Background="{x:Null}"/>
+                                </Border>
                                 <!--Название-->
-                                <Border x:Name="ProductNameBorder" Grid.Row="1" Background="Black" Opacity="0.7"
-                                    Visibility="Collapsed"/>
-                                <TextBlock x:Name="ProductName" Grid.Row="1" FontSize="12" Margin="4,2" TextAlignment="Left" TextWrapping="Wrap" Foreground="White"
-                                    HorizontalAlignment="Left" VerticalAlignment="Center" MaxLines="3"
+                                <Border x:Name="ProductNameBorder" Grid.Row="1" Grid.RowSpan="1" Height="50" Background="Black" Opacity="0.7"
+                                    Visibility="Collapsed" VerticalAlignment="Top"/>
+                                <TextBlock x:Name="ProductName" Grid.Row="1" Grid.RowSpan="1" Height="50" FontSize="12" Margin="4,2" TextAlignment="Left" TextWrapping="Wrap" Foreground="White"
+                                    HorizontalAlignment="Left" MaxLines="3"
                                     Text="{Binding Name, Converter={StaticResource stringProConverter}}"
-                                    Visibility="Collapsed"/>
+                                    Visibility="Collapsed" VerticalAlignment="Top"/>
                                 <!--Цена и кнопка покупки-->
                                 <Grid x:Name="ProductPriceBorder" Grid.Row="2" Background="{StaticResource Static.Grid.Background}">
                                     <Grid.ColumnDefinitions>
@@ -157,40 +160,25 @@
                             <VisualStateManager.VisualStateGroups>
                                 <VisualStateGroup x:Name="TypeModelGroup">
                                     <VisualState x:Name="FullMode">
-                                        <Storyboard>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="TriangleShape"
-                                                                       Storyboard.TargetProperty="Visibility">
-                                                <DiscreteObjectKeyFrame KeyTime="0">
-                                                    <DiscreteObjectKeyFrame.Value>
-                                                        <Visibility>Collapsed</Visibility>
-                                                    </DiscreteObjectKeyFrame.Value>
-                                                </DiscreteObjectKeyFrame>
-                                            </ObjectAnimationUsingKeyFrames>
-                                        </Storyboard>
+                                        <VisualState.Setters>
+                                            <Setter Target="Root.Height" Value="288"/>
+                                            <Setter Target="TriangleShape.Visibility" Value="Collapsed"/>
+                                            <Setter Target="ProgressRingImage.Visibility" Value="Visible"/>
+                                        </VisualState.Setters>
                                     </VisualState>
                                     <VisualState x:Name="NoImageMode">
-                                        <Storyboard>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="TriangleShape"
-                                                                       Storyboard.TargetProperty="Visibility">
-                                                <DiscreteObjectKeyFrame KeyTime="0">
-                                                    <DiscreteObjectKeyFrame.Value>
-                                                        <Visibility>Collapsed</Visibility>
-                                                    </DiscreteObjectKeyFrame.Value>
-                                                </DiscreteObjectKeyFrame>
-                                            </ObjectAnimationUsingKeyFrames>
-                                        </Storyboard>
+                                        <VisualState.Setters>
+                                            <Setter Target="Root.Height" Value="175"/>
+                                            <Setter Target="TriangleShape.Visibility" Value="Collapsed"/>
+                                            <Setter Target="ProgressRingImage.Visibility" Value="Collapsed"/>
+                                        </VisualState.Setters>
                                     </VisualState>
                                     <VisualState x:Name="OnlyPriceMode">
-                                        <Storyboard>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="TriangleShape"
-                                                                       Storyboard.TargetProperty="Visibility">
-                                                <DiscreteObjectKeyFrame KeyTime="0">
-                                                    <DiscreteObjectKeyFrame.Value>
-                                                        <Visibility>Visible</Visibility>
-                                                    </DiscreteObjectKeyFrame.Value>
-                                                </DiscreteObjectKeyFrame>
-                                            </ObjectAnimationUsingKeyFrames>
-                                        </Storyboard>
+                                        <VisualState.Setters>
+                                            <Setter Target="Root.Height" Value="100"/>
+                                            <Setter Target="TriangleShape.Visibility" Value="Visible"/>
+                                            <Setter Target="ProgressRingImage.Visibility" Value="Collapsed"/>
+                                        </VisualState.Setters>
                                     </VisualState>
                                 </VisualStateGroup>
                                 <VisualStateGroup x:Name="MainLoadingGroup">

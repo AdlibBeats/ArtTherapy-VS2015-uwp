@@ -7,7 +7,7 @@ using Windows.UI.Xaml.Media;
 
 namespace ArtTherapy.Models.ProductModels
 {
-    public enum LoadingType : byte
+    public enum LoadingType 
     {
         FullMode,
         NoImageMode,

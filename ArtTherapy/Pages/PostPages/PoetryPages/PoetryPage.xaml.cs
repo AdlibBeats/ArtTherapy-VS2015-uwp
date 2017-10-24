@@ -52,6 +52,7 @@ namespace ArtTherapy.Pages.PostPages.PoetryPages
             Id = 2;
             Title = "Стихи";
             NavigateEventType = NavigateEventTypes.ListBoxSelectionChanged;
+
             _ContentDialog.Background = new SolidColorBrush(Colors.Black);
             _ContentDialog.BorderThickness = new Thickness(0);
             _ContentDialog.BorderBrush = _ContentDialog.Background;
@@ -73,18 +74,9 @@ namespace ArtTherapy.Pages.PostPages.PoetryPages
         {
             base.OnNavigatedTo(e);
 
-            ArtTherapy.AppSettings.AppSettings.Current.Get();
-
-            _ViewModel = new PostViewModel<ProductModel>(AppSettings.AppSettings.Current.LoadingType);
+            _ViewModel = new PostViewModel<ProductModel>(LoadingType.FullMode);
 
             _ViewModel.Loaded += _viewModel_Loaded;
-
-            switch (_ViewModel.LoadingType)
-            {
-                case LoadingType.FullMode: r1.IsChecked = true; break;
-                case LoadingType.NoImageMode: r2.IsChecked = true; break;
-                case LoadingType.OnlyPriceMode: r3.IsChecked = true; break;
-            }
         }
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)
@@ -121,48 +113,9 @@ namespace ArtTherapy.Pages.PostPages.PoetryPages
         ContentDialog _ContentDialog = new ContentDialog();
         DispatcherTimer _DispatcherTimer = new DispatcherTimer();
 
-        int angle = 1;
-        bool isLocy = false;
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
             Initialized?.Invoke(this, new EventArgs());
-
-            //_ViewModel = new PostViewModel<ProductModel>(loadImages.IsOn);
-
-            //_DispatcherTimer.Interval = TimeSpan.FromSeconds(0.005);
-            //_DispatcherTimer.Tick += (s, args) =>
-            //{
-            //    Task.Factory.StartNew(async () =>
-            //    {
-            //        await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
-            //        {
-            //            foreach (Control frame in gridView.ItemsPanelRoot.Children)
-            //            {
-            //                if (frame != null)
-            //                {
-            //                    if (!(frame.RenderTransform is RotateTransform))
-            //                        frame.RenderTransform = new RotateTransform();
-
-            //                    (frame.RenderTransform as RotateTransform).CenterX = 0.5 * frame.ActualWidth;
-            //                    (frame.RenderTransform as RotateTransform).CenterY = 0.5 * frame.ActualHeight;
-
-            //                    (frame.RenderTransform as RotateTransform).Angle += angle;
-            //                }
-            //            }
-            //            if (!isLocy)
-            //                ++angle;
-            //            else
-            //                --angle;
-
-            //            if (angle == 50)
-            //                isLocy = true;
-            //            else if (angle == -50)
-            //                isLocy = false;
-            //        });
-            //    });
-            //};
-
-            //_DispatcherTimer.Start();
         }
 
         private async void gridView_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -203,7 +156,7 @@ namespace ArtTherapy.Pages.PostPages.PoetryPages
         }
 
         #endregion
-
+        
         private void RadioButton_Checked(object sender, RoutedEventArgs e)
         {
             var radioButton = sender as RadioButton;
@@ -212,31 +165,18 @@ namespace ArtTherapy.Pages.PostPages.PoetryPages
                 var name = radioButton.Content as String;
                 if (name != null)
                 {
-                    _ViewModel.Loaded -= _viewModel_Loaded;
-                    _ViewModel.Dispose();
-                    
                     switch (name)
                     {
                         case "С изображениями":
-                            AppSettings.AppSettings.Current.Set(LoadingType.FullMode);
-                            _ViewModel = new PostViewModel<ProductModel>(LoadingType.FullMode);
-                            gridView.ItemHeight = 288;
+                            _ViewModel.SetLoadingType(LoadingType.FullMode);
                             break;
                         case "Без изображений":
-                            AppSettings.AppSettings.Current.Set(LoadingType.NoImageMode);
-                            _ViewModel = new PostViewModel<ProductModel>(LoadingType.NoImageMode);
-                            gridView.ItemHeight = 175;
+                            _ViewModel.SetLoadingType(LoadingType.NoImageMode);
                             break;
                         case "Без Sku":
-                            AppSettings.AppSettings.Current.Set(LoadingType.OnlyPriceMode);
-                            _ViewModel = new PostViewModel<ProductModel>(LoadingType.OnlyPriceMode);
-                            gridView.ItemHeight = 100;
+                            _ViewModel.SetLoadingType(LoadingType.OnlyPriceMode);
                             break;
                     }
-
-                    _ViewModel.Loaded += _viewModel_Loaded;
-                    gridView.ItemsSource = _ViewModel.ProductModel.Items;
-                    _ViewModel.LoadData(1);
                 }
             }
         }

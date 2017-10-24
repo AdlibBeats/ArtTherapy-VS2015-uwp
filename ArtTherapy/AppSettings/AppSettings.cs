@@ -46,15 +46,9 @@ namespace ArtTherapy.AppSettings
             LoadingType = appSettings.LoadingType;
         }
 
-        public async void Set()
-        {
-            var result = await _baseJsonStorage.SetModel("AppSettings.json", this);
-        }
-
         public async void Set(ArtTherapy.Models.ProductModels.LoadingType loadingType)
         {
             LoadingType = loadingType;
-
             var result = await _baseJsonStorage.SetModel("AppSettings.json", this);
         }
 

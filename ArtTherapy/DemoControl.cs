@@ -27,11 +27,11 @@ namespace ArtTherapy
         
         public Models.ProductModels.LoadingType LoadingType
         {
-            get { return (Models.ProductModels.LoadingType)GetValue(VisibilityImagesProperty); }
-            set { SetValue(VisibilityImagesProperty, value); }
+            get { return (Models.ProductModels.LoadingType)GetValue(LoadingTypeProperty); }
+            set { SetValue(LoadingTypeProperty, value); }
         }
 
-        public static readonly DependencyProperty VisibilityImagesProperty =
+        public static readonly DependencyProperty LoadingTypeProperty =
             DependencyProperty.Register("LoadingType", typeof(Models.ProductModels.LoadingType), typeof(DemoControl), new PropertyMetadata(Models.ProductModels.LoadingType.FullMode));
 
         private static void OnModelChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -49,21 +49,32 @@ namespace ArtTherapy
 
         public void UpdateState(CurrentProductModel model)
         {
-            if (model.IsLoading)
-            {
-                VisualStateManager.GoToState(this, "Loading", true);
-                VisualStateManager.GoToState(this, "FullMode", true);
-            }
-            else
-            {
-                VisualStateManager.GoToState(this, "Loaded", true);
-                VisualStateManager.GoToState(this, $"{model.LoadingType}", true);
-            }
+            LoadingType = model.LoadingType;
+
+            VisualStateManager.GoToState(this, $"{LoadingType}", true);
+
+            VisualStateManager.GoToState(this, model.IsLoading ? "Loading" : "Loaded", true);
 
             if (RootProgress != null)
                 RootProgress.IsActive = model.IsLoading;
 
-            VisualStateManager.GoToState(this, model.IsLoadingImage ? "ImageLoading" : "ImageLoaded", true);
+            if (model.IsLoading)
+                VisualStateManager.GoToState(this, "ImageLoading", true);
+            else
+            {
+                switch (LoadingType)
+                {
+                    case Models.ProductModels.LoadingType.FullMode:
+                        VisualStateManager.GoToState(this, "ImageLoaded", true);
+                        break;
+                    case Models.ProductModels.LoadingType.NoImageMode:
+                        VisualStateManager.GoToState(this, "NoImageLoaded", true);
+                        break;
+                    case Models.ProductModels.LoadingType.OnlyPriceMode:
+                        VisualStateManager.GoToState(this, "NoImageLoaded", true);
+                        break;
+                }
+            }
 
             if (model.DiscountPrice != 0)
                 VisualStateManager.GoToState(this, model.IsLoading ? "DiscountPricesLoading" : "DiscountPricesLoaded", true);
@@ -74,25 +85,7 @@ namespace ArtTherapy
                 VisualStateManager.GoToState(this, model.IsLoadingRemains ? "RemainsLoading" : "RemainsLoaded", true);
             else
                 VisualStateManager.GoToState(this, model.IsLoadingRemains ? "NoRemainsLoading" : "NoRemainsLoaded", true);
-
-            if (RootGrid != null)
-            {
-                switch (model.LoadingType)
-                {
-                    case Models.ProductModels.LoadingType.FullMode:
-                        RootGrid.RowDefinitions.ElementAt(0).Height = new GridLength(110, GridUnitType.Pixel);
-                        break;
-                    case Models.ProductModels.LoadingType.NoImageMode:
-                        RootGrid.RowDefinitions.ElementAt(0).Height = new GridLength(0, GridUnitType.Pixel);
-                        break;
-                    case Models.ProductModels.LoadingType.OnlyPriceMode:
-                        RootGrid.RowDefinitions.ElementAt(0).Height = new GridLength(0, GridUnitType.Pixel);
-                        break;
-                }
-            }
         }
-
-        public Grid RootGrid { get; set; }
 
         public ProgressRing RootProgress { get; set; }
 
@@ -104,8 +97,7 @@ namespace ArtTherapy
         protected override void OnApplyTemplate()
         {
             base.OnApplyTemplate();
-
-            RootGrid = this.GetTemplateChild("RootGrid") as Grid;
+            
             RootProgress = this.GetTemplateChild("RootProgress") as ProgressRing;
         }
     }

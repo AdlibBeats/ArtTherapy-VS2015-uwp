@@ -46,24 +46,17 @@ namespace ArtTherapy.ViewModels
             };
 
             Storage = (BaseJsonStorage<T>)_JsonFactoryStorage.Create();
-            LoadingType = loadingType;
+            SetLoadingType(loadingType);
         }
 
-        /// <summary>
-        /// Размер карточки товара.
-        /// </summary>
-        public double ItemHeight
+        public Models.ProductModels.LoadingType LoadingType { get; private set; }
+
+        public void SetLoadingType(Models.ProductModels.LoadingType loadingType)
         {
-            get => _ItemHeight;
-            set => SetValue(ref _ItemHeight, value);
+            LoadingType = loadingType;
+            foreach (var x in ProductModel.Items)
+                x.LoadingType = LoadingType;
         }
-        private double _ItemHeight;
-
-        /// <summary>
-        /// Получает информацию о том,
-        /// показывать картинки в интерфейсе или нет.
-        /// </summary>
-        public Models.ProductModels.LoadingType LoadingType { get; }
 
         /// <summary>
         /// Полное количество, полученное через запрос.
@@ -104,19 +97,17 @@ namespace ArtTherapy.ViewModels
                                     {
                                         IsEnabledBuy = false,
                                         IsLoading = true,
-                                        LoadingType = LoadingType
                                     });
-                                    ProductModel.Items[i].LoadingType = LoadingType;
                                     Debug.WriteLine($"Добавлено {CurrentCount} из {Count}");
                                 }
 
                                 _IsLoadedList.Add(new TaskCompletionSource<bool>());
 
                                 int startIndex = ProductModel.Items.IndexOf(ProductModel.Items.LastOrDefault());
-                                if (startIndex >= startCountLoad - 1)
+                                int startCountLoadIndex = startCountLoad - 1;
+                                if (startIndex >= startCountLoadIndex)
                                 {
-                                    int startCountLoadParam = startCountLoad - 1;
-                                    startIndex -= startCountLoadParam;
+                                    startIndex -= startCountLoadIndex;
 
                                     //Назвние и Sku
                                     loadingHelper.LoadingType = ArtTherapyCore.BaseModels.LoadingType.GetFullData;
@@ -146,27 +137,19 @@ namespace ArtTherapy.ViewModels
                                     Loaded?.Invoke(this, new PostEventArgs(Count.Equals(CurrentCount)));
 
                                     //Картинки
-                                    Task t1 = null;
-                                    T images = default(T);
-                                    if (LoadingType == Models.ProductModels.LoadingType.FullMode)
-                                    {
-                                        loadingHelper.LoadingType = ArtTherapyCore.BaseModels.LoadingType.GetImagesData;
-                                        images = await Storage.GetModel(loadingHelper.Path) as T;
-                                        await Task.Delay(smallDataTimeLoading);
-                                    }
-                                    t1 = Task.Run(async () =>
+                                    loadingHelper.LoadingType = ArtTherapyCore.BaseModels.LoadingType.GetImagesData;
+                                    var images = await Storage.GetModel(loadingHelper.Path) as T;
+                                    await Task.Delay(smallDataTimeLoading);
+                                    Task t1 = Task.Run(async () =>
                                     {
                                         await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
                                         {
                                             for (int i = startIndex, k = 0; k < startCountLoad && i < Count; i++, k++)
                                             {
-                                                if (LoadingType == Models.ProductModels.LoadingType.FullMode)
-                                                {
-                                                    if (images != null && images.Items != null && images.Items.Count >= startCountLoad)
-                                                        ProductModel.Items[i].ImageUrl = images.Items[i].ImageUrl;
-                                                    else
-                                                        ProductModel.Items[i].ImageUrl = null;
-                                                }
+                                                if (images != null && images.Items != null && images.Items.Count >= startCountLoad)
+                                                    ProductModel.Items[i].ImageUrl = images.Items[i].ImageUrl;
+                                                else
+                                                    ProductModel.Items[i].ImageUrl = null;
 
                                                 ProductModel.Items[i].IsLoadingImage = false;
                                             }
@@ -198,26 +181,19 @@ namespace ArtTherapy.ViewModels
                                     });
 
                                     //Остатки
-                                    T remains = default(T);
-                                    if (LoadingType == Models.ProductModels.LoadingType.FullMode || LoadingType == Models.ProductModels.LoadingType.NoImageMode)
-                                    {
-                                        loadingHelper.LoadingType = ArtTherapyCore.BaseModels.LoadingType.GetRemainsData;
-                                        remains = await Storage.GetModel(loadingHelper.Path) as T;
-                                        await Task.Delay(smallDataTimeLoading);
-                                    }
+                                    loadingHelper.LoadingType = ArtTherapyCore.BaseModels.LoadingType.GetRemainsData;
+                                    var remains = await Storage.GetModel(loadingHelper.Path) as T;
+                                    await Task.Delay(smallDataTimeLoading);
                                     Task t3 = Task.Run(async () =>
                                     {
                                         await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
                                         {
                                             for (int i = startIndex, k = 0; k < startCountLoad && i < Count; i++, k++)
                                             {
-                                                if (LoadingType == Models.ProductModels.LoadingType.FullMode || LoadingType == Models.ProductModels.LoadingType.NoImageMode)
+                                                if (remains != null && remains.Items != null && remains.Items.Count >= startCountLoad)
                                                 {
-                                                    if (remains != null && remains.Items != null && remains.Items.Count >= startCountLoad)
-                                                    {
-                                                        ProductModel.Items[i].Remains = remains.Items[i].Remains;
-                                                        ProductModel.Items[i].IsEnabledBuy = true;
-                                                    }
+                                                    ProductModel.Items[i].Remains = remains.Items[i].Remains;
+                                                    ProductModel.Items[i].IsEnabledBuy = true;
                                                 }
                                                 ProductModel.Items[i].IsLoadingRemains = false;
                                             }
