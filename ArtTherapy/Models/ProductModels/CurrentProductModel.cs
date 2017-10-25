@@ -11,7 +11,8 @@ namespace ArtTherapy.Models.ProductModels
     {
         FullMode,
         NoImageMode,
-        OnlyPriceMode
+        OnlyPriceMode,
+        None
     }
 
     public class CurrentProductModel : BaseModel
@@ -24,13 +25,6 @@ namespace ArtTherapy.Models.ProductModels
             set => SetValue(ref _Sku, value);
         }
         private uint _Sku;
-
-        public string BuyIcon
-        {
-            get => _BuyIcon;
-            set => SetValue(ref _BuyIcon, value);
-        }
-        private string _BuyIcon;
 
         public string Name
         {

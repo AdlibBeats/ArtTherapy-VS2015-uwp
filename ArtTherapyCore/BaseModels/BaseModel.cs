@@ -4,7 +4,7 @@ using System.Runtime.CompilerServices;
 
 namespace ArtTherapyCore.BaseModels
 {
-    public enum LoadingType : byte
+    public enum JsonLoadingType : byte
     {
         GetCount,
         GetFullData,
@@ -16,7 +16,7 @@ namespace ArtTherapyCore.BaseModels
     public class LoadingHelper
     {
 
-        public LoadingHelper(LoadingType loadingType)
+        public LoadingHelper(JsonLoadingType loadingType)
         {
             LoadingType = loadingType;
         }
@@ -27,17 +27,17 @@ namespace ArtTherapyCore.BaseModels
             {
                 switch (LoadingType)
                 {
-                    case LoadingType.GetCount: return "PostModelCount.json";
-                    case LoadingType.GetFullData: return "PostModel.json";
-                    case LoadingType.GetImagesData: return "PostModelImages.json";
-                    case LoadingType.GetPricesData: return "PostModelPrices.json";
-                    case LoadingType.GetRemainsData: return "PostModelRemains.json";
+                    case JsonLoadingType.GetCount: return "PostModelCount.json";
+                    case JsonLoadingType.GetFullData: return "PostModel.json";
+                    case JsonLoadingType.GetImagesData: return "PostModelImages.json";
+                    case JsonLoadingType.GetPricesData: return "PostModelPrices.json";
+                    case JsonLoadingType.GetRemainsData: return "PostModelRemains.json";
                     default: return String.Empty;
                 }
             }
         }
 
-        public LoadingType LoadingType { get; set; }
+        public JsonLoadingType LoadingType { get; set; }
     }
 
     public interface IBaseModel : INotifyPropertyChanged

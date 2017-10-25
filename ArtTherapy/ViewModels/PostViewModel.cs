@@ -13,9 +13,6 @@ using ArtTherapyCore.BaseModels;
 
 namespace ArtTherapy.ViewModels
 {
-    /// <summary>
-    /// Представляет класс, с результатом о полной загрузки.
-    /// </summary>
     public class PostEventArgs : EventArgs
     {
         public bool IsFullInitialized { get; }
@@ -38,7 +35,7 @@ namespace ArtTherapy.ViewModels
         public BaseJsonStorage<T> Storage { get; private set; }
         public event EventHandler<PostEventArgs> Loaded;
 
-        public PostViewModel(Models.ProductModels.LoadingType loadingType)
+        public PostViewModel(LoadingType loadingType)
         {
             ProductModel = new T()
             {
@@ -49,9 +46,9 @@ namespace ArtTherapy.ViewModels
             SetLoadingType(loadingType);
         }
 
-        public Models.ProductModels.LoadingType LoadingType { get; private set; }
+        public LoadingType LoadingType { get; private set; }
 
-        public void SetLoadingType(Models.ProductModels.LoadingType loadingType)
+        public void SetLoadingType(LoadingType loadingType)
         {
             LoadingType = loadingType;
             foreach (var x in ProductModel.Items)
@@ -72,16 +69,18 @@ namespace ArtTherapy.ViewModels
         /// Загрузка данных из json файлов.
         /// </summary>
         /// <param name="scrollViewerProgress">Результат скроллинга.</param>
+        /// <param name="scrollCheck">Значение для проверки скролла.</param>
         /// <param name="startCountLoad">Количество подгружаемых элементов.</param>
         /// <param name="fullDataTimeLoading">Время загрузки полной информации (Название и Sku).</param>
         /// <param name="smallDataTimeLoading">Время загрузки изображений, ценников и остатков.</param>
-        public void LoadData(double scrollViewerProgress, int startCountLoad = 10, int fullDataTimeLoading = 1000, int smallDataTimeLoading = 50)
+        public void LoadData(double scrollViewerProgress, double scrollCheck = 0.9999, int startCountLoad = 10, int fullDataTimeLoading = 1000, int smallDataTimeLoading = 50)
         {
-            if (scrollViewerProgress > 0.9999)
+            if (scrollViewerProgress > scrollCheck)
             {
                 Task tt = Task.Run(async () =>
                 {
-                    LoadingHelper loadingHelper = new LoadingHelper(ArtTherapyCore.BaseModels.LoadingType.GetCount);
+                    //Количество
+                    LoadingHelper loadingHelper = new LoadingHelper(JsonLoadingType.GetCount);
                     var postModel = await Storage.GetModel(loadingHelper.Path) as T;
                     await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
                     {
@@ -110,7 +109,7 @@ namespace ArtTherapy.ViewModels
                                     startIndex -= startCountLoadIndex;
 
                                     //Назвние и Sku
-                                    loadingHelper.LoadingType = ArtTherapyCore.BaseModels.LoadingType.GetFullData;
+                                    loadingHelper.LoadingType = JsonLoadingType.GetFullData;
                                     var fullPostModel = await Storage.GetModel(loadingHelper.Path) as T;
                                     await Task.Delay(fullDataTimeLoading);
                                     await Task.Run(async () =>
@@ -137,7 +136,7 @@ namespace ArtTherapy.ViewModels
                                     Loaded?.Invoke(this, new PostEventArgs(Count.Equals(CurrentCount)));
 
                                     //Картинки
-                                    loadingHelper.LoadingType = ArtTherapyCore.BaseModels.LoadingType.GetImagesData;
+                                    loadingHelper.LoadingType = JsonLoadingType.GetImagesData;
                                     var images = await Storage.GetModel(loadingHelper.Path) as T;
                                     await Task.Delay(smallDataTimeLoading);
                                     Task t1 = Task.Run(async () =>
@@ -157,7 +156,7 @@ namespace ArtTherapy.ViewModels
                                     });
 
                                     //Цена
-                                    loadingHelper.LoadingType = ArtTherapyCore.BaseModels.LoadingType.GetPricesData;
+                                    loadingHelper.LoadingType = JsonLoadingType.GetPricesData;
                                     var prices = await Storage.GetModel(loadingHelper.Path) as T;
                                     await Task.Delay(smallDataTimeLoading);
                                     Task t2 = Task.Run(async () =>
@@ -181,7 +180,7 @@ namespace ArtTherapy.ViewModels
                                     });
 
                                     //Остатки
-                                    loadingHelper.LoadingType = ArtTherapyCore.BaseModels.LoadingType.GetRemainsData;
+                                    loadingHelper.LoadingType = JsonLoadingType.GetRemainsData;
                                     var remains = await Storage.GetModel(loadingHelper.Path) as T;
                                     await Task.Delay(smallDataTimeLoading);
                                     Task t3 = Task.Run(async () =>
@@ -233,7 +232,7 @@ namespace ArtTherapy.ViewModels
                         Sku = (uint)(3002550 + (i + 1)),
                         Price = 108990,
                         DiscountPrice = (i + 1) > 10 && i <= 35 ? 98990 : 0,
-                        BuyIcon = "\xE7BF",
+                        //BuyIcon = "\xE7BF",
                         IsLoading = false,
                         Name = "Ноутбук Apple MacBook Pro 2017 Core i7/16/256 SSD Gold (MNYK2RU/A)",
                         ImageUrl = "https://rebabaskett.com/wp-content/uploads/2017/01/u_10150899.jpg",
@@ -272,11 +271,9 @@ namespace ArtTherapy.ViewModels
         /// </summary>
         public T ProductModel
         {
-            get { return (T)GetValue(PostModelProperty); }
-            set { SetValue(PostModelProperty, value); }
+            get => _ProductModel;
+            set => SetValue(ref _ProductModel, value);
         }
-        
-        public static readonly DependencyProperty PostModelProperty =
-            DependencyProperty.Register("ProductModel", typeof(T), typeof(PostViewModel<T>), new PropertyMetadata(null));
+        private T _ProductModel;
     }
 }

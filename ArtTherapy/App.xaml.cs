@@ -8,6 +8,7 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using ArtTherapyCore.Extensions;
 using ArtTherapy.Settings;
+using ArtTherapy.Models.ProductModels;
 
 namespace ArtTherapy
 {
@@ -77,6 +78,14 @@ namespace ArtTherapy
                 //var p = Package.Current.InstalledLocation;
                 // Обеспечение активности текущего окна
                 Window.Current.Activate();
+
+                //var task = AppSettings.AppSettings.Current.Get();
+                //task.Start();
+                //task.Wait();
+
+                //AppSettings.AppSettings.Current.Set(LoadingType.OnlyPriceMode);
+
+                //AppSettings.AppSettings.Current.Get();
             }
         }
 

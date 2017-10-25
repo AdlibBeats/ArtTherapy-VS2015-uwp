@@ -1,21 +1,43 @@
-﻿using ArtTherapy.ViewModels;
+﻿using ArtTherapy.Models.ProductModels;
+using ArtTherapy.ViewModels;
+using ArtTherapyCore.Extensions;
+
+using Microsoft.Toolkit.Uwp.UI.Controls;
+
 using System;
 using System.ComponentModel;
+using System.Diagnostics;
+using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
+using System.Windows.Input;
+using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
-using ArtTherapy.Models.ProductModels;
-using Microsoft.Toolkit.Uwp.UI.Controls;
-using Windows.UI;
-using System.Runtime.CompilerServices;
-using System.Threading.Tasks;
-using ArtTherapyCore.Extensions;
-using System.Diagnostics;
 
 namespace ArtTherapy.Pages.PostPages.PoetryPages
 {
-    public sealed partial class PoetryPage : Page, IPage
+    public interface ISetLoadingType
+    {
+        void SetLoadingType(object parameter);
+    }
+    public class SetLoadingTypeCommand : ICommand
+    {
+        private ISetLoadingType _ViewModel;
+
+        public SetLoadingTypeCommand(ISetLoadingType viewModel)
+        {
+            _ViewModel = viewModel;
+        }
+
+        public event EventHandler CanExecuteChanged;
+
+        public bool CanExecute(object parameter) => true;
+
+        public void Execute(object parameter) => _ViewModel.SetLoadingType(parameter);
+    }
+    public sealed partial class PoetryPage : Page, IPage, ISetLoadingType
     {
         public uint Id
         {
@@ -41,11 +63,13 @@ namespace ArtTherapy.Pages.PostPages.PoetryPages
         public PostViewModel<ProductModel> ViewModel
         {
             get => _ViewModel;
+            set => SetValue(ref _ViewModel, value);
         }
         private PostViewModel<ProductModel> _ViewModel;
 
         public event EventHandler<EventArgs> Initialized;
 
+        private ContentDialog _ContentDialog = new ContentDialog();
         public PoetryPage()
         {
             this.InitializeComponent();
@@ -61,61 +85,75 @@ namespace ArtTherapy.Pages.PostPages.PoetryPages
             _ContentDialog.MinHeight = 10;
             _ContentDialog.MaxWidth = 5000;
             _ContentDialog.MaxHeight = 5000;
-            _ContentDialog.Width = Window.Current.Bounds.Width;
-            _ContentDialog.Height = Window.Current.Bounds.Height;
 
             _ContentDialog.PointerPressed += (s, args) =>
             {
                 _ContentDialog.Hide();
             };
+
+            SetLoadingTypeCommand = new SetLoadingTypeCommand(this);
         }
 
-        protected override void OnNavigatedTo(NavigationEventArgs e)
+        protected override async void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
-
-            _ViewModel = new PostViewModel<ProductModel>(LoadingType.FullMode);
-
-            _ViewModel.Loaded += _viewModel_Loaded;
+            
+            await Task.Run(async () =>
+            {
+                await AppSettings.AppSettings.Current.Get();
+                await this.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+                {
+                    Debug.WriteLine(AppSettings.AppSettings.Current.LoadingType);
+                    ViewModel = new PostViewModel<ProductModel>(AppSettings.AppSettings.Current.LoadingType);
+                    ViewModel.Loaded += _viewModel_Loaded;
+                    switch (AppSettings.AppSettings.Current.LoadingType)
+                    {
+                        case LoadingType.FullMode: if (r1 != null) r1.IsChecked = true; break;
+                        case LoadingType.NoImageMode: if (r2 != null) r2.IsChecked = true; break;
+                        case LoadingType.OnlyPriceMode: if (r3 != null) r3.IsChecked = true; break;
+                        case LoadingType.None: if (r1 != null) r4.IsChecked = true; break;
+                    }
+                    double value = scrollViewer.GetScrollViewProgress();
+                    ViewModel.LoadData(value);
+                    Initialized?.Invoke(this, new EventArgs());
+                });
+            });
         }
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)
         {
             base.OnNavigatedFrom(e);
 
-            _ViewModel.Loaded -= _viewModel_Loaded;
+            ViewModel.Loaded -= _viewModel_Loaded;
 
-            _ViewModel.Dispose();
+            ViewModel.Dispose();
         }
 
         private void _viewModel_Loaded(object sender, PostEventArgs e)
         {
             double value = scrollViewer.GetScrollViewProgress();
             if (!e.IsFullInitialized)
-                _ViewModel.LoadData(value);
+                ViewModel.LoadData(value);
         }
 
         private void ScrollViewer_ViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
         {
-            double value = scrollViewer.GetScrollViewProgress();
-            _ViewModel.LoadData(value);
+            if (ViewModel != null)
+            {
+                double value = scrollViewer.GetScrollViewProgress();
+                ViewModel.LoadData(value);
+            }
         }
 
         private void Page_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             _ContentDialog.Width = Window.Current.Bounds.Width;
             _ContentDialog.Height = Window.Current.Bounds.Height;
-
-            double value = scrollViewer.GetScrollViewProgress();
-            _ViewModel.LoadData(value);
-        }
-
-        ContentDialog _ContentDialog = new ContentDialog();
-        DispatcherTimer _DispatcherTimer = new DispatcherTimer();
-
-        private void Page_Loaded(object sender, RoutedEventArgs e)
-        {
-            Initialized?.Invoke(this, new EventArgs());
+            if (ViewModel != null)
+            {
+                double value = scrollViewer.GetScrollViewProgress();
+                ViewModel.LoadData(value);
+            }
         }
 
         private async void gridView_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -145,6 +183,27 @@ namespace ArtTherapy.Pages.PostPages.PoetryPages
             }
         }
 
+        public async void SetLoadingType(object parameter)
+        {
+            int result;
+            var stringValue = parameter as String;
+            if (!String.IsNullOrEmpty(stringValue))
+                if (int.TryParse(stringValue, out result))
+                {
+                    await AppSettings.AppSettings.Current.Set((LoadingType)result);
+                    ViewModel.SetLoadingType((LoadingType)result);
+                }
+        }
+
+        public ICommand SetLoadingTypeCommand
+        {
+            get { return (ICommand)GetValue(SetLoadingTypeCommandProperty); }
+            set { SetValue(SetLoadingTypeCommandProperty, value); }
+        }
+        
+        public static readonly DependencyProperty SetLoadingTypeCommandProperty =
+            DependencyProperty.Register("SetLoadingTypeCommand", typeof(ICommand), typeof(PoetryPage), new PropertyMetadata(null));
+
         #region INotifyPropertyChanged Members
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -156,29 +215,5 @@ namespace ArtTherapy.Pages.PostPages.PoetryPages
         }
 
         #endregion
-        
-        private void RadioButton_Checked(object sender, RoutedEventArgs e)
-        {
-            var radioButton = sender as RadioButton;
-            if (radioButton != null)
-            {
-                var name = radioButton.Content as String;
-                if (name != null)
-                {
-                    switch (name)
-                    {
-                        case "С изображениями":
-                            _ViewModel.SetLoadingType(LoadingType.FullMode);
-                            break;
-                        case "Без изображений":
-                            _ViewModel.SetLoadingType(LoadingType.NoImageMode);
-                            break;
-                        case "Без Sku":
-                            _ViewModel.SetLoadingType(LoadingType.OnlyPriceMode);
-                            break;
-                    }
-                }
-            }
-        }
     }
 }

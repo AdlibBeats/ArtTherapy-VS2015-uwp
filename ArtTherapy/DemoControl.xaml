@@ -154,6 +154,12 @@
                             </Grid>
                             <Border x:Name="ProductBorder" Background="{x:Null}" BorderBrush="#FFE2E2E2" BorderThickness="1"
                                     Visibility="Collapsed"/>
+                            <TextBlock x:Name="NoneTextBlock"
+                                    VerticalAlignment="Center"
+                                    HorizontalAlignment="Center"
+                                    TextAlignment="Center"
+                                    Visibility="Collapsed"
+                                    Text="Данные отсутствуют"/>
                             <ProgressRing x:Name="RootProgress" Height="50" Width="50" BorderBrush="Gray" Foreground="Black"
                                     HorizontalAlignment="Center" VerticalAlignment="Center"
                                     IsActive="{Binding IsLoading}" Background="{x:Null}"/>
@@ -164,21 +170,72 @@
                                             <Setter Target="Root.Height" Value="288"/>
                                             <Setter Target="TriangleShape.Visibility" Value="Collapsed"/>
                                             <Setter Target="ProgressRingImage.Visibility" Value="Visible"/>
+                                            <Setter Target="NoneTextBlock.Visibility" Value="Collapsed"/>
                                         </VisualState.Setters>
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid"
+                                                                       Storyboard.TargetProperty="Visibility">
+                                                <DiscreteObjectKeyFrame KeyTime="0">
+                                                    <DiscreteObjectKeyFrame.Value>
+                                                        <Visibility>Visible</Visibility>
+                                                    </DiscreteObjectKeyFrame.Value>
+                                                </DiscreteObjectKeyFrame>
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
                                     </VisualState>
                                     <VisualState x:Name="NoImageMode">
                                         <VisualState.Setters>
                                             <Setter Target="Root.Height" Value="175"/>
                                             <Setter Target="TriangleShape.Visibility" Value="Collapsed"/>
                                             <Setter Target="ProgressRingImage.Visibility" Value="Collapsed"/>
+                                            <Setter Target="NoneTextBlock.Visibility" Value="Collapsed"/>
                                         </VisualState.Setters>
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid"
+                                                                       Storyboard.TargetProperty="Visibility">
+                                                <DiscreteObjectKeyFrame KeyTime="0">
+                                                    <DiscreteObjectKeyFrame.Value>
+                                                        <Visibility>Visible</Visibility>
+                                                    </DiscreteObjectKeyFrame.Value>
+                                                </DiscreteObjectKeyFrame>
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
                                     </VisualState>
                                     <VisualState x:Name="OnlyPriceMode">
                                         <VisualState.Setters>
                                             <Setter Target="Root.Height" Value="100"/>
                                             <Setter Target="TriangleShape.Visibility" Value="Visible"/>
                                             <Setter Target="ProgressRingImage.Visibility" Value="Collapsed"/>
+                                            <Setter Target="NoneTextBlock.Visibility" Value="Collapsed"/>
                                         </VisualState.Setters>
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid"
+                                                                       Storyboard.TargetProperty="Visibility">
+                                                <DiscreteObjectKeyFrame KeyTime="0">
+                                                    <DiscreteObjectKeyFrame.Value>
+                                                        <Visibility>Visible</Visibility>
+                                                    </DiscreteObjectKeyFrame.Value>
+                                                </DiscreteObjectKeyFrame>
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="None">
+                                        <VisualState.Setters>
+                                            <Setter Target="Root.Height" Value="175"/>
+                                            <Setter Target="TriangleShape.Visibility" Value="Collapsed"/>
+                                            <Setter Target="ProgressRingImage.Visibility" Value="Collapsed"/>
+                                            <Setter Target="NoneTextBlock.Visibility" Value="Visible"/>
+                                        </VisualState.Setters>
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid"
+                                                                       Storyboard.TargetProperty="Visibility">
+                                                <DiscreteObjectKeyFrame KeyTime="0">
+                                                    <DiscreteObjectKeyFrame.Value>
+                                                        <Visibility>Collapsed</Visibility>
+                                                    </DiscreteObjectKeyFrame.Value>
+                                                </DiscreteObjectKeyFrame>
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
                                     </VisualState>
                                 </VisualStateGroup>
                                 <VisualStateGroup x:Name="MainLoadingGroup">

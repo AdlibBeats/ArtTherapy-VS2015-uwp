@@ -9,6 +9,7 @@ using System.Diagnostics;
 using ArtTherapy.Models;
 using ArtTherapyCore.BaseModels;
 using ArtTherapy.Storage;
+using ArtTherapy.Models.ProductModels;
 
 namespace ArtTherapy.AppSettings
 {
@@ -21,7 +22,7 @@ namespace ArtTherapy.AppSettings
 
         private AppSettings()
         {
-            LoadingType = Models.ProductModels.LoadingType.FullMode;
+            LoadingType = LoadingType.FullMode;
         }
 
         private BaseJsonStorage<AppSettings> _baseJsonStorage =>
@@ -30,31 +31,31 @@ namespace ArtTherapy.AppSettings
         private JsonFactoryStorage<AppSettings> _jsonFactoryStorage =>
             new JsonFactoryStorage<AppSettings>();
 
-        public ArtTherapy.Models.ProductModels.LoadingType LoadingType
+        public LoadingType LoadingType
         {
             get => _LoadingType;
-            set => SetValue(ref _LoadingType, value);
+            set => _LoadingType = value;
         }
-        private ArtTherapy.Models.ProductModels.LoadingType _LoadingType;
+        private LoadingType _LoadingType;
 
-        public async void Get()
+        public async Task Get()
         {
             var appSettings = await _baseJsonStorage.GetModel("AppSettings.json");
             if (appSettings == null)
                 return;
-
+            //Debug.WriteLine(appSettings.LoadingType);
             LoadingType = appSettings.LoadingType;
         }
 
-        public async void Set(ArtTherapy.Models.ProductModels.LoadingType loadingType)
+        public async Task Set(LoadingType loadingType)
         {
             LoadingType = loadingType;
             var result = await _baseJsonStorage.SetModel("AppSettings.json", this);
         }
 
-        public async void Delete()
+        public async Task Delete()
         {
-            var result = await _baseJsonStorage.DeleteModel("AppSettings");
+            var result = await _baseJsonStorage.DeleteModel("AppSettings.json");
         }
     }
 }
