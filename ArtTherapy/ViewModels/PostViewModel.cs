@@ -50,9 +50,15 @@ namespace ArtTherapy.ViewModels
 
         public void SetLoadingType(LoadingType loadingType)
         {
-            LoadingType = loadingType;
-            foreach (var x in ProductModel.Items)
-                x.LoadingType = LoadingType;
+            Task.Run(async () =>
+            {
+                await this.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+                {
+                    LoadingType = loadingType;
+                    foreach (var x in ProductModel.Items)
+                        x.LoadingType = LoadingType;
+                });
+            });
         }
 
         /// <summary>
@@ -73,140 +79,137 @@ namespace ArtTherapy.ViewModels
         /// <param name="startCountLoad">Количество подгружаемых элементов.</param>
         /// <param name="fullDataTimeLoading">Время загрузки полной информации (Название и Sku).</param>
         /// <param name="smallDataTimeLoading">Время загрузки изображений, ценников и остатков.</param>
-        public void LoadData(double scrollViewerProgress, double scrollCheck = 0.9999, int startCountLoad = 10, int fullDataTimeLoading = 1000, int smallDataTimeLoading = 50)
+        public async void LoadData(double scrollViewerProgress, double scrollCheck = 0.9999, int startCountLoad = 10, int fullDataTimeLoading = 1000, int smallDataTimeLoading = 50)
         {
             if (scrollViewerProgress > scrollCheck)
             {
-                Task tt = Task.Run(async () =>
+                _IsLoadedList.Add(new TaskCompletionSource<bool>());
+
+                //Количество
+                LoadingHelper loadingHelper = new LoadingHelper(JsonLoadingType.GetCount);
+                var postModel = await Storage.GetModel(loadingHelper.Path) as T;
+                if (postModel != null)
                 {
-                    //Количество
-                    LoadingHelper loadingHelper = new LoadingHelper(JsonLoadingType.GetCount);
-                    var postModel = await Storage.GetModel(loadingHelper.Path) as T;
-                    await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
+                    Count = postModel.Count;
+                    if (Count > 0 && CurrentCount < Count)
                     {
-                        if (postModel != null)
+                        await this.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
                         {
-                            Count = postModel.Count;
-                            if (Count > 0 && CurrentCount < Count)
+                            for (int i = 0; i < Count; i++)
                             {
-                                for (int i = 0; i < Count; i++)
+                                if (i == startCountLoad || CurrentCount == Count) break;
+                                ProductModel.Items.Add(new CurrentProductModel()
                                 {
-                                    if (i == startCountLoad || CurrentCount == Count) break;
-                                    ProductModel.Items.Add(new CurrentProductModel()
-                                    {
-                                        IsEnabledBuy = false,
-                                        IsLoading = true,
-                                    });
-                                    Debug.WriteLine($"Добавлено {CurrentCount} из {Count}");
-                                }
-
-                                _IsLoadedList.Add(new TaskCompletionSource<bool>());
-
-                                int startIndex = ProductModel.Items.IndexOf(ProductModel.Items.LastOrDefault());
-                                int startCountLoadIndex = startCountLoad - 1;
-                                if (startIndex >= startCountLoadIndex)
-                                {
-                                    startIndex -= startCountLoadIndex;
-
-                                    //Назвние и Sku
-                                    loadingHelper.LoadingType = JsonLoadingType.GetFullData;
-                                    var fullPostModel = await Storage.GetModel(loadingHelper.Path) as T;
-                                    await Task.Delay(fullDataTimeLoading);
-                                    await Task.Run(async () =>
-                                    {
-                                        await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
-                                        {
-                                            if (fullPostModel != null && fullPostModel.Items != null && fullPostModel.Items.Count > 0)
-                                            {
-                                                for (int i = startIndex, k = 0; k < startCountLoad && i < Count; i++, k++)
-                                                {
-                                                    fullPostModel.Items[i].LoadingType = LoadingType;
-                                                    ProductModel.Items[i] = fullPostModel.Items[i];
-                                                    ProductModel.Items[i].IsLoading = false;
-
-                                                    ProductModel.Items[i].ImageUrl = "None";
-                                                    ProductModel.Items[i].IsLoadingImage = true;
-                                                    ProductModel.Items[i].IsLoadingPrice = true;
-                                                    ProductModel.Items[i].IsLoadingRemains = true;
-                                                }
-                                            }
-                                        });
-                                    });
-
-                                    Loaded?.Invoke(this, new PostEventArgs(Count.Equals(CurrentCount)));
-
-                                    //Картинки
-                                    loadingHelper.LoadingType = JsonLoadingType.GetImagesData;
-                                    var images = await Storage.GetModel(loadingHelper.Path) as T;
-                                    await Task.Delay(smallDataTimeLoading);
-                                    Task t1 = Task.Run(async () =>
-                                    {
-                                        await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
-                                        {
-                                            for (int i = startIndex, k = 0; k < startCountLoad && i < Count; i++, k++)
-                                            {
-                                                if (images != null && images.Items != null && images.Items.Count >= startCountLoad)
-                                                    ProductModel.Items[i].ImageUrl = images.Items[i].ImageUrl;
-                                                else
-                                                    ProductModel.Items[i].ImageUrl = null;
-
-                                                ProductModel.Items[i].IsLoadingImage = false;
-                                            }
-                                        });
-                                    });
-
-                                    //Цена
-                                    loadingHelper.LoadingType = JsonLoadingType.GetPricesData;
-                                    var prices = await Storage.GetModel(loadingHelper.Path) as T;
-                                    await Task.Delay(smallDataTimeLoading);
-                                    Task t2 = Task.Run(async () =>
-                                    {
-                                        await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
-                                        {
-                                            for (int i = startIndex, k = 0; k < startCountLoad && i < Count; i++, k++)
-                                            {
-                                                if (prices != null && prices.Items != null && prices.Items.Count >= startCountLoad)
-                                                {
-                                                    ProductModel.Items[i].DiscountPrice =
-                                                        prices.Items[i].DiscountPrice < prices.Items[i].Price ? prices.Items[i].DiscountPrice : 0;
-                                                    ProductModel.Items[i].Price = prices.Items[i].Price;
-                                                    if (ProductModel.Items[i].DiscountPrice > 0)
-                                                        ProductModel.Items[i].PriceDifference =
-                                                            ProductModel.Items[i].Price - ProductModel.Items[i].DiscountPrice;
-                                                }
-                                                ProductModel.Items[i].IsLoadingPrice = false;
-                                            }
-                                        });
-                                    });
-
-                                    //Остатки
-                                    loadingHelper.LoadingType = JsonLoadingType.GetRemainsData;
-                                    var remains = await Storage.GetModel(loadingHelper.Path) as T;
-                                    await Task.Delay(smallDataTimeLoading);
-                                    Task t3 = Task.Run(async () =>
-                                    {
-                                        await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
-                                        {
-                                            for (int i = startIndex, k = 0; k < startCountLoad && i < Count; i++, k++)
-                                            {
-                                                if (remains != null && remains.Items != null && remains.Items.Count >= startCountLoad)
-                                                {
-                                                    ProductModel.Items[i].Remains = remains.Items[i].Remains;
-                                                    ProductModel.Items[i].IsEnabledBuy = true;
-                                                }
-                                                ProductModel.Items[i].IsLoadingRemains = false;
-                                            }
-                                        });
-                                    });
-                                    
-                                    await Task.WhenAll(new[] { t1, t2, t3 });
-
-                                    _IsLoadedList.LastOrDefault().TrySetResult(true);
-                                }
+                                    IsEnabledBuy = false,
+                                    IsLoading = true,
+                                });
+                                Debug.WriteLine($"Добавлено {CurrentCount} из {Count}");
                             }
+                        });
+
+                        int startIndex = ProductModel.Items.IndexOf(ProductModel.Items.LastOrDefault());
+                        int startCountLoadIndex = startCountLoad - 1;
+                        if (startIndex >= startCountLoadIndex)
+                        {
+                            startIndex -= startCountLoadIndex;
+
+                            //Назвние и Sku
+                            loadingHelper.LoadingType = JsonLoadingType.GetFullData;
+                            var fullPostModel = await Storage.GetModel(loadingHelper.Path) as T;
+                            await Task.Delay(fullDataTimeLoading);
+                            await Task.Run(async () =>
+                            {
+                                await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+                                {
+                                    if (fullPostModel != null && fullPostModel.Items != null && fullPostModel.Items.Count > 0)
+                                    {
+                                        for (int i = startIndex, k = 0; k < startCountLoad && i < Count; i++, k++)
+                                        {
+                                            fullPostModel.Items[i].LoadingType = LoadingType;
+                                            ProductModel.Items[i] = fullPostModel.Items[i];
+                                            ProductModel.Items[i].IsLoading = false;
+
+                                            ProductModel.Items[i].ImageUrl = "None";
+                                            ProductModel.Items[i].IsLoadingImage = true;
+                                            ProductModel.Items[i].IsLoadingPrice = true;
+                                            ProductModel.Items[i].IsLoadingRemains = true;
+                                        }
+                                    }
+                                });
+                            });
+
+                            Loaded?.Invoke(this, new PostEventArgs(Count.Equals(CurrentCount)));
+
+                            //Картинки
+                            loadingHelper.LoadingType = JsonLoadingType.GetImagesData;
+                            var images = await Storage.GetModel(loadingHelper.Path) as T;
+                            await Task.Delay(smallDataTimeLoading);
+                            Task t1 = Task.Run(async () =>
+                            {
+                                await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+                                {
+                                    for (int i = startIndex, k = 0; k < startCountLoad && i < Count; i++, k++)
+                                    {
+                                        if (images != null && images.Items != null && images.Items.Count >= startCountLoad)
+                                            ProductModel.Items[i].ImageUrl = images.Items[i].ImageUrl;
+                                        else
+                                            ProductModel.Items[i].ImageUrl = null;
+
+                                        ProductModel.Items[i].IsLoadingImage = false;
+                                    }
+                                });
+                            });
+
+                            //Цена
+                            loadingHelper.LoadingType = JsonLoadingType.GetPricesData;
+                            var prices = await Storage.GetModel(loadingHelper.Path) as T;
+                            await Task.Delay(smallDataTimeLoading);
+                            Task t2 = Task.Run(async () =>
+                            {
+                                await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+                                {
+                                    for (int i = startIndex, k = 0; k < startCountLoad && i < Count; i++, k++)
+                                    {
+                                        if (prices != null && prices.Items != null && prices.Items.Count >= startCountLoad)
+                                        {
+                                            ProductModel.Items[i].DiscountPrice =
+                                                prices.Items[i].DiscountPrice < prices.Items[i].Price ? prices.Items[i].DiscountPrice : 0;
+                                            ProductModel.Items[i].Price = prices.Items[i].Price;
+                                            if (ProductModel.Items[i].DiscountPrice > 0)
+                                                ProductModel.Items[i].PriceDifference =
+                                                    ProductModel.Items[i].Price - ProductModel.Items[i].DiscountPrice;
+                                        }
+                                        ProductModel.Items[i].IsLoadingPrice = false;
+                                    }
+                                });
+                            });
+
+                            //Остатки
+                            loadingHelper.LoadingType = JsonLoadingType.GetRemainsData;
+                            var remains = await Storage.GetModel(loadingHelper.Path) as T;
+                            await Task.Delay(smallDataTimeLoading);
+                            Task t3 = Task.Run(async () =>
+                            {
+                                await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+                                {
+                                    for (int i = startIndex, k = 0; k < startCountLoad && i < Count; i++, k++)
+                                    {
+                                        if (remains != null && remains.Items != null && remains.Items.Count >= startCountLoad)
+                                        {
+                                            ProductModel.Items[i].Remains = remains.Items[i].Remains;
+                                            ProductModel.Items[i].IsEnabledBuy = true;
+                                        }
+                                        ProductModel.Items[i].IsLoadingRemains = false;
+                                    }
+                                });
+                            });
+
+                            await Task.WhenAll(new[] { t1, t2, t3 });
+
+                            _IsLoadedList.LastOrDefault().TrySetResult(true);
                         }
-                    });
-                });
+                    }
+                }
             }
         }
 
@@ -217,7 +220,7 @@ namespace ArtTherapy.ViewModels
         /// <param name="demoPostModel"></param>
         /// <param name="items"></param>
         /// <returns></returns>
-        public async Task AddDemoData(LoadingHelper loadingHelper, T demoPostModel = default(T), ObservableCollection<CurrentProductModel> items = null)
+        public async void AddDemoData(LoadingHelper loadingHelper, T demoPostModel = default(T), ObservableCollection<CurrentProductModel> items = null)
         {
             if (demoPostModel == null)
                 demoPostModel = new T();

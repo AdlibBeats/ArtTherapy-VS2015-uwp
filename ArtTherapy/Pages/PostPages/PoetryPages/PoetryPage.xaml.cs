@@ -22,6 +22,7 @@ namespace ArtTherapy.Pages.PostPages.PoetryPages
     {
         void SetLoadingType(object parameter);
     }
+
     public class SetLoadingTypeCommand : ICommand
     {
         private ISetLoadingType _ViewModel;
@@ -37,8 +38,10 @@ namespace ArtTherapy.Pages.PostPages.PoetryPages
 
         public void Execute(object parameter) => _ViewModel.SetLoadingType(parameter);
     }
+
     public sealed partial class PoetryPage : Page, IPage, ISetLoadingType
     {
+        #region Public
         public uint Id
         {
             get => _Id;
@@ -60,6 +63,10 @@ namespace ArtTherapy.Pages.PostPages.PoetryPages
         }
         private NavigateEventTypes _NavigateEventType;
 
+        public event EventHandler<EventArgs> Initialized;
+
+        #endregion
+
         public PostViewModel<ProductModel> ViewModel
         {
             get => _ViewModel;
@@ -67,8 +74,7 @@ namespace ArtTherapy.Pages.PostPages.PoetryPages
         }
         private PostViewModel<ProductModel> _ViewModel;
 
-        public event EventHandler<EventArgs> Initialized;
-
+        private Task _LoadDataTask = null;
         private ContentDialog _ContentDialog = new ContentDialog();
         public PoetryPage()
         {
@@ -113,8 +119,9 @@ namespace ArtTherapy.Pages.PostPages.PoetryPages
                         case LoadingType.OnlyPriceMode: if (r3 != null) r3.IsChecked = true; break;
                         case LoadingType.None: if (r1 != null) r4.IsChecked = true; break;
                     }
+
                     double value = scrollViewer.GetScrollViewProgress();
-                    ViewModel.LoadData(value);
+                    _LoadDataTask = Task.Run(() => ViewModel.LoadData(value));
                     Initialized?.Invoke(this, new EventArgs());
                 });
             });
@@ -129,31 +136,31 @@ namespace ArtTherapy.Pages.PostPages.PoetryPages
             ViewModel.Dispose();
         }
 
-        private void _viewModel_Loaded(object sender, PostEventArgs e)
+        private async void _viewModel_Loaded(object sender, PostEventArgs e)
         {
-            double value = scrollViewer.GetScrollViewProgress();
+            double value = 0;
+            await this.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+            {
+                value = scrollViewer.GetScrollViewProgress();
+            });
+
             if (!e.IsFullInitialized)
-                ViewModel.LoadData(value);
+                _LoadDataTask = Task.Run(() => ViewModel.LoadData(value));
         }
 
         private void ScrollViewer_ViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
         {
-            if (ViewModel != null)
-            {
-                double value = scrollViewer.GetScrollViewProgress();
-                ViewModel.LoadData(value);
-            }
+            double value = scrollViewer.GetScrollViewProgress();
+            _LoadDataTask = Task.Run(() => ViewModel?.LoadData(value));
         }
 
         private void Page_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             _ContentDialog.Width = Window.Current.Bounds.Width;
             _ContentDialog.Height = Window.Current.Bounds.Height;
-            if (ViewModel != null)
-            {
-                double value = scrollViewer.GetScrollViewProgress();
-                ViewModel.LoadData(value);
-            }
+
+            double value = scrollViewer.GetScrollViewProgress();
+            _LoadDataTask = Task.Run(() => ViewModel?.LoadData(value));
         }
 
         private async void gridView_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -183,26 +190,28 @@ namespace ArtTherapy.Pages.PostPages.PoetryPages
             }
         }
 
-        public async void SetLoadingType(object parameter)
+        public void SetLoadingType(object parameter)
         {
             int result;
             var stringValue = parameter as String;
             if (!String.IsNullOrEmpty(stringValue))
                 if (int.TryParse(stringValue, out result))
                 {
-                    await AppSettings.AppSettings.Current.Set((LoadingType)result);
-                    ViewModel.SetLoadingType((LoadingType)result);
+                    Task.Run(async () =>
+                    {
+                        await _LoadDataTask;
+                        await AppSettings.AppSettings.Current.Set((LoadingType)result);
+                        _LoadDataTask = Task.Run(() => ViewModel?.SetLoadingType((LoadingType)result));
+                    });
                 }
         }
 
         public ICommand SetLoadingTypeCommand
         {
-            get { return (ICommand)GetValue(SetLoadingTypeCommandProperty); }
-            set { SetValue(SetLoadingTypeCommandProperty, value); }
+            get => _SetLoadingTypeCommand;
+            set => SetValue(ref _SetLoadingTypeCommand, value);
         }
-        
-        public static readonly DependencyProperty SetLoadingTypeCommandProperty =
-            DependencyProperty.Register("SetLoadingTypeCommand", typeof(ICommand), typeof(PoetryPage), new PropertyMetadata(null));
+        private ICommand _SetLoadingTypeCommand;
 
         #region INotifyPropertyChanged Members
 

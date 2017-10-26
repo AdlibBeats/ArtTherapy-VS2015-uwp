@@ -40,22 +40,26 @@ namespace ArtTherapy.AppSettings
 
         public async Task Get()
         {
-            var appSettings = await _baseJsonStorage.GetModel("AppSettings.json");
-            if (appSettings == null)
+            var result =
+                await _baseJsonStorage.GetModel("AppSettings.json");
+
+            if (result == null)
                 return;
-            //Debug.WriteLine(appSettings.LoadingType);
-            LoadingType = appSettings.LoadingType;
+
+            LoadingType = result.LoadingType;
         }
 
         public async Task Set(LoadingType loadingType)
         {
             LoadingType = loadingType;
-            var result = await _baseJsonStorage.SetModel("AppSettings.json", this);
+            var result =
+                await _baseJsonStorage.SetModel("AppSettings.json", this);
         }
 
         public async Task Delete()
         {
-            var result = await _baseJsonStorage.DeleteModel("AppSettings.json");
+            var result =
+                await _baseJsonStorage.DeleteModel("AppSettings.json");
         }
     }
 }
