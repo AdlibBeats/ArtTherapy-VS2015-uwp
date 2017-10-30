@@ -43,16 +43,19 @@
                 Margin="5"
                 MinWidth="155"
                 DesiredWidth="170"
-                SelectionMode="Single" DataFetchSize="10"
+                SelectionMode="None" DataFetchSize="10"
                 IsItemClickEnabled="True" x:Name="gridView" SelectionChanged="gridView_SelectionChanged"
                 ItemsSource="{x:Bind ViewModel.ProductModel.Items, Mode=OneWay}"
-                ItemContainerStyle="{StaticResource gridViewItemStyle}">
+                ItemContainerStyle="{StaticResource gridViewItemStyle}" >
                 <ItemsControl.ItemTemplate>
                     <DataTemplate x:DataType="models:CurrentProductModel">
-                        <local:DemoControl Model="{x:Bind}"/>
+                        <local:DemoControl Model="{x:Bind}" ProductTapped="DemoControl_ProductTapped"/>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </controls:AdaptiveGridView>
         </ScrollViewer>
+
+        
+        
     </Grid>
 </Page>

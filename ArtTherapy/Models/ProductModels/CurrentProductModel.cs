@@ -19,12 +19,12 @@ namespace ArtTherapy.Models.ProductModels
     {
         #region Json Serialized
 
-        public uint Sku
+        public string Sku
         {
             get => _Sku;
             set => SetValue(ref _Sku, value);
         }
-        private uint _Sku;
+        private string _Sku;
 
         public string Name
         {
@@ -33,19 +33,19 @@ namespace ArtTherapy.Models.ProductModels
         }
         private string _Name;
 
-        public int Price
+        public int? Price
         {
             get => _Price;
             set => SetValue(ref _Price, value);
         }
-        private int _Price;
+        private int? _Price;
 
-        public int DiscountPrice
+        public int? DiscountPrice
         {
             get => _DiscountPrice;
             set => SetValue(ref _DiscountPrice, value);
         }
-        private int _DiscountPrice;
+        private int? _DiscountPrice;
 
         public string ImageUrl
         {
@@ -54,12 +54,12 @@ namespace ArtTherapy.Models.ProductModels
         }
         private string _ImageUrl;
         
-        public uint Remains
+        public int Remains
         {
             get => _Remains;
             set => SetValue(ref _Remains, value);
         }
-        private uint _Remains;
+        private int _Remains;
 
         #endregion
 
@@ -74,12 +74,12 @@ namespace ArtTherapy.Models.ProductModels
         private LoadingType _LoadingType;
 
         [JsonIgnore]
-        public int PriceDifference
+        public int? PriceDifference
         {
             get => _PriceDifference;
             set => SetValue(ref _PriceDifference, value);
         }
-        private int _PriceDifference;
+        private int? _PriceDifference;
 
         [JsonIgnore]
         public bool IsLoading

@@ -7,7 +7,6 @@
     
     <converters:VisibilityInverseConverter x:Key="visibilityInverseConverter"/>
     <converters:VisibilityConverter x:Key="visibilityConverter"/>
-    <converters:UInt32Converter x:Key="uint32Converter"/>
     <converters:Int32Converter x:Key="int32Converter"/>
     <converters:StringProConverter x:Key="stringProConverter"/>
     <converters:PriceConverter x:Key="priceConverter"/>
@@ -21,7 +20,7 @@
                     <ControlTemplate TargetType="custom:DemoControl">
                         <Grid x:Name="Root" Height="288" Background="{TemplateBinding Background}">
                             <Grid x:Name="RootGrid"
-                                  Visibility="Collapsed">
+                                  Visibility="Collapsed" Tag="{Binding Sku}">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto"/>
                                     <RowDefinition Height="Auto"/>
@@ -90,6 +89,23 @@
                                         <Button.Content>
                                             <Image Stretch="Uniform" Source="/Assets/trolley-cart1@3x.png"/>
                                         </Button.Content>
+                                        <Button.Flyout>
+                                            <MenuFlyout Placement="Bottom">
+                                                <ToggleMenuFlyoutItem x:Name="checkX" IsChecked="True" Text="Фотография товара" />
+                                                <MenuFlyoutSeparator />
+                                                <MenuFlyoutSubItem Text="Добавить в...">
+                                                    <MenuFlyoutItem Text="Добавить в сравнение"/>
+                                                    <MenuFlyoutItem Text="Добавить в корзину"/>
+                                                    <MenuFlyoutItem Text="Добавить в желаемые покупки"/>
+                                                </MenuFlyoutSubItem>
+                                                <MenuFlyoutSubItem Text="Отзывы">
+                                                    <MenuFlyoutItem Text="Отзывы покупалей"/>
+                                                    <MenuFlyoutItem Text="Отзывы продавцов"/>
+                                                </MenuFlyoutSubItem>
+                                                <MenuFlyoutSeparator />
+                                                <MenuFlyoutItem Text="Выход"/>
+                                            </MenuFlyout>
+                                        </Button.Flyout>
                                     </Button>
                                     <Button x:Name="ProductFalseBuy" Grid.Column="1" Margin="0,5" Width="32" Height="32" IsEnabled="False"
                                         HorizontalAlignment="Right" VerticalAlignment="Top"
@@ -97,6 +113,7 @@
                                         <Button.Content>
                                             <Image Stretch="Uniform" Source="/Assets/icon-empty-shopping-cart@3x.png"/>
                                         </Button.Content>
+                                        
                                     </Button>
                                 </Grid>
                                 <Grid x:Name="ProductDiscountPriceBorder" Grid.Row="3" Background="{StaticResource Static.Grid.Background}"
@@ -143,7 +160,7 @@
                                 <StackPanel x:Name="ProductSku" Grid.Row="5" Margin="4,2"
                                             Visibility="Collapsed">
                                     <TextBlock  FontSize="12" Foreground="DarkGray" TextAlignment="Left" TextWrapping="Wrap"
-                                            Text="{Binding Sku, Converter={StaticResource uint32Converter}}"
+                                            Text="{Binding Sku}"
                                             HorizontalAlignment="Left" VerticalAlignment="Center"/>
                                 </StackPanel>
                             </Grid>

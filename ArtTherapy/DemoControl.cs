@@ -4,11 +4,16 @@ using Windows.UI.Xaml.Controls;
 using Microsoft.Toolkit.Uwp.UI.Controls;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Diagnostics;
+using System;
+using Windows.UI.Xaml.Input;
 
 namespace ArtTherapy
 {
     public class DemoControl : Control
     {
+        public event TappedEventHandler ProductTapped;
+        
         public CurrentProductModel Model
         {
             get { return (CurrentProductModel)GetValue(ModelProperty); }
@@ -33,15 +38,14 @@ namespace ArtTherapy
 
             var product = e.NewValue as CurrentProductModel;
             if (product != null && itemControl != null)
-            {
-                if (product != null)
-                    product.PropertyChanged += (sender, args) =>
-                        itemControl.UpdateState(product);
-            }
+                product.PropertyChanged += (sender, args) =>
+                    itemControl.UpdateState(product);
         }
 
         public void UpdateState(CurrentProductModel model)
         {
+            Debug.WriteLine(model?.Price);
+
             LoadingType = model.LoadingType;
 
             VisualStateManager.GoToState(this, $"{LoadingType}", true);
@@ -90,6 +94,8 @@ namespace ArtTherapy
 
         public ProgressRing RootProgress { get; set; }
 
+        public Grid RootGrid { get; set; }
+
         public DemoControl()
         {
             this.DefaultStyleKey = typeof(DemoControl);
@@ -100,6 +106,17 @@ namespace ArtTherapy
             base.OnApplyTemplate();
             
             RootProgress = this.GetTemplateChild("RootProgress") as ProgressRing;
+            RootGrid = this.GetTemplateChild("RootGrid") as Grid;
+            RootGrid.Tapped += RootGrid_Tapped;
+        }
+
+        private void RootGrid_Tapped(object sender, Windows.UI.Xaml.Input.TappedRoutedEventArgs e)
+        {
+            if(sender is Grid g)
+            {
+                if(!Model.IsLoading)
+                    ProductTapped?.Invoke(sender, e);
+            }
         }
     }
 }

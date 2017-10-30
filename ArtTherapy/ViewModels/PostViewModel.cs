@@ -27,7 +27,7 @@ namespace ArtTherapy.ViewModels
     /// ViewModel
     /// </summary>
     /// <typeparam name="T">BaseModel</typeparam>
-    public class PostViewModel<T> : BaseViewModel<T> where T : ProductModel, new()
+    public class ProductViewModel<T> : BaseViewModel<T> where T : ProductModel, new()
     {
         private List<TaskCompletionSource<bool>> _IsLoadedList = new List<TaskCompletionSource<bool>>();
         private JsonFactoryStorage<T> _JsonFactoryStorage = new JsonFactoryStorage<T>();
@@ -35,7 +35,7 @@ namespace ArtTherapy.ViewModels
         public BaseJsonStorage<T> Storage { get; private set; }
         public event EventHandler<PostEventArgs> Loaded;
 
-        public PostViewModel(LoadingType loadingType)
+        public ProductViewModel(LoadingType loadingType)
         {
             ProductModel = new T()
             {
@@ -48,9 +48,9 @@ namespace ArtTherapy.ViewModels
 
         public LoadingType LoadingType { get; private set; }
 
-        public void SetLoadingType(LoadingType loadingType)
+        public async void SetLoadingType(LoadingType loadingType)
         {
-            Task.Run(async () =>
+            await Task.Run(async () =>
             {
                 await this.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
                 {
@@ -79,7 +79,7 @@ namespace ArtTherapy.ViewModels
         /// <param name="startCountLoad">Количество подгружаемых элементов.</param>
         /// <param name="fullDataTimeLoading">Время загрузки полной информации (Название и Sku).</param>
         /// <param name="smallDataTimeLoading">Время загрузки изображений, ценников и остатков.</param>
-        public async void LoadData(double scrollViewerProgress, double scrollCheck = 0.9999, int startCountLoad = 10, int fullDataTimeLoading = 1000, int smallDataTimeLoading = 50)
+        public async void LoadData(double scrollViewerProgress, double scrollCheck = 0.9999, int startCountLoad = 10, int fullDataTimeLoading = 1000, int smallDataTimeLoading = 500)
         {
             if (scrollViewerProgress > scrollCheck)
             {
@@ -93,18 +93,21 @@ namespace ArtTherapy.ViewModels
                     Count = postModel.Count;
                     if (Count > 0 && CurrentCount < Count)
                     {
-                        await this.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+                        await Task.Run( async() =>
                         {
-                            for (int i = 0; i < Count; i++)
+                           await this.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
                             {
-                                if (i == startCountLoad || CurrentCount == Count) break;
-                                ProductModel.Items.Add(new CurrentProductModel()
+                                for (int i = 0; i < Count; i++)
                                 {
-                                    IsEnabledBuy = false,
-                                    IsLoading = true,
-                                });
-                                Debug.WriteLine($"Добавлено {CurrentCount} из {Count}");
-                            }
+                                    if (i == startCountLoad || CurrentCount == Count) break;
+                                    ProductModel.Items.Add(new CurrentProductModel()
+                                    {
+                                        IsEnabledBuy = false,
+                                        IsLoading = true,
+                                    });
+                                    Debug.WriteLine($"Добавлено {CurrentCount} из {Count}");
+                                }
+                            });
                         });
 
                         int startIndex = ProductModel.Items.IndexOf(ProductModel.Items.LastOrDefault());
@@ -172,12 +175,20 @@ namespace ArtTherapy.ViewModels
                                     {
                                         if (prices != null && prices.Items != null && prices.Items.Count >= startCountLoad)
                                         {
-                                            ProductModel.Items[i].DiscountPrice =
-                                                prices.Items[i].DiscountPrice < prices.Items[i].Price ? prices.Items[i].DiscountPrice : 0;
                                             ProductModel.Items[i].Price = prices.Items[i].Price;
-                                            if (ProductModel.Items[i].DiscountPrice > 0)
+
+                                            if (ProductModel.Items[i].Price != null)
+                                            {
+                                                ProductModel.Items[i].DiscountPrice =
+                                                    prices.Items[i].DiscountPrice != null &&
+                                                    prices.Items[i].DiscountPrice < ProductModel.Items[i].Price
+                                                    ? prices.Items[i].DiscountPrice : 0;
+
                                                 ProductModel.Items[i].PriceDifference =
-                                                    ProductModel.Items[i].Price - ProductModel.Items[i].DiscountPrice;
+                                                    ProductModel.Items[i].DiscountPrice != null &&
+                                                    ProductModel.Items[i].DiscountPrice > 0
+                                                    ? ProductModel.Items[i].Price - ProductModel.Items[i].DiscountPrice : 0;
+                                            }
                                         }
                                         ProductModel.Items[i].IsLoadingPrice = false;
                                     }
@@ -232,14 +243,14 @@ namespace ArtTherapy.ViewModels
                 {
                     demoPostModel.Items.Add(new CurrentProductModel()
                     {
-                        Sku = (uint)(3002550 + (i + 1)),
+                        //Sku = (st)(3002550 + (i + 1)),
                         Price = 108990,
                         DiscountPrice = (i + 1) > 10 && i <= 35 ? 98990 : 0,
                         //BuyIcon = "\xE7BF",
                         IsLoading = false,
                         Name = "Ноутбук Apple MacBook Pro 2017 Core i7/16/256 SSD Gold (MNYK2RU/A)",
                         ImageUrl = "https://rebabaskett.com/wp-content/uploads/2017/01/u_10150899.jpg",
-                        Remains = (uint)(k + 1)
+                        //Remains = (uint)(k + 1)
                     });
                     if ((k + 1) == 10)
                         k = 0;

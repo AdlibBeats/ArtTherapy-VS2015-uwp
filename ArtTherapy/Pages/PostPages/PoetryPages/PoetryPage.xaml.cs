@@ -5,12 +5,14 @@ using ArtTherapyCore.Extensions;
 using Microsoft.Toolkit.Uwp.UI.Controls;
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Windows.UI;
+using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
@@ -67,12 +69,12 @@ namespace ArtTherapy.Pages.PostPages.PoetryPages
 
         #endregion
 
-        public PostViewModel<ProductModel> ViewModel
+        public ProductViewModel<ProductModel> ViewModel
         {
             get => _ViewModel;
             set => SetValue(ref _ViewModel, value);
         }
-        private PostViewModel<ProductModel> _ViewModel;
+        private ProductViewModel<ProductModel> _ViewModel;
 
         private Task _LoadDataTask = null;
         private ContentDialog _ContentDialog = new ContentDialog();
@@ -110,7 +112,7 @@ namespace ArtTherapy.Pages.PostPages.PoetryPages
                 await this.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
                 {
                     Debug.WriteLine(AppSettings.AppSettings.Current.LoadingType);
-                    ViewModel = new PostViewModel<ProductModel>(AppSettings.AppSettings.Current.LoadingType);
+                    ViewModel = new ProductViewModel<ProductModel>(AppSettings.AppSettings.Current.LoadingType);
                     ViewModel.Loaded += _viewModel_Loaded;
                     switch (AppSettings.AppSettings.Current.LoadingType)
                     {
@@ -173,7 +175,7 @@ namespace ArtTherapy.Pages.PostPages.PoetryPages
                 if (adaptiveGridView != null)
                 {
                     var selectedItem = adaptiveGridView.SelectedItem as CurrentProductModel;
-                    if (selectedItem != null && selectedItem.Sku > 0)
+                    if (selectedItem != null && !String.IsNullOrEmpty(selectedItem.Sku))
                     {
                         textBlock.FontSize = 24d;
                         textBlock.TextWrapping = TextWrapping.WrapWholeWords;
@@ -199,7 +201,6 @@ namespace ArtTherapy.Pages.PostPages.PoetryPages
                 {
                     Task.Run(async () =>
                     {
-                        await _LoadDataTask;
                         await AppSettings.AppSettings.Current.Set((LoadingType)result);
                         _LoadDataTask = Task.Run(() => ViewModel?.SetLoadingType((LoadingType)result));
                     });
@@ -224,5 +225,14 @@ namespace ArtTherapy.Pages.PostPages.PoetryPages
         }
 
         #endregion
+
+        private void DemoControl_ProductTapped(object sender, Windows.UI.Xaml.Input.TappedRoutedEventArgs e)
+        {
+            if(sender is FrameworkElement f)
+            {
+                new MessageDialog(f.Tag?.ToString()).ShowAsync();
+            }
+            
+        }
     }
 }

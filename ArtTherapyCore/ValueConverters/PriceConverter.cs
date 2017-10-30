@@ -10,9 +10,9 @@ namespace ArtTherapyCore.ValueConverters
     public class PriceConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, string language) =>
-            (int)value == 0 ? String.Empty : $"{value}р.";
+            (int?)value == null || (int?)value == 0 ? String.Empty : $"{value}р.";
 
         public object ConvertBack(object value, Type targetType, object parameter, string language) =>
-            String.IsNullOrEmpty(value as String) ? 0 : value;
+            String.IsNullOrEmpty(value as String) ? 0 : int.Parse(value as String);
     }
 }
