@@ -13,10 +13,10 @@ namespace ArtTherapyCore.BaseModels
         GetRemainsData
     }
 
-    public class LoadingHelper
+    public class JsonLoadingHelper
     {
 
-        public LoadingHelper(JsonLoadingType loadingType)
+        public JsonLoadingHelper(JsonLoadingType loadingType)
         {
             LoadingType = loadingType;
         }

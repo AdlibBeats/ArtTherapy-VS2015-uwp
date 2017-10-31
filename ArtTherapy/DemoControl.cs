@@ -7,12 +7,16 @@ using System.Runtime.CompilerServices;
 using System.Diagnostics;
 using System;
 using Windows.UI.Xaml.Input;
+using Windows.UI.Xaml.Controls.Primitives;
 
 namespace ArtTherapy
 {
     public class DemoControl : Control
     {
         public event TappedEventHandler ProductTapped;
+        public event RightTappedEventHandler ProductInfoTapped;
+        public event TappedEventHandler BasketTapped;
+        public event RightTappedEventHandler BasketInfoTapped;
         
         public CurrentProductModel Model
         {
@@ -23,15 +27,6 @@ namespace ArtTherapy
         public static readonly DependencyProperty ModelProperty =
             DependencyProperty.Register("Model", typeof(CurrentProductModel), typeof(DemoControl), new PropertyMetadata(default(CurrentProductModel), OnModelChanged));
         
-        public LoadingType LoadingType
-        {
-            get { return (LoadingType)GetValue(LoadingTypeProperty); }
-            private set { SetValue(LoadingTypeProperty, value); }
-        }
-
-        public static readonly DependencyProperty LoadingTypeProperty =
-            DependencyProperty.Register("LoadingType", typeof(LoadingType), typeof(DemoControl), new PropertyMetadata(LoadingType.FullMode));
-
         private static void OnModelChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var itemControl = d as DemoControl;
@@ -42,26 +37,37 @@ namespace ArtTherapy
                     itemControl.UpdateState(product);
         }
 
+        public void UpdateLoadingType(LoadingType loadingType)
+        {
+            VisualStateManager.GoToState(this, $"{loadingType}", true);
+
+            switch (loadingType)
+            {
+                case LoadingType.FullMode:
+                    VisualStateManager.GoToState(this, "ImageLoaded", true);
+                    break;
+                case LoadingType.NoImageMode:
+                    VisualStateManager.GoToState(this, "NoImageLoaded", true);
+                    break;
+                case LoadingType.PriceMode:
+                    VisualStateManager.GoToState(this, "NoImageLoaded", true);
+                    break;
+            }
+        }
+
         public void UpdateState(CurrentProductModel model)
         {
-            Debug.WriteLine(model?.Price);
+            VisualStateManager.GoToState(this, $"{model.LoadingType}", true);
 
-            LoadingType = model.LoadingType;
-
-            VisualStateManager.GoToState(this, $"{LoadingType}", true);
-
-            if (LoadingType != LoadingType.None)
+            if (model.LoadingType != LoadingType.None)
             {
-                if (RootProgress != null)
-                    RootProgress.IsActive = model.IsLoading;
-
                 VisualStateManager.GoToState(this, model.IsLoading ? "Loading" : "Loaded", true);
 
                 if (model.IsLoading)
                     VisualStateManager.GoToState(this, "ImageLoading", true);
                 else
                 {
-                    switch (LoadingType)
+                    switch (model.LoadingType)
                     {
                         case LoadingType.FullMode:
                             VisualStateManager.GoToState(this, "ImageLoaded", true);
@@ -69,7 +75,7 @@ namespace ArtTherapy
                         case LoadingType.NoImageMode:
                             VisualStateManager.GoToState(this, "NoImageLoaded", true);
                             break;
-                        case LoadingType.OnlyPriceMode:
+                        case LoadingType.PriceMode:
                             VisualStateManager.GoToState(this, "NoImageLoaded", true);
                             break;
                     }
@@ -86,15 +92,12 @@ namespace ArtTherapy
                     VisualStateManager.GoToState(this, model.IsLoadingRemains ? "NoRemainsLoading" : "NoRemainsLoaded", true);
             }
             else
-            {
-                RootProgress.IsActive = false;
                 VisualStateManager.GoToState(this, "None", true);
-            }
         }
 
-        public ProgressRing RootProgress { get; set; }
+        private Grid RootGrid { get; set; }
 
-        public Grid RootGrid { get; set; }
+        private Button ProductTrueBuy { get; set; }
 
         public DemoControl()
         {
@@ -105,18 +108,46 @@ namespace ArtTherapy
         {
             base.OnApplyTemplate();
             
-            RootProgress = this.GetTemplateChild("RootProgress") as ProgressRing;
             RootGrid = this.GetTemplateChild("RootGrid") as Grid;
-            RootGrid.Tapped += RootGrid_Tapped;
+            ProductTrueBuy = this.GetTemplateChild("ProductTrueBuy") as Button;
+
+            if (RootGrid != null)
+            {
+                RootGrid.Tapped += RootGrid_Tapped;
+                RootGrid.RightTapped += RootGrid_RightTapped;
+            }
+
+            if (ProductTrueBuy != null)
+            {
+                ProductTrueBuy.Tapped += ProductTrueBuy_Tapped;
+                ProductTrueBuy.RightTapped += ProductTrueBuy_RightTapped;
+            }
         }
 
-        private void RootGrid_Tapped(object sender, Windows.UI.Xaml.Input.TappedRoutedEventArgs e)
+        private void ProductTrueBuy_RightTapped(object sender, RightTappedRoutedEventArgs e)
         {
-            if(sender is Grid g)
-            {
-                if(!Model.IsLoading)
-                    ProductTapped?.Invoke(sender, e);
-            }
+            e.Handled = true;
+            if (!Model.IsLoading && Model.Remains > 0)
+                BasketInfoTapped?.Invoke(Model, e);
+        }
+
+        private void ProductTrueBuy_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            e.Handled = true;
+            if (!Model.IsLoading && Model.Remains > 0)
+                BasketTapped?.Invoke(Model, e);
+        }
+
+        private void RootGrid_RightTapped(object sender, RightTappedRoutedEventArgs e)
+        {
+            if (!Model.IsLoading && Model.Remains > 0)
+                ProductInfoTapped?.Invoke(Model, e);
+        }
+
+        private void RootGrid_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            if (!Model.IsLoading && Model.Remains > 0)
+                ProductTapped?.Invoke(Model, e);
         }
     }
 }

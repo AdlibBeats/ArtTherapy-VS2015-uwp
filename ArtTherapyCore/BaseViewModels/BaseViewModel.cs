@@ -11,7 +11,7 @@ namespace ArtTherapyCore.BaseViewModels
         T GetModel();
     }
 
-    public class BaseViewModel<T> : DependencyObject, IDisposable, IBaseViewModel<T> where T : BaseModel
+    public class BaseViewModel<T> : DependencyObject, IBaseViewModel<T> where T : BaseModel
     {
         public BaseViewModel()
         {
@@ -19,8 +19,6 @@ namespace ArtTherapyCore.BaseViewModels
         }
         
         public virtual T GetModel() { return default(T); }
-
-        public virtual void Dispose() { }
 
         public Action Command
         {

@@ -47,11 +47,16 @@
                 IsItemClickEnabled="True" x:Name="gridView" SelectionChanged="gridView_SelectionChanged"
                 ItemsSource="{x:Bind ViewModel.ProductModel.Items, Mode=OneWay}"
                 ItemContainerStyle="{StaticResource gridViewItemStyle}" >
-                <ItemsControl.ItemTemplate>
+                <controls:AdaptiveGridView.ItemTemplate>
                     <DataTemplate x:DataType="models:CurrentProductModel">
-                        <local:DemoControl Model="{x:Bind}" ProductTapped="DemoControl_ProductTapped"/>
+                        <local:DemoControl
+                            Model="{x:Bind Mode=OneWay}"
+                            ProductTapped="DemoControl_ProductTapped"
+                            ProductInfoTapped="DemoControl_ProductInfoTapped"
+                            BasketTapped="DemoControl_BasketTapped"
+                            BasketInfoTapped="DemoControl_BasketInfoTapped"/>
                     </DataTemplate>
-                </ItemsControl.ItemTemplate>
+                </controls:AdaptiveGridView.ItemTemplate>
             </controls:AdaptiveGridView>
         </ScrollViewer>
 

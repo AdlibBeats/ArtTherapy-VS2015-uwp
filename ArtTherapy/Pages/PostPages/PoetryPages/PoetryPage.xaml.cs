@@ -118,14 +118,18 @@ namespace ArtTherapy.Pages.PostPages.PoetryPages
                     {
                         case LoadingType.FullMode: if (r1 != null) r1.IsChecked = true; break;
                         case LoadingType.NoImageMode: if (r2 != null) r2.IsChecked = true; break;
-                        case LoadingType.OnlyPriceMode: if (r3 != null) r3.IsChecked = true; break;
-                        case LoadingType.None: if (r1 != null) r4.IsChecked = true; break;
+                        case LoadingType.PriceMode: if (r3 != null) r3.IsChecked = true; break;
+                        case LoadingType.None: if (r4 != null) r4.IsChecked = true; break;
                     }
-
-                    double value = scrollViewer.GetScrollViewProgress();
-                    _LoadDataTask = Task.Run(() => ViewModel.LoadData(value));
+                    
                     Initialized?.Invoke(this, new EventArgs());
                 });
+
+                if (ViewModel != null)
+                {
+                    await ViewModel.LoadData(1);
+                    SetLoadingType(AppSettings.AppSettings.Current.LoadingType);
+                }
             });
         }
 
@@ -134,8 +138,6 @@ namespace ArtTherapy.Pages.PostPages.PoetryPages
             base.OnNavigatedFrom(e);
 
             ViewModel.Loaded -= _viewModel_Loaded;
-
-            ViewModel.Dispose();
         }
 
         private async void _viewModel_Loaded(object sender, PostEventArgs e)
@@ -147,22 +149,25 @@ namespace ArtTherapy.Pages.PostPages.PoetryPages
             });
 
             if (!e.IsFullInitialized)
-                _LoadDataTask = Task.Run(() => ViewModel.LoadData(value));
+                if (ViewModel != null)
+                    await ViewModel.LoadData(value);
         }
 
-        private void ScrollViewer_ViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
+        private async void ScrollViewer_ViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
         {
             double value = scrollViewer.GetScrollViewProgress();
-            _LoadDataTask = Task.Run(() => ViewModel?.LoadData(value));
+            if (ViewModel != null)
+                await ViewModel.LoadData(value);
         }
 
-        private void Page_SizeChanged(object sender, SizeChangedEventArgs e)
+        private async void Page_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             _ContentDialog.Width = Window.Current.Bounds.Width;
             _ContentDialog.Height = Window.Current.Bounds.Height;
 
             double value = scrollViewer.GetScrollViewProgress();
-            _LoadDataTask = Task.Run(() => ViewModel?.LoadData(value));
+            if (ViewModel != null)
+                await ViewModel.LoadData(value);
         }
 
         private async void gridView_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -192,18 +197,29 @@ namespace ArtTherapy.Pages.PostPages.PoetryPages
             }
         }
 
-        public void SetLoadingType(object parameter)
+        public async void SetLoadingType(object parameter)
         {
             int result;
             var stringValue = parameter as String;
             if (!String.IsNullOrEmpty(stringValue))
                 if (int.TryParse(stringValue, out result))
                 {
-                    Task.Run(async () =>
+                    await AppSettings.AppSettings.Current.Set((LoadingType)result);
+                    var panel = gridView.ItemsPanelRoot;
+                    if (panel != null)
                     {
-                        await AppSettings.AppSettings.Current.Set((LoadingType)result);
-                        _LoadDataTask = Task.Run(() => ViewModel?.SetLoadingType((LoadingType)result));
-                    });
+                        //foreach (GridViewItem x in panel.Children)
+                        //{
+                        //    var demoControl = x.ContentTemplateRoot as DemoControl;
+                        //    if (demoControl != null)
+                        //    {
+                        //        demoControl.UpdateLoadingType((LoadingType)result);
+                        //        //ViewModel.SetLoadingType((LoadingType)result);
+                        //    }
+                        //}
+                        //ViewModel.LoadingType = (LoadingType)result;
+                        await ViewModel.SetLoadingType((LoadingType)result);
+                    }
                 }
         }
 
@@ -226,13 +242,36 @@ namespace ArtTherapy.Pages.PostPages.PoetryPages
 
         #endregion
 
-        private void DemoControl_ProductTapped(object sender, Windows.UI.Xaml.Input.TappedRoutedEventArgs e)
+        private async void DemoControl_ProductTapped(object sender, Windows.UI.Xaml.Input.TappedRoutedEventArgs e)
         {
-            if(sender is FrameworkElement f)
-            {
-                new MessageDialog(f.Tag?.ToString()).ShowAsync();
-            }
-            
+            Debug.WriteLine("DemoControl_ProductTapped");
+            var currentProduct = sender as CurrentProductModel;
+            if (currentProduct != null)
+                await new MessageDialog(currentProduct.Sku).ShowAsync();
+        }
+
+        private async void DemoControl_ProductInfoTapped(object sender, Windows.UI.Xaml.Input.RightTappedRoutedEventArgs e)
+        {
+            Debug.WriteLine("DemoControl_ProductInfoTapped");
+            var currentProduct = sender as CurrentProductModel;
+            if (currentProduct != null)
+                await new MessageDialog(currentProduct.Sku).ShowAsync();
+        }
+
+        private async void DemoControl_BasketTapped(object sender, Windows.UI.Xaml.Input.TappedRoutedEventArgs e)
+        {
+            Debug.WriteLine("DemoControl_BasketTapped");
+            var currentProduct = sender as CurrentProductModel;
+            if (currentProduct != null)
+                await new MessageDialog(currentProduct.Sku).ShowAsync();
+        }
+
+        private async void DemoControl_BasketInfoTapped(object sender, Windows.UI.Xaml.Input.RightTappedRoutedEventArgs e)
+        {
+            Debug.WriteLine("DemoControl_BasketInfoTapped");
+            var currentProduct = sender as CurrentProductModel;
+            if (currentProduct != null)
+                await new MessageDialog(currentProduct.Sku).ShowAsync();
         }
     }
 }

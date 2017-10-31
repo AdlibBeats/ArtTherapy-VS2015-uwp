@@ -46,6 +46,7 @@ namespace ArtTherapy.Pages.MenuPages
         public BaseViewModel<BaseModel> ViewModel
         {
             get => _ViewModel;
+            set => SetValue(ref _ViewModel, value);
         }
         private BaseViewModel<BaseModel> _ViewModel;
 

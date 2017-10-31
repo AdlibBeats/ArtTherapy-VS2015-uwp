@@ -11,7 +11,7 @@ namespace ArtTherapy.Models.ProductModels
     {
         FullMode,
         NoImageMode,
-        OnlyPriceMode,
+        PriceMode,
         None
     }
 

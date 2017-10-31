@@ -20,7 +20,7 @@
                     <ControlTemplate TargetType="custom:DemoControl">
                         <Grid x:Name="Root" Height="288" Background="{TemplateBinding Background}">
                             <Grid x:Name="RootGrid"
-                                  Visibility="Collapsed" Tag="{Binding Sku}">
+                                  Visibility="Collapsed">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto"/>
                                     <RowDefinition Height="Auto"/>
@@ -89,7 +89,7 @@
                                         <Button.Content>
                                             <Image Stretch="Uniform" Source="/Assets/trolley-cart1@3x.png"/>
                                         </Button.Content>
-                                        <Button.Flyout>
+                                        <!--<Button.Flyout>
                                             <MenuFlyout Placement="Bottom">
                                                 <ToggleMenuFlyoutItem x:Name="checkX" IsChecked="True" Text="Фотография товара" />
                                                 <MenuFlyoutSeparator />
@@ -105,7 +105,7 @@
                                                 <MenuFlyoutSeparator />
                                                 <MenuFlyoutItem Text="Выход"/>
                                             </MenuFlyout>
-                                        </Button.Flyout>
+                                        </Button.Flyout>-->
                                     </Button>
                                     <Button x:Name="ProductFalseBuy" Grid.Column="1" Margin="0,5" Width="32" Height="32" IsEnabled="False"
                                         HorizontalAlignment="Right" VerticalAlignment="Top"
@@ -188,6 +188,7 @@
                                             <Setter Target="TriangleShape.Visibility" Value="Collapsed"/>
                                             <Setter Target="ProgressRingImage.Visibility" Value="Visible"/>
                                             <Setter Target="NoneTextBlock.Visibility" Value="Collapsed"/>
+                                            <Setter Target="ProductImage.Visibility" Value="Visible"/>
                                         </VisualState.Setters>
                                         <Storyboard>
                                             <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid"
@@ -206,6 +207,7 @@
                                             <Setter Target="TriangleShape.Visibility" Value="Collapsed"/>
                                             <Setter Target="ProgressRingImage.Visibility" Value="Collapsed"/>
                                             <Setter Target="NoneTextBlock.Visibility" Value="Collapsed"/>
+                                            <Setter Target="ProductImage.Visibility" Value="Collapsed"/>
                                         </VisualState.Setters>
                                         <Storyboard>
                                             <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid"
@@ -218,12 +220,13 @@
                                             </ObjectAnimationUsingKeyFrames>
                                         </Storyboard>
                                     </VisualState>
-                                    <VisualState x:Name="OnlyPriceMode">
+                                    <VisualState x:Name="PriceMode">
                                         <VisualState.Setters>
                                             <Setter Target="Root.Height" Value="100"/>
                                             <Setter Target="TriangleShape.Visibility" Value="Visible"/>
                                             <Setter Target="ProgressRingImage.Visibility" Value="Collapsed"/>
                                             <Setter Target="NoneTextBlock.Visibility" Value="Collapsed"/>
+                                            <Setter Target="ProductImage.Visibility" Value="Collapsed"/>
                                         </VisualState.Setters>
                                         <Storyboard>
                                             <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid"
@@ -242,6 +245,7 @@
                                             <Setter Target="TriangleShape.Visibility" Value="Collapsed"/>
                                             <Setter Target="ProgressRingImage.Visibility" Value="Collapsed"/>
                                             <Setter Target="NoneTextBlock.Visibility" Value="Visible"/>
+                                            <Setter Target="ProductImage.Visibility" Value="Collapsed"/>
                                         </VisualState.Setters>
                                         <Storyboard>
                                             <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid"

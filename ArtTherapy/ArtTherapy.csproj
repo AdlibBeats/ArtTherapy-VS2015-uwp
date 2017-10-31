@@ -142,7 +142,7 @@
     <Compile Include="Settings\BasePhoneSettings.cs" />
     <Compile Include="Storage\BaseJsonStorage.cs" />
     <Compile Include="ViewModels\MenuViewModel.cs" />
-    <Compile Include="ViewModels\PostViewModel.cs" />
+    <Compile Include="ViewModels\ProductViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">
