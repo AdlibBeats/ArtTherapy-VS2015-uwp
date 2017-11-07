@@ -65,13 +65,13 @@ namespace ArtTherapy.Models.ProductModels
 
         #region JsonIgnore
 
-        [JsonIgnore]
-        public LoadingType LoadingType
-        {
-            get => _LoadingType;
-            set => SetValue(ref _LoadingType, value);
-        }
-        private LoadingType _LoadingType;
+        //[JsonIgnore]
+        //public LoadingType LoadingType
+        //{
+        //    get => _LoadingType;
+        //    set => SetValue(ref _LoadingType, value);
+        //}
+        //private LoadingType _LoadingType;
 
         [JsonIgnore]
         public int? PriceDifference

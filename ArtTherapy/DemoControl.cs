@@ -17,7 +17,16 @@ namespace ArtTherapy
         public event RightTappedEventHandler ProductInfoTapped;
         public event TappedEventHandler BasketTapped;
         public event RightTappedEventHandler BasketInfoTapped;
-        
+
+        public LoadingType LoadingType
+        {
+            get { return (LoadingType)GetValue(LoadingTypeProperty); }
+            set { SetValue(LoadingTypeProperty, value); }
+        }
+
+        public static readonly DependencyProperty LoadingTypeProperty =
+            DependencyProperty.Register("LoadingType", typeof(LoadingType), typeof(DemoControl), new PropertyMetadata(LoadingType.None));
+
         public CurrentProductModel Model
         {
             get { return (CurrentProductModel)GetValue(ModelProperty); }
@@ -34,40 +43,24 @@ namespace ArtTherapy
             var product = e.NewValue as CurrentProductModel;
             if (product != null && itemControl != null)
                 product.PropertyChanged += (sender, args) =>
-                    itemControl.UpdateState(product);
+                itemControl.UpdateState();
         }
 
-        public void UpdateLoadingType(LoadingType loadingType)
+        public void UpdateState()
         {
-            VisualStateManager.GoToState(this, $"{loadingType}", true);
+            LoadingType = AppSettings.AppSettings.Current.LoadingType;
 
-            switch (loadingType)
+            VisualStateManager.GoToState(this, $"{LoadingType}", true);
+
+            if (LoadingType != LoadingType.None)
             {
-                case LoadingType.FullMode:
-                    VisualStateManager.GoToState(this, "ImageLoaded", true);
-                    break;
-                case LoadingType.NoImageMode:
-                    VisualStateManager.GoToState(this, "NoImageLoaded", true);
-                    break;
-                case LoadingType.PriceMode:
-                    VisualStateManager.GoToState(this, "NoImageLoaded", true);
-                    break;
-            }
-        }
+                VisualStateManager.GoToState(this, Model.IsLoading ? "Loading" : "Loaded", true);
 
-        public void UpdateState(CurrentProductModel model)
-        {
-            VisualStateManager.GoToState(this, $"{model.LoadingType}", true);
-
-            if (model.LoadingType != LoadingType.None)
-            {
-                VisualStateManager.GoToState(this, model.IsLoading ? "Loading" : "Loaded", true);
-
-                if (model.IsLoading)
+                if (Model.IsLoading)
                     VisualStateManager.GoToState(this, "ImageLoading", true);
                 else
                 {
-                    switch (model.LoadingType)
+                    switch (LoadingType)
                     {
                         case LoadingType.FullMode:
                             VisualStateManager.GoToState(this, "ImageLoaded", true);
@@ -81,21 +74,21 @@ namespace ArtTherapy
                     }
                 }
 
-                if (model.DiscountPrice != 0)
-                    VisualStateManager.GoToState(this, model.IsLoading ? "DiscountPricesLoading" : "DiscountPricesLoaded", true);
+                if (Model.DiscountPrice != 0)
+                    VisualStateManager.GoToState(this, Model.IsLoading ? "DiscountPricesLoading" : "DiscountPricesLoaded", true);
                 else
-                    VisualStateManager.GoToState(this, model.IsLoadingPrice ? "PricesLoading" : "PricesLoaded", true);
+                    VisualStateManager.GoToState(this, Model.IsLoadingPrice ? "PricesLoading" : "PricesLoaded", true);
 
-                if (model.Remains != 0)
-                    VisualStateManager.GoToState(this, model.IsLoadingRemains ? "RemainsLoading" : "RemainsLoaded", true);
+                if (Model.Remains != 0)
+                    VisualStateManager.GoToState(this, Model.IsLoadingRemains ? "RemainsLoading" : "RemainsLoaded", true);
                 else
-                    VisualStateManager.GoToState(this, model.IsLoadingRemains ? "NoRemainsLoading" : "NoRemainsLoaded", true);
+                    VisualStateManager.GoToState(this, Model.IsLoadingRemains ? "NoRemainsLoading" : "NoRemainsLoaded", true);
             }
             else
                 VisualStateManager.GoToState(this, "None", true);
         }
 
-        private Grid RootGrid { get; set; }
+        private Grid Root { get; set; }
 
         private Button ProductTrueBuy { get; set; }
 
@@ -108,13 +101,13 @@ namespace ArtTherapy
         {
             base.OnApplyTemplate();
             
-            RootGrid = this.GetTemplateChild("RootGrid") as Grid;
+            Root = this.GetTemplateChild("Root") as Grid;
             ProductTrueBuy = this.GetTemplateChild("ProductTrueBuy") as Button;
 
-            if (RootGrid != null)
+            if (Root != null)
             {
-                RootGrid.Tapped += RootGrid_Tapped;
-                RootGrid.RightTapped += RootGrid_RightTapped;
+                Root.Tapped += RootGrid_Tapped;
+                Root.RightTapped += RootGrid_RightTapped;
             }
 
             if (ProductTrueBuy != null)

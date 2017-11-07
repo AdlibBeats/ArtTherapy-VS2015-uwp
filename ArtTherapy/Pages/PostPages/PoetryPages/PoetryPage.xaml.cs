@@ -22,7 +22,7 @@ namespace ArtTherapy.Pages.PostPages.PoetryPages
 {
     public interface ISetLoadingType
     {
-        void SetLoadingType(object parameter);
+        void SetJsonLoadingType(object parameter);
     }
 
     public class SetLoadingTypeCommand : ICommand
@@ -38,7 +38,7 @@ namespace ArtTherapy.Pages.PostPages.PoetryPages
 
         public bool CanExecute(object parameter) => true;
 
-        public void Execute(object parameter) => _ViewModel.SetLoadingType(parameter);
+        public void Execute(object parameter) => _ViewModel.SetJsonLoadingType(parameter);
     }
 
     public sealed partial class PoetryPage : Page, IPage, ISetLoadingType
@@ -75,30 +75,12 @@ namespace ArtTherapy.Pages.PostPages.PoetryPages
             set => SetValue(ref _ViewModel, value);
         }
         private ProductViewModel<ProductModel> _ViewModel;
-
-        private Task _LoadDataTask = null;
-        private ContentDialog _ContentDialog = new ContentDialog();
         public PoetryPage()
         {
             this.InitializeComponent();
             Id = 2;
             Title = "Стихи";
             NavigateEventType = NavigateEventTypes.ListBoxSelectionChanged;
-
-            _ContentDialog.Background = new SolidColorBrush(Colors.Black);
-            _ContentDialog.BorderThickness = new Thickness(0);
-            _ContentDialog.BorderBrush = _ContentDialog.Background;
-            _ContentDialog.FullSizeDesired = true;
-            _ContentDialog.MinWidth = 10;
-            _ContentDialog.MinHeight = 10;
-            _ContentDialog.MaxWidth = 5000;
-            _ContentDialog.MaxHeight = 5000;
-
-            _ContentDialog.PointerPressed += (s, args) =>
-            {
-                _ContentDialog.Hide();
-            };
-
             SetLoadingTypeCommand = new SetLoadingTypeCommand(this);
         }
 
@@ -121,14 +103,15 @@ namespace ArtTherapy.Pages.PostPages.PoetryPages
                         case LoadingType.PriceMode: if (r3 != null) r3.IsChecked = true; break;
                         case LoadingType.None: if (r4 != null) r4.IsChecked = true; break;
                     }
-                    
+                    if (loading != null)
+                        loading.IsActive = false;
                     Initialized?.Invoke(this, new EventArgs());
                 });
 
                 if (ViewModel != null)
                 {
                     await ViewModel.LoadData(1);
-                    SetLoadingType(AppSettings.AppSettings.Current.LoadingType);
+                    SetJsonLoadingType(AppSettings.AppSettings.Current.LoadingType);
                 }
             });
         }
@@ -162,42 +145,12 @@ namespace ArtTherapy.Pages.PostPages.PoetryPages
 
         private async void Page_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            _ContentDialog.Width = Window.Current.Bounds.Width;
-            _ContentDialog.Height = Window.Current.Bounds.Height;
-
             double value = scrollViewer.GetScrollViewProgress();
             if (ViewModel != null)
                 await ViewModel.LoadData(value);
         }
 
-        private async void gridView_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (gridView.SelectedIndex > -1)
-            {
-                var textBlock = new TextBlock();
-
-                var adaptiveGridView = sender as AdaptiveGridView;
-                if (adaptiveGridView != null)
-                {
-                    var selectedItem = adaptiveGridView.SelectedItem as CurrentProductModel;
-                    if (selectedItem != null && !String.IsNullOrEmpty(selectedItem.Sku))
-                    {
-                        textBlock.FontSize = 24d;
-                        textBlock.TextWrapping = TextWrapping.WrapWholeWords;
-                        textBlock.HorizontalAlignment = HorizontalAlignment.Center;
-                        textBlock.VerticalAlignment = VerticalAlignment.Center;
-                        textBlock.Foreground = new SolidColorBrush(Colors.White);
-                        textBlock.Text = $"{selectedItem.Sku}: {selectedItem.Name}";
-
-                        _ContentDialog.Content = textBlock;
-                        await _ContentDialog.ShowAsync();
-                    }
-                }
-                gridView.SelectedIndex = -1;
-            }
-        }
-
-        public async void SetLoadingType(object parameter)
+        public async void SetJsonLoadingType(object parameter)
         {
             int result;
             var stringValue = parameter as String;
@@ -205,22 +158,33 @@ namespace ArtTherapy.Pages.PostPages.PoetryPages
                 if (int.TryParse(stringValue, out result))
                 {
                     await AppSettings.AppSettings.Current.Set((LoadingType)result);
-                    var panel = gridView.ItemsPanelRoot;
-                    if (panel != null)
-                    {
-                        //foreach (GridViewItem x in panel.Children)
-                        //{
-                        //    var demoControl = x.ContentTemplateRoot as DemoControl;
-                        //    if (demoControl != null)
-                        //    {
-                        //        demoControl.UpdateLoadingType((LoadingType)result);
-                        //        //ViewModel.SetLoadingType((LoadingType)result);
-                        //    }
-                        //}
-                        //ViewModel.LoadingType = (LoadingType)result;
-                        await ViewModel.SetLoadingType((LoadingType)result);
-                    }
+                    await SetLoadingType((LoadingType)result);
+                    double value = scrollViewer.GetScrollViewProgress();
+                    if (ViewModel != null)
+                        await ViewModel.LoadData(value);
                 }
+        }
+
+        private async Task SetLoadingType(LoadingType loadingType)
+        {
+            var panel = gridView.ItemsPanelRoot;
+            if (panel == null) return;
+
+            await this.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+            {
+                for (int i = 0; i < panel.Children.Count; i++)
+                {
+                    var gridViewItem = panel.Children[i] as GridViewItem;
+                    if (gridViewItem == null) return;
+                    if (gridViewItem.ContentTemplateRoot == null) return;
+
+                    var demoControl = gridViewItem.ContentTemplateRoot as DemoControl;
+                    if (demoControl == null) return;
+
+                    demoControl.UpdateState();
+                    demoControl.UpdateLayout();
+                }
+            });
         }
 
         public ICommand SetLoadingTypeCommand

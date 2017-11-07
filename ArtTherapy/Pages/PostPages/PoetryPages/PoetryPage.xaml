@@ -38,13 +38,16 @@
                          Command="{x:Bind SetLoadingTypeCommand}"
                          CommandParameter="3" Name="r4"/>
         </StackPanel>
+        <ProgressRing x:Name="loading" Grid.Row="1" Width="150" Height="150" Background="{x:Null}" Foreground="Black" IsActive="True"/>
         <ScrollViewer Grid.Row="1" x:Name="scrollViewer" ViewChanged="ScrollViewer_ViewChanged">
             <controls:AdaptiveGridView
+                x:Name="gridView"
                 Margin="5"
                 MinWidth="155"
                 DesiredWidth="170"
-                SelectionMode="None" DataFetchSize="10"
-                IsItemClickEnabled="True" x:Name="gridView" SelectionChanged="gridView_SelectionChanged"
+                SelectionMode="None"
+                DataFetchSize="200"
+                IsItemClickEnabled="True"
                 ItemsSource="{x:Bind ViewModel.ProductModel.Items, Mode=OneWay}"
                 ItemContainerStyle="{StaticResource gridViewItemStyle}" >
                 <controls:AdaptiveGridView.ItemTemplate>

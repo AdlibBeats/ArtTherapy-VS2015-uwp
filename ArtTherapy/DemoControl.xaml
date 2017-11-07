@@ -20,7 +20,7 @@
                     <ControlTemplate TargetType="custom:DemoControl">
                         <Grid x:Name="Root" Height="288" Background="{TemplateBinding Background}">
                             <Grid x:Name="RootGrid"
-                                  Visibility="Collapsed">
+                                  Visibility="Visible">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto"/>
                                     <RowDefinition Height="Auto"/>
@@ -46,7 +46,7 @@
                                     Text="{Binding Name, Converter={StaticResource stringProConverter}}"
                                     Visibility="Collapsed" VerticalAlignment="Top"/>
                                 <!--Цена и кнопка покупки-->
-                                <Grid x:Name="ProductPriceBorder" Grid.Row="2" Background="{StaticResource Static.Grid.Background}">
+                                <Grid x:Name="ProductPriceBorder" Grid.Row="2" Background="{StaticResource Static.Grid.Background}" Visibility="Collapsed">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition/>
                                         <ColumnDefinition Width="Auto"/>
@@ -113,7 +113,6 @@
                                         <Button.Content>
                                             <Image Stretch="Uniform" Source="/Assets/icon-empty-shopping-cart@3x.png"/>
                                         </Button.Content>
-                                        
                                     </Button>
                                 </Grid>
                                 <Grid x:Name="ProductDiscountPriceBorder" Grid.Row="3" Background="{StaticResource Static.Grid.Background}"
@@ -163,6 +162,9 @@
                                             Text="{Binding Sku}"
                                             HorizontalAlignment="Left" VerticalAlignment="Center"/>
                                 </StackPanel>
+                                <ProgressRing x:Name="RootProgress" Grid.RowSpan="6" Height="50" Width="50" BorderBrush="Gray" Foreground="Black"
+                                    HorizontalAlignment="Center" VerticalAlignment="Center" IsActive="True"
+                                     Background="{x:Null}"/>
                             </Grid>
                             <Grid x:Name="TriangleShape"  Width="32" Height="32" HorizontalAlignment="Right" VerticalAlignment="Top"
                                 Visibility="Collapsed">
@@ -177,9 +179,6 @@
                                     TextAlignment="Center"
                                     Visibility="Collapsed"
                                     Text="Данные отсутствуют"/>
-                            <ProgressRing x:Name="RootProgress" Height="50" Width="50" BorderBrush="Gray" Foreground="Black"
-                                    HorizontalAlignment="Center" VerticalAlignment="Center"
-                                    IsActive="{Binding IsLoading}" Background="{x:Null}"/>
                             <VisualStateManager.VisualStateGroups>
                                 <VisualStateGroup x:Name="TypeModelGroup">
                                     <VisualState x:Name="FullMode">
@@ -261,8 +260,20 @@
                                 </VisualStateGroup>
                                 <VisualStateGroup x:Name="MainLoadingGroup">
                                     <VisualState x:Name="Loading">
+                                        <!--IsActive="{Binding IsLoading}"-->
+                                        <VisualState.Setters>
+                                            <Setter Target="RootProgress.IsActive" Value="True"/>
+                                        </VisualState.Setters>
                                         <Storyboard>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid"
+                                            <!--<ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid"
+                                                                       Storyboard.TargetProperty="Visibility">
+                                                <DiscreteObjectKeyFrame KeyTime="0">
+                                                    <DiscreteObjectKeyFrame.Value>
+                                                        <Visibility>Visible</Visibility>
+                                                    </DiscreteObjectKeyFrame.Value>
+                                                </DiscreteObjectKeyFrame>
+                                            </ObjectAnimationUsingKeyFrames>-->
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ProductPriceBorder"
                                                                        Storyboard.TargetProperty="Visibility">
                                                 <DiscreteObjectKeyFrame KeyTime="0">
                                                     <DiscreteObjectKeyFrame.Value>
@@ -345,8 +356,19 @@
                                         </Storyboard>
                                     </VisualState>
                                     <VisualState x:Name="Loaded">
+                                        <VisualState.Setters>
+                                            <Setter Target="RootProgress.IsActive" Value="False"/>
+                                        </VisualState.Setters>
                                         <Storyboard>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid"
+                                            <!--<ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid"
+                                                                       Storyboard.TargetProperty="Visibility">
+                                                <DiscreteObjectKeyFrame KeyTime="0">
+                                                    <DiscreteObjectKeyFrame.Value>
+                                                        <Visibility>Visible</Visibility>
+                                                    </DiscreteObjectKeyFrame.Value>
+                                                </DiscreteObjectKeyFrame>
+                                            </ObjectAnimationUsingKeyFrames>-->
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ProductPriceBorder"
                                                                        Storyboard.TargetProperty="Visibility">
                                                 <DiscreteObjectKeyFrame KeyTime="0">
                                                     <DiscreteObjectKeyFrame.Value>

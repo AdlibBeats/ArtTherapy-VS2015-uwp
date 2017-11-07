@@ -48,14 +48,14 @@ namespace ArtTherapy.ViewModels
 
         public LoadingType LoadingType { get; private set; }
 
-        public async Task SetLoadingType(LoadingType loadingType)
-        {
-            await this.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
-            {
-                this.LoadingType = loadingType;
-                ProductModel.Items.ToList().ForEach((CurrentProductModel x) => x.LoadingType = this.LoadingType);
-            });
-        }
+        //public async Task SetLoadingType(LoadingType loadingType)
+        //{
+        //    await this.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+        //    {
+        //        this.LoadingType = loadingType;
+        //        ProductModel.Items.ToList().ForEach((CurrentProductModel x) => x.LoadingType = this.LoadingType);
+        //    });
+        //}
 
         /// <summary>
         /// Полное количество, полученное через запрос.
@@ -140,7 +140,7 @@ namespace ArtTherapy.ViewModels
                     {
                         IsEnabledBuy = false,
                         IsLoading = true,
-                        LoadingType = this.LoadingType
+                        //LoadingType = this.LoadingType
                     });
                     Debug.WriteLine($"Добавлено {CurrentCount} из {Count}");
                 }
@@ -166,7 +166,7 @@ namespace ArtTherapy.ViewModels
                 {
                     for (int i = index, k = 0; k < startCountLoad && i < Count; i++, k++)
                     {
-                        fullPostModel.Items[i].LoadingType = this.LoadingType;
+                        //fullPostModel.Items[i].LoadingType = this.LoadingType;
                         ProductModel.Items[i] = fullPostModel.Items[i];
                         ProductModel.Items[i].IsLoading = false;
 
@@ -197,7 +197,7 @@ namespace ArtTherapy.ViewModels
             {
                 for (int i = index, k = 0; k < startCountLoad && i < Count; i++, k++)
                 {
-                    if (images != null && images.Items != null && images.Items.Count >= startCountLoad)
+                    if (images?.Items != null && images.Items.Any())
                         ProductModel.Items[i].ImageUrl = images.Items[i].ImageUrl;
                     else
                         ProductModel.Items[i].ImageUrl = null;
@@ -224,7 +224,7 @@ namespace ArtTherapy.ViewModels
             {
                 for (int i = index, k = 0; k < startCountLoad && i < Count; i++, k++)
                 {
-                    if (prices != null && prices.Items != null && prices.Items.Count >= startCountLoad)
+                    if (prices?.Items != null && prices.Items.Any())
                     {
                         ProductModel.Items[i].Price = prices.Items[i].Price;
 
