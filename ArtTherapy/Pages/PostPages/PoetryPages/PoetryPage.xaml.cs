@@ -157,11 +157,16 @@ namespace ArtTherapy.Pages.PostPages.PoetryPages
             if (!String.IsNullOrEmpty(stringValue))
                 if (int.TryParse(stringValue, out result))
                 {
-                    await AppSettings.AppSettings.Current.Set((LoadingType)result);
-                    await SetLoadingType((LoadingType)result);
                     double value = scrollViewer.GetScrollViewProgress();
+                    Task setJsonLoadingTypeTask = AppSettings.AppSettings.Current.Set((LoadingType)result);
+                    Task setLoadingTypeTask = SetLoadingType((LoadingType)result);
+                    Task loadDataTask = ViewModel.LoadData(value);
+
                     if (ViewModel != null)
-                        await ViewModel.LoadData(value);
+                        await Task.WhenAll(setJsonLoadingTypeTask, setLoadingTypeTask, loadDataTask);
+                    else
+                        await Task.WhenAll(setJsonLoadingTypeTask, setLoadingTypeTask);
+
                 }
         }
 
