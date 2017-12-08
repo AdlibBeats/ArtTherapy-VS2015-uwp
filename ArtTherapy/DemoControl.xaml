@@ -212,7 +212,7 @@
                                     </VisualState>
                                     <VisualState x:Name="PriceMode">
                                         <VisualState.Setters>
-                                            <Setter Target="Root.Height" Value="100"/>
+                                            <Setter Target="Root.Height" Value="96"/>
                                             <Setter Target="TriangleShape.Visibility" Value="Visible"/>
                                             <Setter Target="ProgressRingImage.Visibility" Value="Collapsed"/>
                                             <Setter Target="NoneTextBlock.Visibility" Value="Collapsed"/>
