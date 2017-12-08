@@ -29,7 +29,7 @@ namespace ArtTherapy.ViewModels
     /// <typeparam name="T">BaseModel</typeparam>
     public class ProductViewModel<T> : BaseViewModel<T> where T : ProductModel, new()
     {
-        private List<TaskCompletionSource<bool>> _IsLoadedList = new List<TaskCompletionSource<bool>>();
+        //private List<TaskCompletionSource<bool>> _IsLoadedList = new List<TaskCompletionSource<bool>>();
         private JsonFactoryStorage<T> _JsonFactoryStorage = new JsonFactoryStorage<T>();
 
         public BaseJsonStorage<T> Storage { get; private set; }
@@ -75,11 +75,11 @@ namespace ArtTherapy.ViewModels
         /// <param name="startCountLoad">Количество подгружаемых элементов.</param>
         /// <param name="fullDataTimeLoading">Время загрузки полной информации (Название и Sku).</param>
         /// <param name="smallDataTimeLoading">Время загрузки изображений, ценников и остатков.</param>
-        public async Task LoadData(double scrollViewerProgress, double scrollCheck = 0.9999, int startCountLoad = 10, int fullDataTimeLoading = 1000, int smallDataTimeLoading = 500)
+        public async Task LoadData(double scrollViewerProgress, double scrollCheck = 0.9999, int startCountLoad = 20, int fullDataTimeLoading = 500, int smallDataTimeLoading = 2000)
         {
             if (scrollViewerProgress > scrollCheck)
             {
-                _IsLoadedList.Add(new TaskCompletionSource<bool>(false));
+                //_IsLoadedList.Add(new TaskCompletionSource<bool>(false));
 
                 JsonLoadingHelper loadingHelper = new JsonLoadingHelper(JsonLoadingType.GetCount);
                 //Получаем количество
@@ -92,7 +92,7 @@ namespace ArtTherapy.ViewModels
                         //Defalut
                         await AddDefaultProducts(startCountLoad);
 
-                        //Идекс последнего добавленного элемента
+                        //Индекс последнего добавленного элемента
                         int startIndex = ProductModel.Items.IndexOf(ProductModel.Items.LastOrDefault());
                         int startCountLoadIndex = startCountLoad - 1;
                         if (startIndex >= startCountLoadIndex)
@@ -117,7 +117,7 @@ namespace ArtTherapy.ViewModels
                             //Запустить параллельно 3 потока
                             await Task.WhenAll(getImagesTask, getPricesTask, getRemainsTask);
 
-                            await _IsLoadedList.LastOrDefault().Task;
+                            //await _IsLoadedList.LastOrDefault().Task;
                         }
                     }
                 }
