@@ -181,7 +181,6 @@ namespace ArtTherapy.Pages.PostPages.PoetryPages
                 {
                     var gridViewItem = panel.Children[i] as GridViewItem;
                     if (gridViewItem == null) return;
-                    if (gridViewItem.ContentTemplateRoot == null) return;
 
                     var demoControl = gridViewItem.ContentTemplateRoot as DemoControl;
                     if (demoControl == null) return;
